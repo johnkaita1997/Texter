@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:background="@color/basecolor"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="700dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Tafa Subscriptions"
+                android:textColor="@color/mainicolor"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="10dp"
+                android:theme="@style/Theme.MaterialComponents.Light">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="5dp"
+                        android:text="Entire Form Subscription"
+                        android:textColor="@color/mainicolor"
+                        android:textSize="15dp"></TextView>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="Select A Form To Continue"
+                        android:textColor="@color/black"
+                        android:textSize="12dp"></TextView>
+
+
+                    <!--                    <com.google.android.material.textfield.TextInputLayout-->
+                    <!--                        android:layout_marginHorizontal="10dp"-->
+                    <!--                        android:layout_marginBottom="10dp"-->
+                    <!--                        android:id="@+id/textIsdfasdfnpsdfsutEmail"-->
+                    <!--                        style="@style/parent"-->
+                    <!--                        android:background="@drawable/rectangle"-->
+                    <!--                        android:layout_marginTop="@dimen/loginViewsMargin">-->
+
+                    <!--                        <EditText-->
+                    <!--                            android:id="@+id/checkoutnumber"-->
+                    <!--                            style="@style/modifiedEditText"-->
+                    <!--                            android:backgroundTint="@color/white"-->
+                    <!--                            android:hint="0729836000"-->
+                    <!--                            android:inputType="number"-->
+                    <!--                            android:maxLines="1"-->
+                    <!--                            android:textColor="@color/black"-->
+                    <!--                            android:textColorHint="@color/white" />-->
+                    <!--                    </com.google.android.material.textfield.TextInputLayout>-->
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="4">
+
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/formone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formonecolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 1"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/formtwo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formtwocolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 2"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/formthree"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formthreecolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 3"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/formfour"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formfourcolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 4"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="10dp"
+                android:theme="@style/Theme.MaterialComponents.Light">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="5dp"
+                        android:text="Entire Subject "
+                        android:textColor="@color/mainicolor"
+                        android:textSize="15dp"></TextView>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="Pick a form and subject from dialog"
+                        android:textColor="@color/black"
+                        android:textSize="12dp"></TextView>
+
+
+                    <!--                    <com.google.android.material.textfield.TextInputLayout-->
+                    <!--                        android:layout_marginHorizontal="10dp"-->
+                    <!--                        android:layout_marginBottom="10dp"-->
+                    <!--                        android:id="@+id/textIsdfasdfnpsdfsutEmail"-->
+                    <!--                        style="@style/parent"-->
+                    <!--                        android:background="@drawable/rectangle"-->
+                    <!--                        android:layout_marginTop="@dimen/loginViewsMargin">-->
+
+                    <!--                        <EditText-->
+                    <!--                            android:id="@+id/checkoutnumber"-->
+                    <!--                            style="@style/modifiedEditText"-->
+                    <!--                            android:backgroundTint="@color/white"-->
+                    <!--                            android:hint="0729836000"-->
+                    <!--                            android:inputType="number"-->
+                    <!--                            android:maxLines="1"-->
+                    <!--                            android:textColor="@color/black"-->
+                    <!--                            android:textColorHint="@color/white" />-->
+                    <!--                    </com.google.android.material.textfield.TextInputLayout>-->
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="4">
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/subjectformone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formonecolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 1"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/subjectformtwo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formtwocolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 2"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/subjectformthree"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formthreecolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 3"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/subjectformfour"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="10dp"
+                            android:layout_marginVertical="10dp"
+                            android:layout_weight="1"
+                            android:theme="@style/Theme.MaterialComponents.Light"
+                            app:cardCornerRadius="5dp"
+                            app:strokeColor="@color/formfourcolor"
+                            app:strokeWidth="3dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3dp"
+                                android:orientation="vertical"
+                                android:padding="10dp">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Form 4"></TextView>
+
+
+                            </LinearLayout>
+                        </com.google.android.material.card.MaterialCardView>
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="10dp"
+                android:theme="@style/Theme.MaterialComponents.Light">
+
+
+                <LinearLayout
+                    android:id="@+id/endView_Container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="Individual Unit Subscription"
+                        android:textColor="@color/mainicolor"
+                        android:textSize="15dp"></TextView>
+
+
+                    <TextView
+                        android:id="@+id/finishTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginTop="10dp"
+                        android:gravity="center"
+                        android:text="Subscribe To Individual Units"
+                        android:textSize="14dp"
+                        android:visibility="visible" />
+
+
+                    <Button
+                        android:id="@+id/browseunits"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginHorizontal="10dp"
+                        android:layout_marginVertical="20dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/safebasecolor"
+                        android:gravity="center"
+                        android:text="Browse Units"
+                        android:textColor="@color/white"
+                        android:textSize="14dp"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -1,0 +1,31 @@
+query loadgit{
+    organization(login: "flutter"){
+        name
+        url
+        repository(name: "flutter"){
+            name
+            url
+            issues(states: [OPEN, CLOSED], last: 50){
+                nodes{
+                    url
+                    state
+                    createdAt
+                    number
+                    title
+                    author{
+                        login
+                    }
+                    comments(first: 50){
+                        nodes{
+                            body
+                            createdAt
+                            author{
+                                login
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

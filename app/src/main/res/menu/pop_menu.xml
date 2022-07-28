@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:visible="false"
+        android:id="@+id/account"
+        android:title="Account" />
+
+    <item
+        android:id="@+id/subscriptions"
+        android:title="Subscriptions" />
+
+    <item
+        android:id="@+id/logout"
+        android:title="Logout" />
+
+</menu>

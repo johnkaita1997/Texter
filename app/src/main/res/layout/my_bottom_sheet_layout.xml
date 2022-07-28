@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="10dp"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/paymentDetailssdfsdf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:text="1 Year Subscription"
+        android:textColor="@color/mainicolor"
+        android:textSize="16dp"></TextView>
+
+    <TextView
+        android:id="@+id/lovedsf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:text=""
+        android:textColor="@color/black"
+        android:textSize="13dp"></TextView>
+
+
+    <TextView
+        android:id="@+id/love"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:text="Enter your M-pesa Moble"
+        android:textColor="@color/black"
+        android:textSize="13dp"></TextView>
+
+    <com.google.android.material.textfield.TextInputLayout
+        app:hintTextColor="@color/formtwocolor"
+        android:paddingHorizontal="5dp"
+        android:layout_height="40dp"
+        android:id="@+id/textIsdfasdfnpsdfsutEmail"
+        style="@style/parent"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="@dimen/loginViewsMargin"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rectangle">
+
+        <EditText
+            android:textCursorDrawable = "@null"
+            android:id="@+id/mpesamobile"
+            style="@style/modifiedEditText"
+            android:backgroundTint="@color/white"
+            android:focusedByDefault="false"
+            android:hint="0700000000"
+            android:inputType="number"
+            android:background="@null"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:layout_height="match_parent"
+            android:textColorHint="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        android:id="@+id/subscribe"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="15dp"
+        android:background="@color/black"
+        android:text="Subscribe"
+        android:textColor="@color/white">
+
+    </Button>
+
+</LinearLayout>

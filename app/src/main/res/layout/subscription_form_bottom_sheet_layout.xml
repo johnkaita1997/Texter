@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:paddingHorizontal="10dp"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+    android:orientation="vertical">
+
+    <Button
+        android:visibility="gone"
+        android:background="@color/black"
+        android:id="@+id/viewallsubscriptionplans"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="30dp"
+        android:text="View all Subscription Plans"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+
+    <TextView
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:textSize="16dp"
+        android:textColor="@color/mainicolor"
+        android:id="@+id/lsdfove"
+        android:text="Form Subscription Plans"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </TextView>
+
+
+    <TextView
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:textSize="13dp"
+        android:textColor="@color/black"
+        android:id="@+id/love"
+        android:text="Enter Mpesa Mobile and Select Subsciption Plan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </TextView>
+
+    <com.google.android.material.textfield.TextInputLayout
+        app:hintTextColor="@color/formtwocolor"
+        android:paddingHorizontal="5dp"
+        android:id="@+id/textIsdfasdfnpsdfsutEmail"
+        style="@style/parent"
+        android:layout_marginHorizontal="20dp"
+        android:background="@drawable/rectangle"
+        android:layout_marginTop="@dimen/loginViewsMargin">
+
+        <EditText
+            android:id="@+id/mpesamobile"
+            style="@style/modifiedEditText"
+            android:backgroundTint="@color/white"
+            android:focusedByDefault="false"
+            android:hint="0700000000"
+            android:inputType="number"
+            android:maxLines="1"
+            android:background="@null"
+            android:textColor="@color/black"
+            android:layout_height="match_parent"
+            android:textColorHint="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/custom_bottom_sheet_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="55dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
+
+
+</LinearLayout>
