@@ -25,9 +25,10 @@ class YourVideos : AppCompatActivity() {
         val colorname = intent.getStringExtra("colorname").toString()
         val formname = intent.getStringExtra("formname").toString()
 
-        yourvideos_spin_kit.setColor(Color.parseColor(colorname))
-
         CoroutineScope(Dispatchers.IO).launch() {
+            withContext(Dispatchers.Main) {
+                yourvideos_spin_kit.setColor(Color.parseColor(colorname))
+            }
 
             val yourvideos = async { myViewModel(this@YourVideos).getYourVideos(formid) }
             val thevideos = yourvideos.await().details

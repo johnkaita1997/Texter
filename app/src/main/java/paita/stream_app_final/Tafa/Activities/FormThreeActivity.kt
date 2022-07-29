@@ -51,6 +51,8 @@ class FormThreeActivity : AppCompatActivity() {
                 val formid = getFormId(myViewModel(this@FormThreeActivity), "3")
                 val intent = Intent(this@FormThreeActivity, YourVideos::class.java)
                 intent.putExtra("formid", formid)
+                intent.putExtra("formname", "Form Three")
+                intent.putExtra("colorname", "#B478B5")
                 startActivity(intent)
             }
         }

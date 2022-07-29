@@ -50,6 +50,8 @@ class FormTwoActivity : AppCompatActivity() {
                 val formid = getFormId(myViewModel(this@FormTwoActivity), "2")
                 val intent = Intent(this@FormTwoActivity, YourVideos::class.java)
                 intent.putExtra("formid", formid)
+                intent.putExtra("formname", "Form Two")
+                intent.putExtra("colorname", "#5968B0")
                 startActivity(intent)
             }
         }
