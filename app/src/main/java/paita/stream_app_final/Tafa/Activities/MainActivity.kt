@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                             true
                         }
                         R.id.subscriptions -> {
-                            goToActivity_Unfinished(this@MainActivity, SubscriptionActivity::class.java)
+//                            goToActivity_Unfinished(this@MainActivity, SubscriptionActivity::class.java)
                             true
                         }
                         R.id.account -> {

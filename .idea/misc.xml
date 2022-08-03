@@ -17,7 +17,19 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/rectangle_oneone.xml" value="0.1415" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/rectangle_three.xml" value="0.202" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/rectangle_two.xml" value="0.202" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-large/activity_one_launcher.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-sw600dp/activity_one_launcher.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_form.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_login.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_main.xml" value="0.19375" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_mpesa.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_one_launcher.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_sign_up.xml" value="0.18" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_video_viewer.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/custom_subjects.xml" value="0.19375" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/customyourvideos.xml" value="0.12" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/subtopiclist.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/topiclist.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_form_one.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_form_two.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_login.xml" value="0.1" />
@@ -36,7 +48,7 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_mpesa.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_mpesa_test.xml" value="0.14907407407407408" />
-        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_one_launcher.xml" value="0.18" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_one_launcher.xml" value="0.12" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_payment_dialog.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_sign_up.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_subject_plans.xml" value="0.2" />

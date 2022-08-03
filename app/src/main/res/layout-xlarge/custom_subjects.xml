@@ -9,16 +9,15 @@
 
     <TextView
         android:layout_marginTop="10dp"
-        android:background="@color/formfourcolor"
         android:layout_gravity="center"
         android:gravity="center"
+        android:background="@color/formonecolor"
         android:id="@+id/txt_name"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:textColor="@color/white"
-        android:text="Name"
+        android:text="Subject Name"
         android:padding="5dp"/>
-
 
 </LinearLayout>

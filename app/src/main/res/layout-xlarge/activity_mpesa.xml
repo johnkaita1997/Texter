@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@color/white"
+    android:padding="40dp"
     android:fillViewport="true"
-    android:focusableInTouchMode="true"
     android:gravity="center">
 
     <androidx.cardview.widget.CardView
@@ -26,10 +26,10 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="62dp"
-                android:layout_height="73dp"
+                android:layout_width="match_parent"
+                android:layout_height="103dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="120dp"
                 android:src="@drawable/tafalogo"></ImageView>
 
             <TextView
@@ -37,10 +37,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="40dp"
                 android:text="What Subscription Payment"
                 android:textColor="@color/black"
-                android:textSize="20dp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
 
@@ -48,37 +48,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="40dp"
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_gravity="left"
-                    android:gravity="left"
-                    android:paddingHorizontal="1dp"
-                    android:layout_marginTop="20dp"
-                    android:textSize="16dp"
-                    android:textColor="@color/mainicolor"
                     android:id="@+id/love"
-                    android:text="Dear Student, subscribe to view all Mathematics Videos"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </TextView>
-
-
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="20dp"
+                    android:background="#055160"
+                    android:gravity="left"
+                    android:padding="5dp"
+                    android:paddingHorizontal="1dp"
+                    android:text="Dear Student, subscribe to view all Mathematics Videos"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"></TextView>
 
 
                 <TextView
+                    android:id="@+id/lsdfosddsfdsfsve"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="left"
+                    android:layout_marginTop="40dp"
                     android:gravity="left"
                     android:paddingHorizontal="1dp"
-                    android:layout_marginTop="20dp"
-                    android:textSize="16dp"
-                    android:textColor="@color/black"
-                    android:id="@+id/lsdfosddsfdsfsve"
                     android:text="Phone Number*"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </TextView>
+                    android:textColor="@color/black"
+                    android:textSize="20sp"></TextView>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -101,27 +99,23 @@
                         android:maxLines="1"
                         android:textColor="@color/black"
                         android:textColorHint="@color/white"
-                        android:textCursorDrawable="@null" />
+                        android:textCursorDrawable="@null"
+                        android:textSize="14dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-
-
-
-
                 <TextView
+                    android:id="@+id/lsdfosdfsve"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="left"
+                    android:layout_marginTop="40dp"
                     android:gravity="left"
                     android:paddingHorizontal="1dp"
-                    android:layout_marginTop="10dp"
-                    android:textSize="16dp"
-                    android:textColor="@color/black"
-                    android:id="@+id/lsdfosdfsve"
                     android:text="Amount"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </TextView>
+                    android:textColor="@color/black"
+                    android:textSize="20sp"></TextView>
 
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -134,32 +128,32 @@
                     app:hintTextColor="@color/formtwocolor">
 
                     <EditText
-                        android:textSize="15dp"
-                        android:editable="false"
-                        android:enabled="false"
-                        android:text="Amount : 2000"
                         android:id="@+id/amountedit"
                         style="@style/modifiedEditText"
                         android:layout_height="match_parent"
                         android:background="@null"
                         android:backgroundTint="@color/white"
+                        android:editable="false"
+                        android:enabled="false"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
+                        android:text="Amount : 2000"
                         android:textColor="@color/formfourcolor"
                         android:textColorHint="@color/white"
-                        android:textCursorDrawable="@null" />
+                        android:textCursorDrawable="@null"
+                        android:textSize="15dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
 
                 <Button
-                    android:layout_marginBottom="20dp"
                     android:id="@+id/subscribe"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginHorizontal="0dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="40dp"
+                    android:layout_marginBottom="20dp"
                     android:background="@color/black"
                     android:text="Subscribe"
                     android:textAllCaps="false"

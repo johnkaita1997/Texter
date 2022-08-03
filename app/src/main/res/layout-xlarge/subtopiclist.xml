@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp"
+        android:background="@color/black"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:cardCornerRadius="5dp">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:background="#5A68B1"
+                android:id="@+id/subtopicname"
+                android:layout_gravity="center"
+                android:gravity="left"
+                android:layout_width="480dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/white"
+                android:text="Name"
+                android:padding="5dp"/>
+
+
+            <LinearLayout
+                android:id="@+id/linearlayoutcontrol"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="right"
+                android:background="#055160">
+
+                <TextView
+                    android:layout_marginRight="20dp"
+                    android:id="@+id/subtopicamount"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:textColor="@color/white"
+                    android:text="Name"
+                    android:padding="1dp"/>
+
+                <ImageView
+                    android:visibility="gone"
+                    android:padding="6dp"
+                    android:id="@+id/playvideo"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:src="@drawable/playvideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"/>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+</LinearLayout>
