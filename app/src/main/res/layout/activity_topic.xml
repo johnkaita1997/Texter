@@ -6,16 +6,15 @@
     android:focusableInTouchMode="true"
     app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
 
-    <com.github.ybq.android.spinkit.SpinKitView
-        android:layout_centerInParent="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.github.ybq.android.spinkit.SpinKitView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/spin_kit"
         style="@style/SpinKitView.DoubleBounce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
         app:SpinKit_Color="@color/black" />
 
     <View
@@ -38,26 +37,14 @@
         android:backgroundTint="@color/white" />
 
     <TextView
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
         android:id="@+id/videoViewTopText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:gravity="center"
-        android:text="Biology"
-        android:textAppearance="@style/good_mornin" />
-
-
-
-
-
-
-
-
-
-
-
-
-
+        android:text="Biology" />
 
 
     <LinearLayout
@@ -68,19 +55,7 @@
         android:layout_marginTop="10dp"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/topic_name"
-            android:layout_width="390dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:gravity="center"
-            android:text="Topics"
-            android:textAppearance="@style/welcome_to_" />
-
-
         <androidx.cardview.widget.CardView
-            android:visibility="gone"
             android:id="@+id/subjectSubscriptionCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,6 +64,7 @@
             android:background="@color/black"
             android:orientation="vertical"
             android:padding="10dp"
+            android:visibility="gone"
             app:cardCornerRadius="5dp">
 
             <LinearLayout
@@ -97,10 +73,10 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:background="@color/black"
                     android:id="@+id/txt_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/black"
                     android:orientation="horizontal">
 
                     <TextView
@@ -110,17 +86,17 @@
                         android:layout_gravity="center"
                         android:gravity="left"
                         android:padding="5dp"
-                        android:text="Subscribe To All Topics"
+                        android:text="Buy All Topics"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
 
                     <LinearLayout
                         android:id="@+id/linearlayoutcontrol"
-                        android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="right"
-                        android:background="@color/white">
+                        android:background="#055160"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/alltopicsAmount"
@@ -131,37 +107,34 @@
                             android:gravity="right"
                             android:padding="1dp"
                             android:text="KES 2000"
-                            android:textColor="@color/formfourcolor"
-                            android:textSize="13sp" />
+                            android:textColor="@color/white"
+                            android:textSize="14dp" />
 
                         <ImageView
-                            android:visibility="gone"
-                            android:padding="6dp"
                             android:id="@+id/playvideo"
-                            android:gravity="center"
-                            android:layout_gravity="center_horizontal"
-                            android:src="@drawable/playvideo"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"/>
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:gravity="center"
+                            android:padding="6dp"
+                            android:src="@drawable/playvideo"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
 
                 </LinearLayout>
 
-
             </LinearLayout>
 
-
         </androidx.cardview.widget.CardView>
-
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/topiclistRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
             android:scrollbars="vertical" />
 

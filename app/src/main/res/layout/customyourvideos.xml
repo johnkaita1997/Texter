@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="10dp"
-    android:layout_marginTop="15dp"
+    android:layout_marginTop="35dp"
     android:background="@color/white"
     android:orientation="vertical"
     android:padding="10dp"
@@ -25,6 +25,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:background="#055160"
                 android:id="@+id/custom_subjectname"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -32,7 +33,7 @@
                 android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:text="Subject Name"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="14dp" />
 
             <View

@@ -4,23 +4,19 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import paita.stream_app_final.Extensions.*
-import paita.stream_app_final.R
-import kotlinx.android.synthetic.main.my_bottom_sheet_layout.view.*
 import kotlinx.coroutines.*
+import paita.stream_app_final.Extensions.makeLongToast
+import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.R
+import paita.stream_app_final.Tafa.Activities.MpesaActivity
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
-import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
-import java.lang.Exception
 
 class SubTopicsAdapter(var activity: Activity,
                        var color: String?,
@@ -51,15 +47,15 @@ class SubTopicsAdapter(var activity: Activity,
         val unitid = subjectobject.id
 
         holder.setTopicAmount("KES : ${subjectobject.amount}")
+        if (subjectobject.amount.toDouble() <= 0) {
+            holder.setTopicAmount("KES")
+        }
         holder.setTopicName(topicName?.lowercase()?.capitalize())
-        holder.setIsRecyclable(false)
 
         var paid = false
 
-        CoroutineScope(Dispatchers.IO).launch() {
-
-            val unitsubscription = async { activity.myViewModel(activity).isUnitSubscribed(unitid) }
-
+        CoroutineScope(Dispatchers.Main).launch() {
+            val unitsubscription = activity.myViewModel(activity).isUnitSubscribed(unitid)
             if (isSubjectAlreadySubscribed) {
                 holder.makeVisible(activity)
                 paid = true
@@ -67,15 +63,20 @@ class SubTopicsAdapter(var activity: Activity,
                 holder.makeVisible(activity)
                 paid = true
             } else {
-                if (unitsubscription.await()) {
+                if (unitsubscription) {
                     holder.makeVisible(activity)
                     paid = true
                 }
             }
-
         }
 
         holder.itemView.setOnClickListener {
+
+            val theProgressDialog = ProgressDialog(activity)
+            theProgressDialog.setTitle("Fetching")
+            theProgressDialog.setMessage("Fetching Video...")
+            theProgressDialog.setCancelable(true)
+            theProgressDialog.show()
 
             val theposition = holder.adapterPosition
             if (theposition != RecyclerView.NO_POSITION) {
@@ -86,181 +87,87 @@ class SubTopicsAdapter(var activity: Activity,
 
 
                 CoroutineScope(Dispatchers.IO).launch() {
-
-//                    val formsubscription = async {
-//                        activity.myViewModel(activity).isFormSubscribed(formid)
-//                    }
-
-//                    val subjectsubscription = async {
-//                        activity.myViewModel(activity).isSubjectsubscribed(formid, subjectid)
-//                    }
-
-//                    val unitprices = async {
-//                        activity.myViewModel(activity).getUnitPrices(unitid.toString())
-//                    }
-
                     if (!paid) {
                         withContext(Dispatchers.Main) {
                             if (subunitamount <= 1) {
                                 activity.makeLongToast("Amount selected is invalid or too little")
-                            } else showSubscriptionView(unitid, subunitamount, subunitname)
+                                theProgressDialog.dismiss()
+                            } else {
+                                theProgressDialog.dismiss()
+                                showSubscriptionView(unitid, subunitamount, subunitname)
+                            }
                         }
                     } else {
                         val subunitslist = async {
                             activity.myViewModel(activity).fetchvideosperunitname(unitid)
                         }
-                        showUnitVideos(unitid, subunitslist.await())
+                        showUnitVideos(unitid, subunitslist.await(), theProgressDialog)
                     }
-
-//                    withContext(Dispatchers.Main) {
-//                        if (!formsubscription.await()) {
-//                            if (!subjectsubscription.await()) {
-//                            } else showUnitVideos(unitid)
-//                        } else showUnitVideos(unitid)
-//                    }
-
-
                 }
+
 
             }
         }
+
     }
 
-    private suspend fun showSubscriptionView(unitid: String, unitamount: Double, subunitname: String) {
+    private suspend fun showSubscriptionView(unitid: String, subunitamount: Double, unitname: String) {
 
-        val inflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val sheetView: View = inflater.inflate(R.layout.my_bottom_sheet_layout, null)
-        val mpesanumberedittext = sheetView.mpesamobile
+        val intent = Intent(activity, MpesaActivity::class.java)
+        intent.putExtra("item", "subtopic")
+        intent.putExtra("subjectname", "")
+        intent.putExtra("theamount", subunitamount.toString())
+        intent.putExtra("subjectid", subjectid)
+        intent.putExtra("formid", formid)
+        intent.putExtra("topicname", "")
+        intent.putExtra("topicid", "")
+        intent.putExtra("unitid", unitid)
+        intent.putExtra("unitname", unitname)
+        activity.startActivity(intent)
 
-        val texView = sheetView.love
-        texView.setText("Dear Student, Subscribe to view ${subunitname} videos")
+    }
 
-        val mBottomSheetDialog = BottomSheetDialog(mContext)
-        mBottomSheetDialog.setContentView(sheetView)
-        mBottomSheetDialog.show()
 
-        sheetView.subscribe.setOnClickListener {
-            val validatelist = mutableListOf<EditText>(mpesanumberedittext)
-            if (activity.validated(validatelist)) {
+    private suspend fun showUnitVideos(unitid: String, theobject: Videosperunitname, theProgressDialog: ProgressDialog) {
 
-                val (mpesanumber) = validatelist.map { activity.mytext(it) }
-                val userid = activity.getUserId()
+        CoroutineScope(Dispatchers.Main).launch() {
 
-                CoroutineScope(Dispatchers.IO).launch() {
+            if (theobject.thedetails.isNotEmpty()) {
 
-                    withContext(Dispatchers.Main) {
+                theobject.thedetails.forEachIndexed { index, it ->
+                    if (index == 0) {
+                        val videoid = it?.videoid
+                        CoroutineScope(Dispatchers.IO).launch() {
 
-                        val theProgressDialog = ProgressDialog(activity)
-                        theProgressDialog.setTitle("Tafa Checkout")
-                        theProgressDialog.setMessage("Processing Payment...")
-
-                        activity.makeLongToast("You will receive an M-pesa Prompt Shortly")
-                        theProgressDialog.show()
-
-                        val invoiceId = activity.myViewModel(activity).checkoutUnit(CheckOutUnit(unitamount.toInt(), mpesanumber, unitid, userid))
-
-                        if (!invoiceId.equals("")) {
+                            val vidocypherResponse = activity.myViewModel(activity).getPlaybackInfo(videoid.toString())
 
                             withContext(Dispatchers.Main) {
-
-                                try {
-
-                                    var state = false
-
-                                    suspend fun runCode() {
-                                        try {
-                                            val response = MyApi().checkInvoiceStatus(invoiceId)
-
-                                            if (response.code() == 200) {
-                                                if (response.body()?.details?.status.equals("PAID")) {
-                                                    state = true
-                                                    theProgressDialog.dismiss()
-                                                    activity.makeLongToast("Payment was Successful")
-
-                                                    val subunitslist = async {
-                                                        activity.myViewModel(activity).fetchvideosperunitname(unitid)
-                                                    }
-                                                    activity.finish()
-                                                    showUnitVideos(unitid, subunitslist.await())
-
-                                                } else if (response.body()?.details?.status.equals("PENDING")) {
-                                                }
-                                            } else if (response.code() == 400) {
-                                                activity.showAlertDialog("Payment Cancelled")
-                                                state = true
-                                                theProgressDialog.dismiss()
-                                            } else {
-                                                activity.showAlertDialog("Payment ${response}")
-                                                state = true
-                                                theProgressDialog.dismiss()
-                                            }
-
-                                            if (state == false) {
-                                                runCode()
-                                            }
-                                        } catch (exception: Exception) {
-                                            activity.makeLongToast(exception.toString())
-                                            theProgressDialog.dismiss()
-                                        }
-                                    }
-
-                                    runCode()
-
-                                } catch (exception: Exception) {
-                                    activity.makeLongToast(exception.toString())
+                                if (vidocypherResponse.otp == "") {
                                     theProgressDialog.dismiss()
+                                    return@withContext
                                 }
 
+                                val otp = vidocypherResponse.otp
+                                val playbackinfo = vidocypherResponse.playbackInfo
+
+                                val intent = Intent(mContext, VideoViewerActivity::class.java)
+                                intent.putExtra("otp", otp)
+                                intent.putExtra("playbackinfo", playbackinfo)
+                                theProgressDialog.dismiss()
+                                mContext.startActivity(intent)
                             }
-
-                        } else {
-                            theProgressDialog.dismiss()
                         }
-
                     }
+                    return@forEachIndexed
                 }
 
+                theobject.thedetails.forEach {
+
+
+                }
             }
         }
 
-
-    }
-
-
-    private suspend fun showUnitVideos(unitid: String, theobject: Videosperunitname) {
-
-
-        if (theobject.thedetails.isNotEmpty()) {
-
-            theobject.thedetails.forEachIndexed { index, it ->
-                if (index == 0) {
-                    val videoid = it?.videoid
-                    CoroutineScope(Dispatchers.IO).launch() {
-                        val vidocypherResponse = activity.myViewModel(activity).getPlaybackInfo(videoid.toString())
-
-                        withContext(Dispatchers.Main) {
-                            if (vidocypherResponse.otp == "") {
-                                return@withContext
-                            }
-
-                            val otp = vidocypherResponse.otp
-                            val playbackinfo = vidocypherResponse.playbackInfo
-
-                            val intent = Intent(mContext, VideoViewerActivity::class.java)
-                            intent.putExtra("otp", otp)
-                            intent.putExtra("playbackinfo", playbackinfo)
-                            mContext.startActivity(intent)
-                        }
-                    }
-                }
-                return@forEachIndexed
-            }
-
-            theobject.thedetails.forEach {
-
-
-            }
-        }
 
     }
 
@@ -284,7 +191,7 @@ class SubTopicsAdapter(var activity: Activity,
             withContext(Dispatchers.Main) {
                 playvideo.visibility = View.VISIBLE
                 topicAmount.visibility = View.GONE
-                linearlayoutcontrol.setBackgroundColor(Color.parseColor("#ffffff"))
+//                linearlayoutcontrol.setBackgroundColor(Color.parseColor("#eb8634"))
             }
         }
 

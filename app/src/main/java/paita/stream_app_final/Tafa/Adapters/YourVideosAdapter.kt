@@ -1,31 +1,21 @@
 package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.android.synthetic.main.customyourvideos.view.*
-import kotlinx.android.synthetic.main.my_bottom_sheet_layout.view.*
-import kotlinx.android.synthetic.main.subtopiclist.view.*
-import kotlinx.android.synthetic.main.topiclist.view.*
-import kotlinx.coroutines.*
-import paita.stream_app_final.Extensions.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
-import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
-import java.lang.Exception
 
 class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDetail>, val formname: String, val colorname: String) : RecyclerView.Adapter<YourVideosAdapter.SubjectHolder>() {
 
@@ -54,6 +44,13 @@ class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDe
         holder.itemView.customwatchvideo.setBackgroundColor(Color.parseColor(colorname))
 
         holder.itemView.customwatchvideo.setOnClickListener {
+
+            val theProgressDialog = ProgressDialog(activity)
+            theProgressDialog.setTitle("Fetching")
+            theProgressDialog.setMessage("Fetching Video...")
+            theProgressDialog.setCancelable(true)
+            theProgressDialog.show()
+
             val videoid = videoObject.videos.get(0).videoid
 
             CoroutineScope(Dispatchers.IO).launch() {
@@ -61,6 +58,7 @@ class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDe
 
                 withContext(Dispatchers.Main) {
                     if (vidocypherResponse.otp == "") {
+                        theProgressDialog.dismiss()
                         return@withContext
                     }
 
@@ -70,6 +68,7 @@ class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDe
                     val intent = Intent(activity, VideoViewerActivity::class.java)
                     intent.putExtra("otp", otp)
                     intent.putExtra("playbackinfo", playbackinfo)
+                    theProgressDialog.dismiss()
                     activity.startActivity(intent)
                 }
 

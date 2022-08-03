@@ -1,25 +1,21 @@
 package paita.stream_app_final.Tafa.Activities
 
-import android.app.ProgressDialog
-import android.content.Context
+import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.activity_video.*
-import kotlinx.android.synthetic.main.my_bottom_sheet_layout.view.*
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_topic.*
+import kotlinx.android.synthetic.main.topiclist.*
 import kotlinx.coroutines.*
-import paita.stream_app_final.Extensions.*
+import paita.stream_app_final.Extensions.getFormId
+import paita.stream_app_final.Extensions.makeLongToast
+import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Adapters.CheckOutSubject
 import paita.stream_app_final.Tafa.Adapters.TopicsAdapter
-import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
-import java.lang.Exception
 
 class TopicsActivity : AppCompatActivity() {
 
@@ -28,11 +24,12 @@ class TopicsActivity : AppCompatActivity() {
     private lateinit var subjectdescription: String
     private lateinit var formname: String
     private lateinit var colorname: String
+    private lateinit var actualformname: String
     private lateinit var unitsadapter: TopicsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_video)
+        setContentView(R.layout.activity_topic)
         initall()
     }
 
@@ -45,11 +42,10 @@ class TopicsActivity : AppCompatActivity() {
         subjectdescription = intent.getStringExtra("subjectdescription").toString()
         formname = intent.getStringExtra("formname").toString()
         colorname = intent.getStringExtra("colorname").toString()
+        actualformname = intent.getStringExtra("actualformname").toString()
 
-        setActionBarColor_And_Name()
+        setActionBarColor_And_Name(formname, subjectname)
 
-        val layoutManager = LinearLayoutManager(this)
-        topiclistRecyclerView.setLayoutManager(layoutManager)
         var amount = 0.0
 
         CoroutineScope(Dispatchers.IO).launch() {
@@ -65,6 +61,9 @@ class TopicsActivity : AppCompatActivity() {
                         amount = subjectPlanListItem.amount.toDouble()
                         withContext(Dispatchers.Main) {
                             alltopicsAmount.setText("KES ${amount.toString()}")
+                            if (amount.toDouble() <= 0) {
+                                alltopicsAmount.setText("KES")
+                            }
                         }
                     }
                 }
@@ -87,9 +86,15 @@ class TopicsActivity : AppCompatActivity() {
                     return@withContext
                 }
 
+                var loaded = false
+                val viewPool = RecyclerView.RecycledViewPool()
+
+                val layoutManager = LinearLayoutManager(this@TopicsActivity)
+                topiclistRecyclerView.setLayoutManager(layoutManager)
+                topiclistRecyclerView.setRecycledViewPool(viewPool)
+                topiclistRecyclerView.setItemViewCacheSize(100)
                 unitsadapter = TopicsAdapter(this@TopicsActivity, colorname, listOfTopics.await(), this@TopicsActivity, formid.await(), subjectid, colorname, isSubjectSubscribed.await())
                 topiclistRecyclerView.setAdapter(unitsadapter)
-                unitsadapter.notifyDataSetChanged();
                 spin_kit.visibility = View.GONE
 
                 subjectSubscriptionCardView.setOnClickListener {
@@ -117,110 +122,29 @@ class TopicsActivity : AppCompatActivity() {
 
         withContext(Dispatchers.Main) {
 
-            val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val sheetView: View = inflater.inflate(R.layout.my_bottom_sheet_layout, null)
-            val mpesanumberedittext = sheetView.mpesamobile
+            val intent = Intent(this@TopicsActivity, MpesaActivity::class.java)
+            intent.putExtra("item", "subject")
+            intent.putExtra("subjectname", subjectname)
+            intent.putExtra("theamount", amount.toString())
+            intent.putExtra("subjectid", subjectid)
+            intent.putExtra("formid", formid)
+            intent.putExtra("topicname", "")
+            intent.putExtra("topicid", "")
+            intent.putExtra("unitid", "")
+            intent.putExtra("unitname", "")
+            startActivity(intent)
 
-            val texView = sheetView.love
-            texView.setText("Dear Student, Subscribe to view ${subjectname} videos")
-
-            val mBottomSheetDialog = BottomSheetDialog(this@TopicsActivity)
-            mBottomSheetDialog.setContentView(sheetView)
-            mBottomSheetDialog.show()
-
-            sheetView.subscribe.setOnClickListener {
-                val validatelist = mutableListOf<EditText>(mpesanumberedittext)
-                if (validated(validatelist)) {
-                    val (mpesanumber) = validatelist.map { mytext(it) }
-
-//                    val alertDialog = AlertDialog.Builder(this@TopicsActivity).create()
-//                    showMpesaAlert_Units(formid, alertDialog, this@TopicsActivity, formid, subjectid)
-
-                    CoroutineScope(Dispatchers.IO).launch() {
-
-                        withContext(Dispatchers.Main) {
-
-                            val theProgressDialog = ProgressDialog(this@TopicsActivity)
-                            theProgressDialog.setTitle("Tafa Checkout")
-                            theProgressDialog.setMessage("Processing Payment...")
-
-                            makeLongToast("You will receive an M-pesa Prompt Shortly")
-                            theProgressDialog.show()
-
-                            Log.d("-----------------------------------", "showCheckOutDialog: ${getUserId()}")
-
-                            val invoiceId = myViewModel(this@TopicsActivity).checkoutSubject(CheckOutSubject(amount.toInt(), mpesanumber, subjectid, formid, getUserId()))
-
-                            if (!invoiceId.equals("")) {
-
-                                withContext(Dispatchers.Main) {
-
-                                    try {
-
-                                        var state = false
-
-                                        suspend fun runCode() {
-                                            try {
-                                                val response = MyApi().checkInvoiceStatus(invoiceId)
-
-                                                if (response.code() == 200) {
-                                                    if (response.body()?.details?.status.equals("PAID")) {
-                                                        state = true
-                                                        theProgressDialog.dismiss()
-                                                        makeLongToast("Payment was Successful")
-                                                        finish()
-                                                    } else if (response.body()?.details?.status.equals("PENDING")) {
-                                                    }
-                                                } else if (response.code() == 400) {
-                                                    showAlertDialog("Payment Cancelled")
-                                                    state = true
-                                                    theProgressDialog.dismiss()
-                                                } else {
-                                                    showAlertDialog("Payment ${response}")
-                                                    state = true
-                                                    theProgressDialog.dismiss()
-                                                }
-
-                                                if (state == false) {
-                                                    runCode()
-                                                }
-                                            } catch (exception: Exception) {
-                                                makeLongToast(exception.toString())
-                                                theProgressDialog.dismiss()
-                                            }
-                                        }
-
-                                        runCode()
-
-                                    } catch (exception: Exception) {
-                                        makeLongToast(exception.toString())
-                                        theProgressDialog.dismiss()
-                                    }
-
-                                }
-
-                            } else {
-                                theProgressDialog.dismiss()
-                            }
-
-                        }
-                    }
-
-                }
-            }
         }
 
     }
 
     private fun rename_EditText() {
-        topic_name.setText("${subjectname.lowercase().capitalize()} Topics")
     }
 
 
-    private fun setActionBarColor_And_Name() {
-        videoViewTopText.setText(subjectname.lowercase().capitalize())
-        videoViewTopText.setBackgroundColor(Color.parseColor(colorname))
-        rectangle_88.setBackgroundColor(Color.parseColor(colorname))
+    private fun setActionBarColor_And_Name(formname: String, subjectname: String) {
+        videoViewTopText.setText("${this.subjectname.lowercase().capitalize()} ${actualformname} Topics")
+        rectangle_88.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(colorname)));
         spin_kit.setColor(Color.parseColor(colorname))
     }
 

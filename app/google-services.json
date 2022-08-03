@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "825332760934",
+    "project_id": "tafa-9394f",
+    "storage_bucket": "tafa-9394f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825332760934:android:03af19c6fe8942423088a7",
+        "android_client_info": {
+          "package_name": "paita.stream_app_final"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825332760934-u5g6ai7a3qtllj3jrrpc5a6f3e6kv1fq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "paita.stream_app_final",
+            "certificate_hash": "fad4e0bf8bf14823d959d158c1a5a1dd214e3066"
+          }
+        },
+        {
+          "client_id": "825332760934-2i6vttgbcce7aisvcjj9rutu7a65r83r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc1rMgf1kBjTvYbD7cXGxeywvMvrDKDao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825332760934-2i6vttgbcce7aisvcjj9rutu7a65r83r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

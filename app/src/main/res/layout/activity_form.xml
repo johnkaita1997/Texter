@@ -110,7 +110,7 @@
                     android:orientation="vertical">
 
                     <LinearLayout
-                        android:id="@+id/txt_name"
+                        android:id="@+id/yourtopics_color"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/formonecolor"
@@ -137,9 +137,10 @@
                             android:orientation="horizontal">
 
                             <ImageView
+                                android:layout_marginVertical="2dp"
                                 android:id="@+id/playvideo"
                                 android:layout_width="match_parent"
-                                android:layout_height="25dp"
+                                android:layout_height="match_parent"
                                 android:layout_gravity="center"
                                 android:gravity="right"
                                 android:padding="2dp"

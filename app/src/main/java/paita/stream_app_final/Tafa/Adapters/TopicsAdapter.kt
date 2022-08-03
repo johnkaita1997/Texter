@@ -1,36 +1,33 @@
 package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
-import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.my_bottom_sheet_layout.view.*
 import kotlinx.android.synthetic.main.topiclist.view.*
 import kotlinx.coroutines.*
 import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
-import java.lang.Exception
+import paita.stream_app_final.Tafa.Activities.MpesaActivity
 
-class TopicsAdapter(var activity: Activity,
-                    var color: String?,
-                    var subjectlist: Topics,
-                    private val mContext: Context,
-                    val formid: String,
-                    val subjectid: String,
-                    val colorname: String,
-                    val isSubjectAlreadySubscribed: Boolean) : RecyclerView.Adapter<TopicsAdapter.SubjectHolder>() {
+class TopicsAdapter(
+    var activity: Activity,
+    var color: String?,
+    var subjectlist: Topics,
+    private val mContext: Context,
+    val formid: String,
+    val subjectid: String,
+    val colorname: String,
+    val isSubjectAlreadySubscribed: Boolean,
+) : RecyclerView.Adapter<TopicsAdapter.SubjectHolder>() {
 
     lateinit var view: View
 
@@ -50,9 +47,12 @@ class TopicsAdapter(var activity: Activity,
         val topicName = topicObject.name
 
         holder.setTopicAmount("KES : ${topicObject.amount}")
+        if (topicObject.amount.toDouble() <= 0) {
+            holder.setTopicAmount("KES")
+        }
+
         holder.setTopicName(topicName?.lowercase()?.capitalize())
         holder.setColor(colorname)
-        holder.setIsRecyclable(false)
 
         holder.itemView.thetopicamount.setOnClickListener {
             if (topicObject.amount <= 1) {
@@ -60,115 +60,36 @@ class TopicsAdapter(var activity: Activity,
             } else showMpesaDialog(topicObject.amount, subjectid, formid, activity.getUserId(), topicName, activity.getUsername(), topicObject.id)
         }
 
-        CoroutineScope(Dispatchers.IO).launch() {
-
-            val topicSubscription = async { activity.myViewModel(activity).checkTopicSubscription(topicObject.id) }
-
+        CoroutineScope(Dispatchers.Main).launch() {
+            val topicSubscription = activity.myViewModel(activity).checkTopicSubscription(topicObject.id)
             if (isSubjectAlreadySubscribed) {
                 holder.makeVisible(activity)
             } else {
-                if (topicSubscription.await()) {
+                if (topicSubscription) {
                     holder.makeVisible(activity)
                 }
             }
 
-            holder.setRecyclerViewItems(activity, colorname, topicObject, formid, subjectid, isSubjectAlreadySubscribed, topicSubscription.await())
-        }
+            holder.setRecyclerViewItems(activity, colorname, topicObject, formid, subjectid, isSubjectAlreadySubscribed, topicSubscription)
 
+        }
 
     }
 
 
     private fun showMpesaDialog(amount: Double, subjectid: String, formid: String, userId: String, topicName: String, username: String, topicId: String) {
 
-        val inflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val sheetView: View = inflater.inflate(R.layout.my_bottom_sheet_layout, null)
-        val mpesanumberedittext = sheetView.mpesamobile
-
-        val texView = sheetView.love
-        texView.setText("Dear Student, Subscribe to view ${topicName} videos")
-
-        val mBottomSheetDialog = BottomSheetDialog(mContext)
-        mBottomSheetDialog.setContentView(sheetView)
-        mBottomSheetDialog.show()
-
-        sheetView.subscribe.setOnClickListener {
-
-            val validatelist = mutableListOf<EditText>(mpesanumberedittext)
-            if (activity.validated(validatelist)) {
-                val (mpesanumber) = validatelist.map { activity.mytext(it) }
-                val userid = activity.getUserId()
-
-                CoroutineScope(Dispatchers.IO).launch() {
-
-                    withContext(Dispatchers.Main) {
-
-                        val theProgressDialog = ProgressDialog(activity)
-                        theProgressDialog.setTitle("Tafa Checkout")
-                        theProgressDialog.setMessage("Processing Payment...")
-
-                        activity.makeLongToast("You will receive an M-pesa Prompt Shortly")
-                        theProgressDialog.show()
-                        val invoiceId = activity.myViewModel(activity).checkoutTopic(CheckOutTopic(amount.toInt(), mpesanumber, topicId, userid))
-
-                        if (!invoiceId.equals("")) {
-
-                            withContext(Dispatchers.Main) {
-
-                                try {
-
-                                    var state = false
-
-                                    suspend fun runCode() {
-                                        try {
-                                            val response = MyApi().checkInvoiceStatus(invoiceId)
-
-                                            if (response.code() == 200) {
-                                                if (response.body()?.details?.status.equals("PAID")) {
-                                                    state = true
-                                                    theProgressDialog.dismiss()
-                                                    activity.makeLongToast("Payment was Successful")
-                                                    activity.finish()
-                                                } else if (response.body()?.details?.status.equals("PENDING")) {
-                                                }
-                                            } else if (response.code() == 400) {
-                                                activity.showAlertDialog("Payment Cancelled")
-                                                state = true
-                                                theProgressDialog.dismiss()
-                                            } else {
-                                                activity.showAlertDialog("Payment ${response}")
-                                                state = true
-                                                theProgressDialog.dismiss()
-                                            }
-
-                                            if (state == false) {
-                                                runCode()
-                                            }
-                                        } catch (exception: Exception) {
-                                            activity.makeLongToast(exception.toString())
-                                            theProgressDialog.dismiss()
-                                        }
-                                    }
-
-                                    runCode()
-
-                                } catch (exception: Exception) {
-                                    activity.makeLongToast(exception.toString())
-                                    theProgressDialog.dismiss()
-                                }
-
-                            }
-
-                        } else {
-                            theProgressDialog.dismiss()
-                        }
-
-                    }
-                }
-
-
-            }
-        }
+        val intent = Intent(activity, MpesaActivity::class.java)
+        intent.putExtra("item", "topic")
+        intent.putExtra("subjectname", "")
+        intent.putExtra("theamount", amount.toString())
+        intent.putExtra("subjectid", subjectid)
+        intent.putExtra("formid", formid)
+        intent.putExtra("topicname", topicName)
+        intent.putExtra("topicid", topicId)
+        intent.putExtra("unitid", "")
+        intent.putExtra("unitname", "")
+        activity.startActivity(intent)
 
     }
 
@@ -203,10 +124,10 @@ class TopicsAdapter(var activity: Activity,
                                          istopicSubscribed: Boolean) {
 
             withContext(Dispatchers.Main) {
+
                 val layoutManager = LinearLayoutManager(activity)
                 myrecyclerview.setLayoutManager(layoutManager)
-                myrecyclerview.setHasFixedSize(true)
-
+                myrecyclerview.setItemViewCacheSize(100)
                 val subtopicAdapter = SubTopicsAdapter(activity, colorname, subjectobject.subtopics, activity, formid, subjectid, colorname, isSubjectAlreadySubscribed, istopicSubscribed)
                 myrecyclerview.setAdapter(subtopicAdapter)
 
@@ -216,9 +137,10 @@ class TopicsAdapter(var activity: Activity,
 
         suspend fun makeVisible(activity: Activity) {
             withContext(Dispatchers.Main) {
-                playvideo.visibility = View.VISIBLE
-                topicAmount.visibility = View.GONE
-                linearlayoutcontrol.setBackgroundColor(Color.parseColor("#ffffff"))
+//                playvideo.visibility = View.VISIBLE
+//                topicAmount.visibility = View.GONE
+                topicAmount.text = "ACTIVE"
+//                linearlayoutcontrol.setBackgroundColor(Color.parseColor("#ffffff"))
             }
         }
 
@@ -231,6 +153,8 @@ class TopicsAdapter(var activity: Activity,
             linearlayoutcontrol = itemView.findViewById(R.id.linearlayoutcontrol)
 
         }
+
+
     }
 
 }

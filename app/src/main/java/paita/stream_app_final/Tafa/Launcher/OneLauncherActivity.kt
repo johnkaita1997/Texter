@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import kotlinx.android.synthetic.main.activity_one_launcher.*
+import kotlinx.android.synthetic.main.activity_your_videos.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import paita.stream_app_final.Tafa.Authentication.SignUpActivity
 import paita.stream_app_final.Tafa.Shared.ConnectionDetector
 import paita.stream_app_final.Tafa.Shared.SessionManager
+import schemasMicrosoftComVml.STExt.VIEW
 
 class OneLauncherActivity : AppCompatActivity() {
 
@@ -64,7 +66,7 @@ class OneLauncherActivity : AppCompatActivity() {
         runnable = Runnable {
 
             if (!isLoggedIn()) {
-                goToActivity(this, SignUpActivity::class.java)
+                goToActivity(this, LoginActivity::class.java)
             } else {
                 CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
                     val e = SessionManager(this@OneLauncherActivity).fetchu().toString()
@@ -98,6 +100,7 @@ class OneLauncherActivity : AppCompatActivity() {
         layoutParams.weight = 10f
         btnPositive.layoutParams = layoutParams
         btnNegative!!.layoutParams = layoutParams
+
     }
 
     fun gotonextpage() {

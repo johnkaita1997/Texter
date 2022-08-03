@@ -23,6 +23,10 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:name=".Tafa.Activities.MpesaActivity"
+            android:exported="false" />
+        <activity
             android:name=".Tafa.Activities.YourVideos"
             android:exported="false" />
         <activity
@@ -38,7 +42,8 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Tafa.Activities.TopicsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".Tafa.Activities.FormFourActivity"
             android:exported="false" />
@@ -49,7 +54,7 @@
             android:name=".Tafa.Activities.FormTwoActivity"
             android:exported="false" />
         <activity
-            android:name=".Tafa.Activities.FormOneActivity"
+            android:name=".Tafa.Activities.FormActivity"
             android:exported="false" />
         <activity
             android:name=".Tafa.Activities.VideoViewerActivity"
@@ -58,7 +63,7 @@
         <activity
             android:name=".Tafa.Activities.MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustResize|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -72,10 +77,10 @@
         </activity>
         <activity
             android:name=".Tafa.Authentication.LoginActivity"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".Tafa.Authentication.SignUpActivity"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".Tafa.Launcher.OneLauncherActivity"
             android:exported="true">

@@ -1,12 +1,20 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.firebase.crashlytics'
+
 
 android {
     useLibrary 'org.apache.http.legacy'
     signingConfigs {
         release {
-            storeFile file('E:\\Developement\\Java Android Projects\\Appskeystore\\android.jks')
+            storeFile file('C:\\kaita\\kaitakeystore.jks')
+            storePassword 'Bongolala1997'
+            keyAlias 'Bongolala1997'
+            keyPassword 'Bongolala1997'
+        }
+        debug {
+            storeFile file('C:\\kaita\\kaitakeystore.jks')
             storePassword 'Bongolala1997'
             keyAlias 'Bongolala1997'
             keyPassword 'Bongolala1997'
@@ -20,7 +28,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 32
         multiDexEnabled true
-        versionCode 28
+        versionCode 30
         versionName "1.0.0"
 
         compileOptions {
@@ -112,5 +120,10 @@ dependencies {
     implementation 'com.vdocipher.aegis:vdocipher-android:1.11.0'
 
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+
+
+    implementation platform('com.google.firebase:firebase-bom:30.3.1')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
 }

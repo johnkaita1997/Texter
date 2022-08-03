@@ -1,50 +1,57 @@
 package paita.stream_app_final.Tafa.Activities
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_form_one.*
+import kotlinx.android.synthetic.main.activity_form.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import paita.stream_app_final.Extensions.getFormId
-import paita.stream_app_final.Extensions.goToActivity_Unfinished
 import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Adapters.FormOneSubjectAdapter
+import paita.stream_app_final.Tafa.Adapters.FormSubjectAdapter
 import paita.stream_app_final.Tafa.Adapters.Subject
 import paita.stream_app_final.Tafa.Shared.ViewModel
 
 
-class FormOneActivity : AppCompatActivity() {
+class FormActivity : AppCompatActivity() {
 
     private lateinit var myviewmodel: ViewModel
-    private lateinit var subject_list_adpater: FormOneSubjectAdapter
+    private lateinit var subject_list_adpater: FormSubjectAdapter
     private val subjectList: ArrayList<Subject> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_form_one)
+        setContentView(R.layout.activity_form)
         initall()
     }
 
     private fun initall() {
 
-        /*val progressBar = findViewById<View>(R.id.spin_kit) as ProgressBar
-        val doubleBounce: Sprite = DoubleBounce()
-        progressBar.indeterminateDrawable = doubleBounce
-        progressBar.showContextMenu()*/
+        val actualid = intent.getStringExtra("actualid").toString()
+        val colorname = intent.getStringExtra("colorname").toString()
+        val actualformname = intent.getStringExtra("formname").toString()
+        val formnumber = intent.getStringExtra("formnumber").toString()
+
+        spin_kit.setColor(Color.parseColor(colorname))
+        rectangle_8.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(colorname)));
+
+        yourtopics_color.setBackgroundColor(Color.parseColor(colorname))
+        welcome_to_.setText("${actualformname} Subjects")
+        good_mornin.setText("Welcome To $actualformname")
 
         myviewmodel = ViewModel(this.application, this)
 
         val layoutManager = LinearLayoutManager(this)
         form_one_subject_rView.setLayoutManager(layoutManager)
 
-        subject_list_adpater = FormOneSubjectAdapter(subjectList, this)
-        fetch_Subject_Lists()
+        subject_list_adpater = FormSubjectAdapter(subjectList, this, colorname, formnumber, actualformname)
+        fetch_Subject_Lists(actualid)
 
         backbutton.setOnClickListener {
             this.finish()
@@ -53,10 +60,10 @@ class FormOneActivity : AppCompatActivity() {
 
         yourtopics_formone.setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch() {
-                val formid = getFormId(myViewModel(this@FormOneActivity), "1")
-                val intent = Intent(this@FormOneActivity, YourVideos::class.java)
+                val formid = actualid
+                val intent = Intent(this@FormActivity, YourVideos::class.java)
                 intent.putExtra("formid", formid)
-                intent.putExtra("formname", "Form One")
+                intent.putExtra("formname", actualformname)
                 intent.putExtra("colorname", "#B330811C")
                 startActivity(intent)
             }
@@ -64,12 +71,12 @@ class FormOneActivity : AppCompatActivity() {
 
     }
 
-    private fun fetch_Subject_Lists() {
+    private fun fetch_Subject_Lists(actualid: String) {
 
         CoroutineScope(Dispatchers.IO).launch() {
 
-            val formid = intent.extras?.getString("formoneid").toString()
-            val response = myViewModel(this@FormOneActivity).fetch_Subject_Lists(formid)
+            val formid = actualid
+            val response = myViewModel(this@FormActivity).fetch_Subject_Lists(formid)
 
             withContext(Dispatchers.Main){
                 if (response.isEmpty()) {

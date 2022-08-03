@@ -56,21 +56,22 @@ class SignUpActivity : AppCompatActivity() {
 
             if (validated(validatelist)) {
                 val (name, email, password, confirmpassword, school) = validatelist.map { mytext(it) }
+                if (agentcode.text.toString().length <= 0) {
+                    makeLongToast("Enter the agent code first")
+                } else {
+                    CoroutineScope(Dispatchers.IO).launch() {
 
-                CoroutineScope(Dispatchers.IO).launch() {
+                        val countyid = countyid(myViewModel(this@SignUpActivity), county)
+                        val agentid = agentcode.text.toString().trim()
 
-                    val countyid = countyid(myViewModel(this@SignUpActivity), county)
-                    val agentid = getagentid(myViewModel(this@SignUpActivity), agent)
-
-                    if (countyid.equals("") or agentid.equals("")) {
-                        withContext(Dispatchers.Main) {
-                            makeLongToast("Select both county and registration type")
-                            return@withContext
+                        if (countyid.equals("") or agentid.equals("")) {
+                            withContext(Dispatchers.Main) {
+                                makeLongToast("Enter both county and registration type")
+                                return@withContext
+                            }
                         }
+                        myViewModel(this@SignUpActivity).createUser(name, email, password, confirmpassword, countyid, school, agentid, mydialog)
                     }
-
-                    myViewModel(this@SignUpActivity).createUser(name, email, password, confirmpassword, countyid, school, agentid, mydialog)
-
                 }
 
             } else mydialog.dismiss()
@@ -84,7 +85,6 @@ class SignUpActivity : AppCompatActivity() {
 
 
         CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
-            myViewModel(this@SignUpActivity).fetchAndSaveAgents(spinneragent)
         }
 
 
@@ -97,16 +97,6 @@ class SignUpActivity : AppCompatActivity() {
 
             override fun onNothingSelected(p0: AdapterView<*>?): Unit = TODO("Not yet implemented")
 
-        })
-
-        spinneragent.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val item: String = parent?.getItemAtPosition(position).toString()
-                agent = item
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?): Unit = TODO("Not yet implemented")
         })
 
     }

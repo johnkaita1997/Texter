@@ -43,12 +43,13 @@
 
 
                 <LinearLayout
+                    android:gravity="center"
                     android:id="@+id/linearlayoutcontrol"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
-                    android:background="#F5F5F5">
+                    android:background="#055160">
 
                     <TextView
                         android:id="@+id/thetopicamount"
@@ -59,18 +60,18 @@
                         android:gravity="center"
                         android:padding="1dp"
                         android:text="Name"
-                        android:textColor="@color/formfourcolor"
+                        android:textColor="@color/white"
                         android:textSize="13sp" />
 
                     <ImageView
                         android:visibility="gone"
                         android:padding="5dp"
                         android:id="@+id/playvideo"
-                        android:gravity="right"
-                        android:layout_gravity="center_horizontal"
+                        android:gravity="center"
+                        android:layout_gravity="center"
                         android:src="@drawable/playvideo"
                         android:layout_width="match_parent"
-                        android:layout_height="35dp"/>
+                        android:layout_height="match_parent"/>
 
                 </LinearLayout>
 

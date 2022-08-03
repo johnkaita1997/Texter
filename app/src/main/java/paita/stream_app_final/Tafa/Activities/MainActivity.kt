@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_subscription.*
 import kotlinx.coroutines.*
 import paita.stream_app_final.Extensions.*
 
@@ -38,29 +37,41 @@ class MainActivity : AppCompatActivity() {
 
         form_one.setOnClickListener {
             if (this::formoneid.isInitialized) {
-                val intent = Intent(this, FormOneActivity::class.java)
-                intent.putExtra("formoneid", formoneid)
+                val intent = Intent(this, FormActivity::class.java)
+                intent.putExtra("actualid", formoneid)
+                intent.putExtra("colorname", "#B330811C")
+                intent.putExtra("formname", "Form One")
+                intent.putExtra("formnumber", "1")
                 startActivity(intent)
             }
         }
         form_two.setOnClickListener {
             if (this::formtwoid.isInitialized) {
-                val intent = Intent(this, FormTwoActivity::class.java)
-                intent.putExtra("formtwoid", formtwoid)
+                val intent = Intent(this, FormActivity::class.java)
+                intent.putExtra("actualid", formtwoid)
+                intent.putExtra("colorname", "#5968B0")
+                intent.putExtra("formname", "Form Two")
+                intent.putExtra("formnumber", "2")
                 startActivity(intent)
             }
         }
         form_three.setOnClickListener {
             if (this::formthreeid.isInitialized) {
-                val intent = Intent(this, FormThreeActivity::class.java)
-                intent.putExtra("formthree", formthreeid)
+                val intent = Intent(this, FormActivity::class.java)
+                intent.putExtra("actualid", formthreeid)
+                intent.putExtra("colorname", "#B478B5")
+                intent.putExtra("formname", "Form Three")
+                intent.putExtra("formnumber", "3")
                 startActivity(intent)
             }
         }
         form_four.setOnClickListener {
             if (this::formfourid.isInitialized) {
-                val intent = Intent(this, FormFourActivity::class.java)
-                intent.putExtra("formfourid", formfourid)
+                val intent = Intent(this, FormActivity::class.java)
+                intent.putExtra("actualid", formfourid)
+                intent.putExtra("colorname", "#E36B6B")
+                intent.putExtra("formname", "Form Four")
+                intent.putExtra("formnumber", "4")
                 startActivity(intent)
             }
         }
