@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.biometrics.BiometricManager
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
@@ -13,36 +14,75 @@ import android.widget.Button
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager.from
+import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_one_launcher.*
-import kotlinx.android.synthetic.main.activity_your_videos.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import paita.stream_app_final.AppConstants.Constants.permission_request
-import paita.stream_app_final.Extensions.coroutineexception
-import paita.stream_app_final.Extensions.goToActivity
-import paita.stream_app_final.Extensions.isLoggedIn
-import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.MainActivity
 import paita.stream_app_final.Tafa.Authentication.LoginActivity
-import paita.stream_app_final.Tafa.Authentication.SignUpActivity
 import paita.stream_app_final.Tafa.Shared.ConnectionDetector
 import paita.stream_app_final.Tafa.Shared.SessionManager
-import schemasMicrosoftComVml.STExt.VIEW
+import java.util.concurrent.Executor
 
 class OneLauncherActivity : AppCompatActivity() {
 
     var cd = ConnectionDetector(this)
     lateinit var handler: Handler
     lateinit var runnable: Runnable
+    lateinit var biometricPrompt: androidx.biometric.BiometricPrompt
+    lateinit var promptInfo: PromptInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_launcher)
         getSupportActionBar()?.hide()
-        initall()
+//        initall()
+        biometricLogin()
+    }
+
+    private fun biometricLogin() {
+
+        val biometricManager = from(this)
+        when (biometricManager.canAuthenticate()) {
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> makeLongToast("Device has no fingerprint")
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> makeLongToast("Not working")
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> makeLongToast("No fingerprint assigned")
+        }
+
+        val executor: Executor = ContextCompat.getMainExecutor(this)
+
+        biometricPrompt = BiometricPrompt(this, executor, object : BiometricPrompt.AuthenticationCallback() {
+            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                super.onAuthenticationError(errorCode, errString)
+                makeLongToast("Authentication was error")
+            }
+
+            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                super.onAuthenticationSucceeded(result)
+                makeLongToast("Authentication was successful")
+            }
+
+            override fun onAuthenticationFailed() {
+                super.onAuthenticationFailed()
+                makeLongToast("Authentication failed")
+            }
+        })
+
+        val promptInfo = PromptInfo.Builder().setTitle("Tech Projects")
+            .setDescription("Use your fingerprint to login")
+            .setDeviceCredentialAllowed(true)
+            .build()
+
+        biometricPrompt.authenticate(promptInfo)
+
     }
 
     private fun initall() {
@@ -100,7 +140,6 @@ class OneLauncherActivity : AppCompatActivity() {
         layoutParams.weight = 10f
         btnPositive.layoutParams = layoutParams
         btnNegative!!.layoutParams = layoutParams
-
     }
 
     fun gotonextpage() {

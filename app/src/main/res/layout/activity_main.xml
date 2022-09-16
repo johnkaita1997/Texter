@@ -104,14 +104,14 @@
                 app:videoId="esZT9Zh0Vvg" />
 
             <TextView
-                android:layout_gravity="center"
-                android:paddingHorizontal="3dp"
                 android:id="@+id/welcome_to_"
                 android:layout_width="match_parent"
                 android:layout_height="81dp"
+                android:layout_gravity="center"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
+                android:paddingHorizontal="3dp"
                 android:text="Enjoy our in depth learning approach by selecting from  variety of videos across different forms and subjects."
                 android:textAppearance="@style/welcome_to_" />
 

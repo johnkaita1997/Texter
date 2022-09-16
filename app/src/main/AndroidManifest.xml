@@ -21,7 +21,6 @@
         android:name="android.permission.ACCESS_WIFI_STATE"
         android:required="false" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@drawable/tafalogo"
@@ -31,7 +30,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+        <activity
+            android:name=".Tafa.ActivityJava"
+            android:exported="false" />
         <activity
             android:name=".Tafa.Activities.MpesaActivity"
             android:exported="false"
@@ -95,10 +96,6 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
     </application>
-
-
-
 
 </manifest>
