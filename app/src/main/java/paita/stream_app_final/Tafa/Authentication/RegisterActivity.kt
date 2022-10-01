@@ -13,11 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.component3
-import kotlin.collections.component4
-import kotlin.collections.component5
 
 
 class SignUpActivity : AppCompatActivity() {
@@ -52,10 +47,18 @@ class SignUpActivity : AppCompatActivity() {
             mydialog.setMessage("Creating your account...")
             mydialog.show()
 
-            val validatelist = mutableListOf(yourname, youremail, yourconfirmpassword, yourpassword, yourschool)
+            val validatelist = mutableListOf(yourname_first, yourname_last, phoneNumber, youremail, yourconfirmpassword, yourpassword, yourschool)
 
             if (validated(validatelist)) {
-                val (name, email, password, confirmpassword, school) = validatelist.map { mytext(it) }
+
+                val firstname = yourname_first.text.toString().trim()
+                val lastname = yourname_last.text.toString().trim()
+                val phonenumber = phoneNumber.text.toString().trim()
+                val email = youremail.text.toString().trim()
+                val password = yourpassword.text.toString().trim()
+                val confirmpassword = yourconfirmpassword.text.toString().trim()
+                val school = yourschool.text.toString().trim()
+
                 if (agentcode.text.toString().length <= 0) {
                     makeLongToast("Enter the agent code first")
                 } else {
@@ -70,7 +73,7 @@ class SignUpActivity : AppCompatActivity() {
                                 return@withContext
                             }
                         }
-                        myViewModel(this@SignUpActivity).createUser(name, email, password, confirmpassword, countyid, school, agentid, mydialog)
+                        myViewModel(this@SignUpActivity).createUser(email, firstname, lastname, phonenumber, password, confirmpassword, countyid, agentid, school, mydialog)
                     }
                 }
 
@@ -84,12 +87,10 @@ class SignUpActivity : AppCompatActivity() {
         }
 
 
-        CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
-        }
+        CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {}
 
 
         spinnerCounty.onItemSelectedListener = (object : AdapterView.OnItemSelectedListener {
-
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 val item: String = parent?.getItemAtPosition(position).toString()
                 county = item
@@ -103,4 +104,5 @@ class SignUpActivity : AppCompatActivity() {
 
 
 }
+
 

@@ -34,12 +34,12 @@
                 </ImageView>
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/texteweggView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="20dp"
-                    android:text="Welcome Back"
+                    android:text="Hello there, welcome back"
                     android:textColor="@color/black"
                     android:textSize="20dp"
                     android:textStyle="bold" />
@@ -55,9 +55,9 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         app:hintTextColor="@color/formtwocolor"
-                        android:paddingHorizontal="5dp"
+                        android:paddingHorizontal="10dp"
                         android:layout_height="40dp"
-                        android:id="@+id/textInputEmail"
+                        android:id="@+id/textInpdsfutEmail"
                         style="@style/parent"
                         android:layout_marginTop="@dimen/loginViewsMargin"
                         android:background="@drawable/rectangle">
@@ -81,7 +81,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         app:hintTextColor="@color/formtwocolor"
-                        android:paddingHorizontal="5dp"
+                        android:paddingHorizontal="10dp"
                         android:layout_height="40dp"
                         android:id="@+id/textInputPasswordksd"
                         style="@style/parent"
@@ -113,37 +113,41 @@
                         android:layout_width="match_parent"
                         android:layout_height="30dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginHorizontal="20dp"
                         android:layout_marginTop="30dp"
-                        android:background="@color/safebasecolor"
+                        android:backgroundTint="@color/safebasecolor"
+                        android:background="@drawable/rectanglebutton"
                         android:text="Login"
                         android:textAllCaps="false"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/dontHaveAccount"
+                        android:backgroundTint="#666666"
+                        android:background="@drawable/rectanglebutton"
+                        android:gravity="center"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="35dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="30dp"
-                        android:gravity="center_horizontal"
                         android:text="@string/dont_have_an_account"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/white"
                         android:layout_marginBottom="10dp"
                         android:textSize="15dp" />
 
                     <TextView
+                        android:backgroundTint="#666666"
+                        android:background="@drawable/rectanglebutton"
+                        android:gravity="center"
                         android:layout_marginTop="14dp"
                         android:id="@+id/forgotpassword"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="35dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginVertical="10dp"
-                        android:gravity="center_horizontal"
                         android:text="@string/resetPassword"
                         android:textAlignment="center"
-                        android:textColor="@color/formtwocolor"
+                        android:textColor="@color/white"
                         android:textSize="15dp" />
 
                 </LinearLayout>

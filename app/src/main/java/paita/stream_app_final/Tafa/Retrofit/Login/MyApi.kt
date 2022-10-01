@@ -5,6 +5,7 @@ import paita.stream_app_final.AppConstants.Constants
 import paita.stream_app_final.Tafa.Adapters.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import paita.stream_app_final.Tafa.Adapters.UserProfileDetails
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,6 +13,26 @@ import retrofit2.http.*
 
 
 interface MyApi {
+
+
+    companion object {
+
+        operator fun invoke(): MyApi {
+            /*progressDialog = SpotsDialog.Builder().setContext(this).build() as SpotsDialog
+            sessionManager = SessionManager(this)*/
+
+            val gson = GsonBuilder().serializeNulls().create()
+            val loggingInterceptor = HttpLoggingInterceptor()
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+            val okHttpClient = OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build()
+            val retrofit = Retrofit.Builder().baseUrl(Constants.baseurl).addConverterFactory(GsonConverterFactory.create(gson)).client(okHttpClient).build()
+            val apiCall = retrofit.create(MyApi::class.java)
+
+            return apiCall
+
+        }
+
+    }
 
     @POST("api/v1/users/registration") suspend fun register(@Body user: User): Response<Any>
 
@@ -83,11 +104,9 @@ interface MyApi {
     ): Response<YourVideos>
 
 
-
-
-
-
-
+    @POST("api/v1/mfa/otp/verify") suspend fun verifyOtp(
+        @Body otpBody: VerifyOtp?,
+    ): Response<Any>
 
 
     @GET("api/v1/school/topic") suspend fun listoftopics(
@@ -110,8 +129,7 @@ interface MyApi {
     ): Response<PaymentCallback>
 
 
-
-    @POST("posts") suspend fun createPost(@Body post: User): Response<User>
+    /*@POST("posts") suspend fun createPost(@Body post: User): Response<User>
 
     @FormUrlEncoded  //Passes userId=23&title=New%20Title&body=%20Text
     @POST("posts") suspend fun createPostFormUrlEncodedType(
@@ -121,29 +139,11 @@ interface MyApi {
     ): Response<User>
 
     @Headers("Static-Header: 123") @PUT("posts/{id}") suspend fun putPost(@HeaderMap headers: Map<String, String>, @Path("id") id: Int, @Body post: User): Response<POST>
-
     @PUT("posts/{id}") suspend fun patchPost(@Header("Dynamic-Header") header: String, @Path("id") id: Int, @Body post: User): Response<POST>
+    @DELETE("posts/{id}") suspend fun deletePost(@Path("id") id: Int): Response<Void>*/
 
-    @DELETE("posts/{id}") suspend fun deletePost(@Path("id") id: Int): Response<Void>
+    @POST("api/v1/users/account/profile") suspend fun getUserDetails(@Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<UserProfileDetails>
+    @POST("api/v1/video/get-free-videos") suspend fun getTransactions(@Field("subject_id") userId: Int): Response<User>
 
-
-    companion object {
-
-        operator fun invoke(): MyApi {
-            /*progressDialog = SpotsDialog.Builder().setContext(this).build() as SpotsDialog
-            sessionManager = SessionManager(this)*/
-
-            val gson = GsonBuilder().serializeNulls().create()
-            val loggingInterceptor = HttpLoggingInterceptor()
-            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-            val okHttpClient = OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build()
-            val retrofit = Retrofit.Builder().baseUrl(Constants.baseurl).addConverterFactory(GsonConverterFactory.create(gson)).client(okHttpClient).build()
-            val apiCall = retrofit.create(MyApi::class.java)
-
-            return apiCall
-
-        }
-
-    }
 
 }

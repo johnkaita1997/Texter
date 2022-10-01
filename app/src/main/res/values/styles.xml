@@ -206,4 +206,9 @@
         <item name="android:layout_height">@dimen/vdo_media_button_height</item>
     </style>
 
+    <style name="ShapeAppearanceOverlay.App.rounded" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
 </resources>

@@ -11,9 +11,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="already_have_an_account"><u>Already have an account? Login</u></string>
-    <string name="resetPassword"><u>Reset Password</u></string>
-    <string name="dont_have_an_account"><u>Dont Have An Account? Create One</u></string>
+    <string name="already_have_an_account">Already have an account? <font fgcolor='#FFFF00'> Login</font> </string>
+    <string name="resetPassword">Forgot Your Password?  <font fgcolor='#FFFF00'>  Reset Now</font> </string>
+    <string name="dont_have_an_account">Dont Have An Account?<font fgcolor='#FFFF00'>  Create One</font>  </string>
     <string name="view_all_bets"><u>View all bets</u></string>
 
     <string-array name="numbers">
@@ -50,6 +50,5 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-
 
 </resources>

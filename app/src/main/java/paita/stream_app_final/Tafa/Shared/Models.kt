@@ -2,7 +2,7 @@ package paita.stream_app_final.Tafa.Adapters
 
 import com.google.gson.annotations.SerializedName
 
-data class User(var email: String, var name: String, var password: String, var confirm_password: String, var county: String, var code: String, var school: String)
+data class User(var email: String, var first_name: String, var last_name: String, var phone: String, var password: String, var confirm_password: String, var county: String, var code: String, var school: String)
 
 data class theResponse(var details: LoginResponse)
 
@@ -101,58 +101,62 @@ data class UnitPricesObjectItem(val amount: String, val period: String, val unit
 data class TheUnit(val form: Form, val id: String, val name: String, val subject: Subject)
 
 class Topics : ArrayList<TopicsItem>()
-data class TopicsItem(
-    val amount: Double,
-    val form: Form,
-    val id: String,
-    val name: String,
-    val subject: Subject,
-    val subtopics: List<Subtopic>
-)
-data class Subtopic(
-    val amount: Double,
-    val id: String,
-    val name: String
-)
+data class TopicsItem(val amount: Double, val form: Form, val id: String, val name: String, val subject: Subject, val subtopics: List<Subtopic>)
+data class Subtopic(val amount: Double, val id: String, val name: String)
 
 class TopicAmounts : ArrayList<TopicAmountsItem?>()
 data class TopicAmountsItem(val amount: String, val period: String, val topic: String)
 
-class InvoiceId(
-    val details: String
-)
+class InvoiceId(val details: String)
 
-data class PaymentCallback(
-    val details: callBackDetails
-)
-data class callBackDetails(
-    val invoice: String,
-    val status: String
-)
+data class PaymentCallback(val details: callBackDetails)
+data class callBackDetails(val invoice: String, val status: String)
 
 
+class YourVideos(val details: ArrayList<YoursDetail>)
+data class YoursDetail(val id: String, val name: String, val topic: YourTopic, val videos: List<YourVideo>)
 
-class YourVideos(
-    val details: ArrayList<YoursDetail>
+data class VerifyOtp(val otp: String, val send_to: String)
+
+data class YourVideo(val id: String, val index: Int, val label: String, val unit: String, val videoid: String)
+data class YourTopic(val amount: Double, val form: Form, val id: String, val name: String, val subject: Subject, val subtopics: List<Subtopic>)
+
+
+
+
+
+
+
+
+
+
+
+
+class UserProfileDetails(
+    val details: Details_UserProfile?
 )
-data class YoursDetail(
+
+data class Details_UserProfile(
+    val account_status: String,
+    val county: String,
+    val date_created: String,
     val id: String,
     val name: String,
-    val topic: YourTopic,
-    val videos: List<YourVideo>
+    val phone: String,
+    val school: String,
+    val username: String
 )
-data class YourVideo(
-    val id: String,
-    val index: Int,
-    val label: String,
-    val unit: String,
-    val videoid: String
-)
-data class YourTopic(
-    val amount: Double,
-    val form: Form,
-    val id: String,
-    val name: String,
-    val subject: Subject,
-    val subtopics: List<Subtopic>
-)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

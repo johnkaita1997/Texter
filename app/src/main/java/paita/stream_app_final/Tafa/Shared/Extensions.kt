@@ -76,7 +76,6 @@ fun Context.showAlertDialog(message: String) {
 }
 
 
-
 fun Context.showAlertDialog_Special(alertDialog: AlertDialog, title: String, message: String, okaybuttonName: String, bar: () -> Unit) {
     alertDialog.setTitle(title)
     alertDialog.setIcon(R.drawable.tafalogo)

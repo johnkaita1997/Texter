@@ -2,6 +2,7 @@ package paita.stream_app_final.Tafa.Shared
 
 import android.app.Activity
 import android.app.Application
+import android.content.Intent
 import android.util.Log
 import android.widget.Spinner
 import androidx.lifecycle.AndroidViewModel
@@ -13,6 +14,7 @@ import paita.stream_app_final.Tafa.Adapters.*
 import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
 import kotlinx.coroutines.*
 import org.json.JSONObject
+import paita.stream_app_final.Tafa.Activities.ConfirmOtpActivity
 
 class ViewModel(application: Application, myactivity: Activity) : AndroidViewModel(application) {
 
@@ -378,8 +380,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
             networkResponseFailure(it, null)
         }
         return retrosubject
-
     }
+
+
 
     suspend fun loginuser(email: String, password: String, mydialog: SpotsDialog) {
 
@@ -409,8 +412,13 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 Log.d("-------", "initall: $email,  $password")
 
                 withContext(Dispatchers.Main) {
+
                     activity.makeLongToast("Login was successful")
-                    activity.goToActivity(activity, MainActivity::class.java)
+                    val intent = Intent(activity, MainActivity::class.java)
+                    activity.startActivity(intent)
+                    activity.finish()
+
+
                 }
 
             }
@@ -421,10 +429,51 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
 
     }
 
-    suspend fun createUser(name: String, email: String, password: String, confirmpassword: String, county: String, school: String, agent: String, mydialog: SpotsDialog) {
 
-        val user = User(email, name, password, confirmpassword, county, agent, school)
 
+
+    suspend fun loginuser_register(email: String, password: String, mobile : String, mydialog: SpotsDialog) {
+
+        runCatching {
+            val response = MyApi().login(LoginBody(email, password))
+
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), mydialog)
+                return@runCatching
+            } else {
+
+                val authtoken = response.body()?.details?.access_token.toString()
+                val expires_in = response.body()?.details?.expires_in.toString()
+                val jwttoken = response.body()?.details?.jwt_token.toString()
+                val refreshtoken = response.body()?.details?.refresh_token.toString()
+
+                val map = mutableMapOf<String, String>()
+                map["refreshtoken"] = refreshtoken
+                map["jwttoken"] = jwttoken
+                map["authtoken"] = authtoken
+
+                activity.sessionManager().saveAuthToken(authtoken.toString(), refreshtoken.toString(), jwttoken.toString())
+                activity.sessionManager().saveUp(email, password)
+
+                Log.d("-------", "initall: $email,  $password")
+
+                withContext(Dispatchers.Main) {
+                    val intent = Intent(activity, ConfirmOtpActivity::class.java)
+                    intent.putExtra("mobile", mobile)
+                    activity.startActivity(intent)
+                    activity.finish()
+                }
+
+            }
+
+        }.onFailure {
+            networkResponseFailure(it, mydialog)
+        }
+    }
+
+    suspend fun createUser (email: String, first_name: String, last_name: String, phone: String, password: String, confirm_password: String, county: String, code: String, school: String, mydialog: SpotsDialog) {
+        val user = User(email, first_name, last_name, phone, password, confirm_password, county, code, school)
         runCatching {
             val response = MyApi().register(user)
             if (!response.isSuccessful) {
@@ -432,10 +481,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 handleResponse(jsonObj, response.toString(), mydialog)
                 return
             } else {
-                loginuser(email, password, mydialog)
+                loginuser_register(email, password, phone, mydialog)
                 activity.sessionManager().saveUp(email, password)
             }
-
         }.onFailure {
             networkResponseFailure(it, mydialog)
         }
@@ -444,7 +492,6 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     suspend fun refreshtoken(e: String, p: String) {
 
         runCatching {
-
             val response = MyApi().login(LoginBody(e, p))
             if (!response.isSuccessful) {
                 return@runCatching
@@ -460,7 +507,6 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 map["jwttoken"] = jwttoken
                 map["authtoken"] = authtoken
                 activity.sessionManager().saveAuthToken(authtoken.toString(), refreshtoken.toString(), jwttoken.toString())
-
             }
 
         }.onFailure {
@@ -596,6 +642,36 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
             networkResponseFailure(it, null)
         }
         return theyourVideos
+    }
+
+
+    suspend fun confirmOTP(confirmcode: String, mobileNumber: String):Boolean{
+        var mystatus = false
+        runCatching {
+            val status = MyApi().verifyOtp(VerifyOtp(confirmcode, mobileNumber)).code()
+            mystatus = status == 200
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return mystatus
+    }
+
+
+    suspend fun getUserProfileDetails(userid: String):UserProfileDetails{
+        var userProfileDetails = UserProfileDetails(null)
+        runCatching {
+            var response = MyApi().getUserDetails(SessionManager(activity).fetchAuthToken(), SessionManager(activity).fetchJwtToken())
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                userProfileDetails = response.body()!!
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return userProfileDetails
     }
 
 

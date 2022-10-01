@@ -44,8 +44,8 @@ class OneLauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_launcher)
         getSupportActionBar()?.hide()
-//        initall()
-        biometricLogin()
+        initall()
+//        biometricLogin()
     }
 
     private fun biometricLogin() {

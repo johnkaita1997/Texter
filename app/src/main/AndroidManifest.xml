@@ -31,6 +31,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".Tafa.Activities.UserProfileDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Tafa.Activities.ConfirmOtpActivity"
+            android:exported="false" />
+        <activity
             android:name=".Tafa.ActivityJava"
             android:exported="false" />
         <activity
