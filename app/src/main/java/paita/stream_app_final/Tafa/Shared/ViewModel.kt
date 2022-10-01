@@ -675,5 +675,45 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
+    suspend fun getTransactions(userid: String):Transactions{
+        var usertransactions = Transactions(null)
+        runCatching {
+            var response = MyApi().getTransactions(SessionManager(activity).fetchAuthToken(), SessionManager(activity).fetchJwtToken())
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                usertransactions = response.body()!!
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return usertransactions
+    }
+
+
+
+    suspend fun getFreeVideos(subjectid: String):FreeVideos{
+        var freeVideos = FreeVideos(null)
+        runCatching {
+            var response = MyApi().getFreeVideos(subjectid)
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                freeVideos = response.body()!!
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return freeVideos
+    }
+
+
+
+
+
 
 }

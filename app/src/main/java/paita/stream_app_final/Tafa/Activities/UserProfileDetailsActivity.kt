@@ -26,6 +26,12 @@ class UserProfileDetailsActivity : AppCompatActivity() {
             val userprfoiledetails = async { myViewModel(this@UserProfileDetailsActivity).getUserProfileDetails(getUserId()) }
             val thevideos = userprfoiledetails.await().details
 
+            val usertransactions = async { myViewModel(this@UserProfileDetailsActivity).getTransactions(getUserId()) }
+            val transactions = userprfoiledetails.await().details
+
+            val freevideos_await = async { myViewModel(this@UserProfileDetailsActivity).getFreeVideos(subjectid = "") }
+            val freeVideos = userprfoiledetails.await().details
+
 
         }
 

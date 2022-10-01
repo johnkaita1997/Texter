@@ -135,7 +135,6 @@ data class YourTopic(val amount: Double, val form: Form, val id: String, val nam
 class UserProfileDetails(
     val details: Details_UserProfile?
 )
-
 data class Details_UserProfile(
     val account_status: String,
     val county: String,
@@ -146,6 +145,30 @@ data class Details_UserProfile(
     val school: String,
     val username: String
 )
+
+data class Transactions(
+    val details: List<Detail_Transaction>?
+)
+data class Detail_Transaction(
+    val id: String,
+    val status: String,
+    val transaction_date: String,
+    val units: List<String>
+)
+
+
+data class FreeVideos(
+    val details: List<Detail_FreeVideos>?
+)
+data class Detail_FreeVideos(
+    val id: String,
+    val label: String,
+    val thumbnail: String,
+    val videoid: String
+)
+
+
+
 
 
 
