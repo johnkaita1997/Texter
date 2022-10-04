@@ -1,21 +1,35 @@
 package paita.stream_app_final.Tafa.Activities
 
+import android.R.id.text2
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Intent
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
+import android.text.Html
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.activity_free_to_watch.*
 import kotlinx.android.synthetic.main.activity_topic.*
-import kotlinx.android.synthetic.main.topiclist.*
+import kotlinx.android.synthetic.main.activity_topic.spin_kit
+import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.coroutines.*
-import paita.stream_app_final.Extensions.getFormId
-import paita.stream_app_final.Extensions.makeLongToast
-import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
+import paita.stream_app_final.R.*
+import paita.stream_app_final.R.color.*
+import paita.stream_app_final.Tafa.Adapters.CheckOutSubject
 import paita.stream_app_final.Tafa.Adapters.TopicsAdapter
+import paita.stream_app_final.Tafa.Authentication.LoginActivity
+import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
+
 
 class TopicsActivity : AppCompatActivity() {
 
@@ -29,11 +43,52 @@ class TopicsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_topic)
+        setContentView(layout.activity_topic)
         initall()
     }
 
     private fun initall() {
+
+
+        settingsImageviewtopic.setOnClickListener {
+
+            fun logoutUser() {
+                if (sessionManager().logout()) {
+                    makeLongToast("You have been logged out successfully")
+                    goToActivity(this, LoginActivity::class.java)
+                }
+            }
+
+            val popup = PopupMenu(this, it)
+            popup.inflate(R.menu.pop_menu)
+
+            popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
+                override fun onMenuItemClick(menuitem: MenuItem?): Boolean {
+                    return when (menuitem!!.getItemId()) {
+                        R.id.myvideos -> {
+                            goToActivity_Unfinished(this@TopicsActivity, YourVideos::class.java)
+                            true
+                        }
+                        R.id.logout -> {
+                            logoutUser()
+                            true
+                        }
+                        R.id.contact -> {
+                            goToActivity_Unfinished(this@TopicsActivity, ContactUsActivity::class.java)
+                            true
+                        }
+                        R.id.myprofile -> {
+                            goToActivity_Unfinished(this@TopicsActivity, ProfileActivity::class.java)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            })
+            popup.show()
+
+        }
+
 
         val intent = intent
 
@@ -43,8 +98,6 @@ class TopicsActivity : AppCompatActivity() {
         formname = intent.getStringExtra("formname").toString()
         colorname = intent.getStringExtra("colorname").toString()
         actualformname = intent.getStringExtra("actualformname").toString()
-
-        setActionBarColor_And_Name(formname, subjectname)
 
         var amount = 0.0
 
@@ -86,7 +139,6 @@ class TopicsActivity : AppCompatActivity() {
                     return@withContext
                 }
 
-                var loaded = false
                 val viewPool = RecyclerView.RecycledViewPool()
 
                 val layoutManager = LinearLayoutManager(this@TopicsActivity)
@@ -109,12 +161,6 @@ class TopicsActivity : AppCompatActivity() {
 
         }
 
-        backbuttonvideo.setOnClickListener {
-            this.finish()
-        }
-
-        rename_EditText()
-
     }
 
 
@@ -122,30 +168,142 @@ class TopicsActivity : AppCompatActivity() {
 
         withContext(Dispatchers.Main) {
 
-            val intent = Intent(this@TopicsActivity, MpesaActivity::class.java)
-            intent.putExtra("item", "subject")
-            intent.putExtra("subjectname", subjectname)
-            intent.putExtra("theamount", amount.toString())
-            intent.putExtra("subjectid", subjectid)
-            intent.putExtra("formid", formid)
-            intent.putExtra("topicname", "")
-            intent.putExtra("topicid", "")
-            intent.putExtra("unitid", "")
-            intent.putExtra("unitname", "")
-            startActivity(intent)
+            // Create an alert builder
+            val builder: AlertDialog.Builder = AlertDialog.Builder(this@TopicsActivity)
+            val customLayout: View = getLayoutInflater().inflate(layout.custom_dialog, null)
+            builder.setView(customLayout)
+
+            val mydialog: AlertDialog = builder.create()
+
+            val mpesamobile = customLayout.mympesamobile
+
+            CoroutineScope(Dispatchers.IO).launch() {
+
+                val userprfoiledetails = async { myViewModel(this@TopicsActivity).getUserProfileDetails() }
+                val userprofile = userprfoiledetails.await().details!!
+                val name = userprofile.name
+                val text00 = "Dear "
+                val text0 = "${name}"
+                val textA = ", enter your M-Pesa phone number below to subscribe to "
+                val textB = subjectname
+                val textC = ". Press "
+                val textD = "Pay Now"
+                val textE = " button to initiate payment. You will receive a prompt notification on your phone, enter your pin and press OK to complete payment"
+                val fulltext = Html.fromHtml(text00+ "<font color=${R.color.formtwocolor}>" + text0 + "</font>" + textA + "<font color=${R.color.formtwocolor}>" + textB + "</font>" + textC +  "<font color=${R.color.formtwocolor}>" + textD + "</font>" + textE)
+
+                withContext(Dispatchers.Main){
+                    customLayout.myloveTextDialog.setText(fulltext);
+                    customLayout.amountedit.setText("KES : ${amount.toString()}")
+                }
+
+            }
+
+
+            customLayout.cancelnow2.setOnClickListener {
+                mydialog.dismiss()
+            }
+            customLayout.cancelnow.setOnClickListener {
+                mydialog.dismiss()
+            }
+
+            customLayout.subscribe.setOnClickListener {
+                val validatelist = mutableListOf<EditText>(mpesamobile)
+                if (validated(validatelist)) {
+                    val (mpesanumber) = validatelist.map { mytext(it) }
+
+                    CoroutineScope(Dispatchers.IO).launch() {
+
+                        withContext(Dispatchers.Main) {
+
+                            val theProgressDialog = ProgressDialog(this@TopicsActivity)
+                            theProgressDialog.setTitle("Tafa Checkout")
+                            theProgressDialog.setMessage("Processing Payment...")
+
+                            makeLongToast("You will receive an M-pesa Prompt Shortly")
+                            theProgressDialog.show()
+
+                            val invoiceId = myViewModel(this@TopicsActivity).checkoutSubject(CheckOutSubject(amount.toDouble().toInt(), mpesanumber, subjectid, formid, getUserId()))
+
+                            if (!invoiceId.equals("")) {
+
+                                withContext(Dispatchers.Main) {
+
+                                    try {
+
+                                        var state = false
+
+                                        suspend fun runCode() {
+                                            try {
+                                                val response = MyApi().checkInvoiceStatus(invoiceId)
+
+                                                if (response.code() == 200) {
+                                                    if (response.body()?.details?.status.equals("PAID")) {
+                                                        state = true
+                                                        theProgressDialog.dismiss()
+                                                        if (mydialog.isShowing) {
+                                                            mydialog.dismiss()
+                                                        }
+                                                        makeLongToast("Payment was Successful")
+                                                        goToActivity(this@TopicsActivity, MainActivity::class.java)
+                                                    } else if (response.body()?.details?.status.equals("PENDING")) {
+                                                    }
+                                                } else if (response.code() == 400) {
+                                                    showAlertDialog("Payment Cancelled")
+                                                    state = true
+                                                    theProgressDialog.dismiss()
+                                                    if (mydialog.isShowing) {
+                                                        mydialog.dismiss()
+                                                    }
+                                                } else {
+                                                    showAlertDialog("Payment ${response}")
+                                                    state = true
+                                                    theProgressDialog.dismiss()
+                                                    if (mydialog.isShowing) {
+                                                        mydialog.dismiss()
+                                                    }
+                                                }
+
+                                                if (state == false) {
+                                                    runCode()
+                                                }
+                                            } catch (exception: Exception) {
+                                                makeLongToast(exception.toString())
+                                                theProgressDialog.dismiss()
+                                                if (mydialog.isShowing) {
+                                                    mydialog.dismiss()
+                                                }
+                                            }
+                                        }
+
+                                        runCode()
+
+                                    } catch (exception: Exception) {
+                                        makeLongToast(exception.toString())
+                                        theProgressDialog.dismiss()
+                                        if (mydialog.isShowing) {
+                                            mydialog.dismiss()
+                                        }
+                                    }
+
+                                }
+
+                            } else {
+                                theProgressDialog.dismiss()
+                                if (mydialog.isShowing) {
+                                    mydialog.dismiss()
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            }
+
+            mydialog.show()
 
         }
 
-    }
-
-    private fun rename_EditText() {
-    }
-
-
-    private fun setActionBarColor_And_Name(formname: String, subjectname: String) {
-        videoViewTopText.setText("${this.subjectname.lowercase().capitalize()} ${actualformname} Topics")
-        rectangle_88.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(colorname)));
-        spin_kit.setColor(Color.parseColor(colorname))
     }
 
 

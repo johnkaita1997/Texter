@@ -25,30 +25,30 @@
             android:textSize="16dp" />
 
         <com.google.android.material.textfield.TextInputLayout
-            app:hintTextColor="@color/formtwocolor"
-            android:paddingHorizontal="10dp"
-            android:layout_height="40dp"
             android:id="@+id/soro"
             style="@style/parent"
+            android:layout_height="40dp"
             android:layout_marginHorizontal="10dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="@dimen/loginViewsMargin"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/rectangle">
+            android:background="@drawable/rectangle"
+            android:paddingHorizontal="10dp"
+            app:hintTextColor="@color/formtwocolor">
 
             <EditText
-                android:textCursorDrawable = "@null"
                 android:id="@+id/subjectmpesamobile"
                 style="@style/modifiedEditText"
+                android:layout_height="match_parent"
+                android:background="@null"
                 android:backgroundTint="@color/white"
                 android:focusedByDefault="false"
                 android:hint="0700000000"
                 android:inputType="number"
                 android:maxLines="1"
                 android:textColor="@color/black"
-                android:background="@null"
-                android:layout_height="match_parent"
-                android:textColorHint="@color/white" />
+                android:textColorHint="@color/white"
+                android:textCursorDrawable="@null" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

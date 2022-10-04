@@ -86,8 +86,8 @@ class VideoViewerActivity : AppCompatActivity() {
             override fun onInitializationFailure(p0: PlayerHost?, p1: ErrorDescription?) {
                 TODO("Not yet implemented")
             }
-
         })
+
 
     }
 

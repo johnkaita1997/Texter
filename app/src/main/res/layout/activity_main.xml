@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    android:fillViewport="true"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:focusableInTouchMode="true">
 
     <RelativeLayout
@@ -54,7 +53,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="30dp"
             android:layout_marginRight="20dp"
-            android:background="@drawable/icon_settings"
+            android:background="@drawable/menumenu"
             android:backgroundTint="@color/white" />
 
 
@@ -68,7 +67,8 @@
             android:layout_marginLeft="123dp"
             android:layout_marginTop="30dp"
             android:gravity="top"
-            android:text="Welcome Back"
+            android:textAllCaps="true"
+            android:text="Welcome"
             android:textAppearance="@style/good_mornin" />
 
 
@@ -103,92 +103,179 @@
                 app:autoPlay="false"
                 app:videoId="esZT9Zh0Vvg" />
 
-            <TextView
-                android:id="@+id/welcome_to_"
-                android:layout_width="match_parent"
-                android:layout_height="81dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="20dp"
-                android:gravity="center"
-                android:paddingHorizontal="3dp"
-                android:text="Enjoy our in depth learning approach by selecting from  variety of videos across different forms and subjects."
-                android:textAppearance="@style/welcome_to_" />
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/youtube_player_view"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:layout_below="@id/rectangle_8"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:background="#e6e6e6"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="visible"
+                app:cardCornerRadius="20dp">
 
-                <!-- Form One -->
-                <TextView
-                    android:id="@+id/form_one"
-                    style="@style/form_one"
-                    android:layout_width="148dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rectangle_one"
-                    android:gravity="center"
-                    android:text="Form One" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#e6e6e6"
+                    android:orientation="vertical">
 
-                <!-- Form One -->
-                <TextView
-                    android:id="@+id/form_two"
-                    style="@style/form_one"
-                    android:layout_width="148dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rectangle_two"
-                    android:gravity="center"
-                    android:text="Form Two" />
-
-
-            </LinearLayout>
+                    <!-- SJ -->
+                    <TextView
+                        android:id="@+id/sj1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/formtwocolor"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Start learing, select class"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="16dp" />
 
 
-            <LinearLayout
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/youtube_player_view"
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="20dp"
+                        android:weightSum="2">
+
+                        <!-- Form One -->
+                        <TextView
+                            android:id="@+id/form_one"
+                            style="@style/form_one"
+                            android:layout_width="148dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rectangle_two"
+                            android:gravity="center"
+                            android:text="Form 1"
+                            android:textAllCaps="true" />
+
+                        <!-- Form One -->
+                        <TextView
+                            android:id="@+id/form_two"
+                            style="@style/form_one"
+                            android:layout_width="148dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rectangle_two"
+                            android:gravity="center"
+                            android:text="Form 2"
+                            android:textAllCaps="true" />
+
+
+                    </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/youtube_player_view"
+                        android:layout_marginTop="30dp"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="20dp"
+                        android:paddingBottom="20dp"
+                        android:weightSum="2">
+
+                        <!-- Form One -->
+                        <TextView
+                            android:id="@+id/form_three"
+                            style="@style/form_one"
+                            android:layout_width="148dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginRight="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rectangle_two"
+                            android:gravity="center"
+                            android:text="Form 3"
+                            android:textAllCaps="true" />
+
+                        <!-- Form One -->
+                        <TextView
+                            android:id="@+id/form_four"
+                            style="@style/form_one"
+                            android:layout_width="148dp"
+                            android:layout_height="45dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginLeft="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/rectangle_two"
+                            android:gravity="center"
+                            android:text="Form 4"
+                            android:textAllCaps="true" />
+
+
+                    </LinearLayout>
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/youtube_player_view"
-                android:layout_marginTop="30dp"
-                android:orientation="horizontal"
-                android:weightSum="2">
+                android:layout_below="@id/rectangle_8"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:background="#e6e6e6"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="visible"
+                app:cardCornerRadius="20dp">
 
-                <!-- Form One -->
-                <TextView
-                    android:id="@+id/form_three"
-                    style="@style/form_one"
-                    android:layout_width="148dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rectangle_three"
-                    android:gravity="center"
-                    android:text="Form Three" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#e6e6e6"
+                    android:orientation="vertical">
 
-                <!-- Form One -->
-                <TextView
-                    android:id="@+id/form_four"
-                    style="@style/form_one"
-                    android:layout_width="148dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rectangle_four"
-                    android:gravity="center"
-                    android:text="Form Four" />
+                    <!-- SJ -->
+                    <TextView
+                        android:id="@+id/dfssj1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/formtwocolor"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Free to watch"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="16dp" />
 
 
-            </LinearLayout>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/subjectFreeRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:paddingBottom="10dp"
+                        android:scrollbars="vertical" />
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
         </LinearLayout>

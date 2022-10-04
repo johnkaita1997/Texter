@@ -135,15 +135,15 @@ interface MyApi {
     @POST("posts") suspend fun createPostFormUrlEncodedType(
         @Field("userid") userId: Int,
         @Field("title") title: String,
-        @Field("body") body: String,
+        @Field("body") body: String
     ): Response<User>
 
     @Headers("Static-Header: 123") @PUT("posts/{id}") suspend fun putPost(@HeaderMap headers: Map<String, String>, @Path("id") id: Int, @Body post: User): Response<POST>
     @PUT("posts/{id}") suspend fun patchPost(@Header("Dynamic-Header") header: String, @Path("id") id: Int, @Body post: User): Response<POST>
     @DELETE("posts/{id}") suspend fun deletePost(@Path("id") id: Int): Response<Void>*/
 
-    @POST("api/v1/users/account/profile") suspend fun getUserDetails( @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<UserProfileDetails>
-    @POST("api/v1/users/user-transactions") suspend fun getTransactions( @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<Transactions>
-    @GET("api/v1/video/get-free-videos") suspend fun getFreeVideos(@Query("subject_Id") subject_Id: String): Response<FreeVideos>
+    @GET("api/v1/users/account/profile") suspend fun getUserDetails( @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<UserProfileDetails>
+    @GET("api/v1/users/user-transactions") suspend fun getTransactions( @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<Transactions>
+    @GET("api/v1/video/get-free-videos") suspend fun getFreeVideos(@Query("subject_id") subject_Id: String): Response<FreeVideos>
 
 }

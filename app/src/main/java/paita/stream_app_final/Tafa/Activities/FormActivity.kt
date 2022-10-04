@@ -1,21 +1,24 @@
 package paita.stream_app_final.Tafa.Activities
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_form.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Adapters.FormSubjectAdapter
 import paita.stream_app_final.Tafa.Adapters.Subject
+import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import paita.stream_app_final.Tafa.Shared.ViewModel
 
 
@@ -38,36 +41,53 @@ class FormActivity : AppCompatActivity() {
         val actualformname = intent.getStringExtra("formname").toString()
         val formnumber = intent.getStringExtra("formnumber").toString()
 
-        spin_kit.setColor(Color.parseColor(colorname))
-        rectangle_8.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(colorname)));
-
-        yourtopics_color.setBackgroundColor(Color.parseColor(colorname))
-        welcome_to_.setText("${actualformname} Subjects")
-        good_mornin.setText("Welcome To $actualformname")
-
         myviewmodel = ViewModel(this.application, this)
 
         val layoutManager = LinearLayoutManager(this)
         form_one_subject_rView.setLayoutManager(layoutManager)
 
-        subject_list_adpater = FormSubjectAdapter(subjectList, this, colorname, formnumber, actualformname)
+        subject_list_adpater = FormSubjectAdapter(this, subjectList, this, colorname, formnumber, actualformname)
         fetch_Subject_Lists(actualid)
 
-        backbutton.setOnClickListener {
-            this.finish()
-        }
+        settingsImageviewform.setOnClickListener {
 
-
-        yourtopics_formone.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch() {
-                val formid = actualid
-                val intent = Intent(this@FormActivity, YourVideos::class.java)
-                intent.putExtra("formid", formid)
-                intent.putExtra("formname", actualformname)
-                intent.putExtra("colorname", "#B330811C")
-                startActivity(intent)
+            fun logoutUser() {
+                if (sessionManager().logout()) {
+                    makeLongToast("You have been logged out successfully")
+                    goToActivity(this, LoginActivity::class.java)
+                }
             }
+
+            val popup = PopupMenu(this, it)
+            popup.inflate(R.menu.pop_menu)
+
+            popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
+                override fun onMenuItemClick(menuitem: MenuItem?): Boolean {
+                    return when (menuitem!!.getItemId()) {
+                        R.id.myvideos -> {
+                            goToActivity_Unfinished(this@FormActivity, YourVideos::class.java)
+                            true
+                        }
+                        R.id.logout -> {
+                            logoutUser()
+                            true
+                        }
+                        R.id.contact -> {
+                            goToActivity_Unfinished(this@FormActivity, ContactUsActivity::class.java)
+                            true
+                        }
+                        R.id.myprofile -> {
+                            goToActivity_Unfinished(this@FormActivity, ProfileActivity::class.java)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            })
+            popup.show()
+
         }
+
 
     }
 
@@ -78,7 +98,7 @@ class FormActivity : AppCompatActivity() {
             val formid = actualid
             val response = myViewModel(this@FormActivity).fetch_Subject_Lists(formid)
 
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 if (response.isEmpty()) {
 //                    makeLongToast("Data Not added")
                     spin_kit.visibility = View.GONE
@@ -86,12 +106,17 @@ class FormActivity : AppCompatActivity() {
                 }
 
                 response.forEachIndexed { index, item ->
-                    val id = item.id.toString()
-                    val name = item.name.toString()
-                    val description = item.description.toString()
 
-                    val subject = Subject(description, id, name)
+                    val id = item.id
+                    val name = item.name
+                    val description = item.description
+                    val thumbnail = item.thumbnail
+                    val colorcodes = item.color_codes
+                    val background = item.background
+
+                    val subject = Subject(description, id, name, thumbnail, colorcodes, background)
                     subjectList.add(subject)
+
                 }
 
                 form_one_subject_rView.setAdapter(subject_list_adpater)

@@ -1,25 +1,28 @@
 package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.coroutines.*
-import paita.stream_app_final.Extensions.makeLongToast
-import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.MpesaActivity
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
+import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
 
 class SubTopicsAdapter(var activity: Activity,
-                       var color: String?,
+                       var color: String,
                        var subtopiclist: List<Subtopic>,
                        private val mContext: Context,
                        val formid: String,
@@ -113,17 +116,145 @@ class SubTopicsAdapter(var activity: Activity,
 
     private suspend fun showSubscriptionView(unitid: String, subunitamount: Double, unitname: String) {
 
-        val intent = Intent(activity, MpesaActivity::class.java)
-        intent.putExtra("item", "subtopic")
-        intent.putExtra("subjectname", "")
-        intent.putExtra("theamount", subunitamount.toString())
-        intent.putExtra("subjectid", subjectid)
-        intent.putExtra("formid", formid)
-        intent.putExtra("topicname", "")
-        intent.putExtra("topicid", "")
-        intent.putExtra("unitid", unitid)
-        intent.putExtra("unitname", unitname)
-        activity.startActivity(intent)
+        // Create an alert builder
+        val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
+        val customLayout: View = activity.getLayoutInflater().inflate(R.layout.custom_dialog, null)
+        builder.setView(customLayout)
+
+        val mydialog: AlertDialog = builder.create()
+
+        val mpesamobile = customLayout.mympesamobile
+
+        CoroutineScope(Dispatchers.IO).launch() {
+
+            val userprfoiledetails = async { activity.myViewModel(activity).getUserProfileDetails() }
+            val userprofile = userprfoiledetails.await().details!!
+            val name = userprofile.name
+            val text00 = "Dear "
+            val text0 = "${name}"
+            val textA = ", enter your M-Pesa phone number below to subscribe to "
+            val textB = unitname
+            val textC = ". Press "
+            val textD = "Pay Now"
+            val textE = " button to initiate payment. You will receive a prompt notification on your phone, enter your pin and press OK to complete payment"
+            val fulltext = Html.fromHtml(text00+ "<font color=${R.color.formtwocolor}>" + text0 + "</font>" + textA + "<font color=${R.color.formtwocolor}>" + textB + "</font>" + textC +  "<font color=${R.color.formtwocolor}>" + textD + "</font>" + textE)
+
+            withContext(Dispatchers.Main){
+                customLayout.myloveTextDialog.setText(fulltext);
+                customLayout.amountedit.setText("KES : ${subunitamount.toString()}")
+            }
+
+        }
+
+        customLayout.cancelnow2.setOnClickListener {
+            mydialog.dismiss()
+        }
+        customLayout.cancelnow.setOnClickListener {
+            mydialog.dismiss()
+        }
+
+        customLayout.subscribe.setOnClickListener {
+
+            val validatelist = mutableListOf<EditText>(mpesamobile)
+            if (activity.validated(validatelist)) {
+
+                val (mpesanumber) = validatelist.map {activity.mytext(it) }
+                val userid = activity.getUserId()
+
+                CoroutineScope(Dispatchers.IO).launch() {
+
+                    withContext(Dispatchers.Main) {
+
+                        val theProgressDialog = ProgressDialog(activity)
+                        theProgressDialog.setTitle("Tafa Checkout")
+                        theProgressDialog.setMessage("Processing Payment...")
+
+                        activity.makeLongToast("You will receive an M-pesa Prompt Shortly")
+                        theProgressDialog.show()
+
+                        val invoiceId = activity.myViewModel(activity).checkoutUnit(CheckOutUnit(subunitamount.toDouble().toInt(), mpesanumber, unitid, userid))
+
+                        if (!invoiceId.equals("")) {
+
+                            withContext(Dispatchers.Main) {
+
+                                try {
+
+                                    var state = false
+
+                                    suspend fun runCode() {
+                                        try {
+                                            val response = MyApi().checkInvoiceStatus(invoiceId)
+
+                                            if (response.code() == 200) {
+                                                if (response.body()?.details?.status.equals("PAID")) {
+                                                    state = true
+                                                    theProgressDialog.dismiss()
+                                                    activity.makeLongToast("Payment was Successful")
+                                                    if (mydialog.isShowing) {
+                                                        mydialog.dismiss()
+                                                    }
+                                                    val subunitslist = async {
+                                                        activity.myViewModel(activity).fetchvideosperunitname(unitid)
+                                                    }
+                                                    activity.finish()
+                                                    showUnitVideos(unitid, subunitslist.await(), theProgressDialog)
+
+                                                } else if (response.body()?.details?.status.equals("PENDING")) {
+                                                }
+                                            } else if (response.code() == 400) {
+                                                activity.showAlertDialog("Payment Cancelled")
+                                                state = true
+                                                theProgressDialog.dismiss()
+                                                if (mydialog.isShowing) {
+                                                    mydialog.dismiss()
+                                                }
+                                            } else {
+                                                activity.showAlertDialog("Payment ${response}")
+                                                state = true
+                                                theProgressDialog.dismiss()
+                                                if (mydialog.isShowing) {
+                                                    mydialog.dismiss()
+                                                }
+                                            }
+
+                                            if (state == false) {
+                                                runCode()
+                                            }
+                                        } catch (exception: Exception) {
+                                            activity.makeLongToast(exception.toString())
+                                            theProgressDialog.dismiss()
+                                            if (mydialog.isShowing) {
+                                                mydialog.dismiss()
+                                            }
+                                        }
+                                    }
+
+                                    runCode()
+
+                                } catch (exception: Exception) {
+                                    activity.makeLongToast(exception.toString())
+                                    theProgressDialog.dismiss()
+                                    if (mydialog.isShowing) {
+                                        mydialog.dismiss()
+                                    }
+                                }
+
+                            }
+
+                        } else {
+                            theProgressDialog.dismiss()
+                            if (mydialog.isShowing) {
+                                mydialog.dismiss()
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        mydialog.show()
 
     }
 
@@ -136,6 +267,7 @@ class SubTopicsAdapter(var activity: Activity,
 
                 theobject.thedetails.forEachIndexed { index, it ->
                     if (index == 0) {
+
                         val videoid = it?.videoid
                         CoroutineScope(Dispatchers.IO).launch() {
 
@@ -144,6 +276,7 @@ class SubTopicsAdapter(var activity: Activity,
                             withContext(Dispatchers.Main) {
                                 if (vidocypherResponse.otp == "") {
                                     theProgressDialog.dismiss()
+
                                     return@withContext
                                 }
 

@@ -23,14 +23,14 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:background="#5A68B1"
+                android:background="@color/white"
                 android:id="@+id/subtopicname"
                 android:layout_gravity="center"
                 android:gravity="left"
                 android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:text="Name"
                 android:padding="5dp"/>
 
@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
-                android:background="#055160">
+                android:background="@color/formtwocolor">
 
                 <TextView
                     android:layout_marginRight="20dp"

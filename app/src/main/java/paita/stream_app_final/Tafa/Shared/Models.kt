@@ -22,7 +22,7 @@ data class Success_Login_Details(val access_token: String, val expires_in: Int, 
 
 
 class RetroSubjects : ArrayList<RetroSubjectsItem>()
-data class RetroSubjectsItem(val description: String?, val id: String?, val name: String?)
+data class RetroSubjectsItem(val description: String, val id: String, val name: String, val thumbnail: String, val color_codes:String, val background: String?)
 
 
 class MyUnit : ArrayList<Detail>()
@@ -50,7 +50,7 @@ data class UnitPricesItem(val amount: String, val date_created: String, val date
 
 data class Unit(val form: String, val id: String, val name: String, val subject: String)
 
-data class Subject(val description: String, val id: String, val name: String)
+data class Subject(val description: String?, val id: String?, val name: String, val thumbnail: String?, val color_codes:String?, val background: String?)
 
 
 data class PriceControl(

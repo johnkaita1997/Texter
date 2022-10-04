@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="2dp"
+        android:background="@color/black"
+        android:orientation="vertical"
+        android:padding="10dp"
+        app:cardCornerRadius="5dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_marginTop="15dp"
+                android:textStyle="bold"
+                android:drawableRight="@drawable/cancel"
+                android:background="@color/white"
+                android:id="@+id/cancelnow2"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:text="Make Payment"
+                android:padding="5dp"/>
+
+            <View
+                android:layout_marginTop="10dp"
+                android:background="@color/grey_40"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:id="@+id/myloveTextDialog"
+                android:layout_gravity="center"
+                android:gravity="left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/black"
+                android:text="Dear User, enter your M-pesa phone number below to subscribe to unitname/form/topic. Press 'Pay Now' button to initiate payment. You will receive a prompt notification on your phone, enter your pin and press Ok to complete  payment"
+                android:padding="5dp"/>
+
+            <View
+                android:layout_marginTop="10dp"
+                android:background="@color/grey_40"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:textStyle="bold"
+                android:background="@color/white"
+                android:id="@+id/subtopicnentame"
+                android:layout_gravity="center"
+                android:gravity="left"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:text="Enter M-Pesa Number"
+                android:padding="5dp"/>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tevrextInputEmail"
+                android:background="#cccccc"
+                style="@style/parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_weight="1"
+                android:layout_marginRight="5dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:paddingHorizontal="10dp"
+                app:hintTextColor="@color/formtwocolor">
+
+                <EditText
+                    android:background="@null"
+                    android:id="@+id/mympesamobile"
+                    style="@style/modifiedEditText"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/white"
+                    android:hint="07......."
+                    android:inputType="textEmailAddress"
+                    android:maxLines="1"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/white"
+                    android:textCursorDrawable="@null"
+                    android:textSize="15dp" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
+                android:weightSum="3"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_marginBottom="5dp"
+                    android:layout_weight="1"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="bold"
+                    android:background="@color/white"
+                    android:id="@+id/ajdsfk"
+                    android:layout_gravity="center"
+                    android:gravity="left"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:text="Amount : "
+                    android:padding="5dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:id="@+id/textIasdgfnputEmail"
+                    style="@style/parent"
+                    android:layout_height="40dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#cccccc"
+                    android:paddingHorizontal="10dp"
+                    app:hintTextColor="@color/formtwocolor">
+
+                    <EditText
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="15dp"
+                        android:editable="false"
+                        android:enabled="false"
+                        android:text="Kes : 2000"
+                        android:id="@+id/amountedit"
+                        style="@style/modifiedEditText"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:backgroundTint="@color/white"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:textColor="@color/formtwocolor"
+                        android:textColorHint="@color/white"
+                        android:textCursorDrawable="@null" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_weight="1"
+                    android:id="@+id/asdf"
+                    android:gravity="center"
+                    style="@style/parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#8e8d8d"
+                    android:paddingHorizontal="10dp"
+                    app:hintTextColor="@color/formtwocolor">
+
+                    <EditText
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:textSize="15dp"
+                        android:editable="false"
+                        android:enabled="false"
+                        android:text="Per Year"
+                        android:id="@+id/perYear"
+                        style="@style/modifiedEditText"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:backgroundTint="@color/white"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textCursorDrawable="@null" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_marginTop="20dp"
+                android:background="@color/grey_40"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"/>
+
+
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:weightSum="2"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <Button
+                    android:layout_weight="1"
+                    android:id="@+id/cancelnow"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/cancelnow"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:id="@+id/subscribe"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/paynow"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+</LinearLayout>

@@ -24,7 +24,7 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:background="@color/formfourcolor"
+                android:background="@color/formtwocolor"
                 android:id="@+id/txt_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
-                    android:background="#055160">
+                    android:background="@color/black">
 
                     <TextView
                         android:id="@+id/thetopicamount"

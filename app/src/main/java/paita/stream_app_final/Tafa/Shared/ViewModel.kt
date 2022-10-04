@@ -657,9 +657,10 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getUserProfileDetails(userid: String):UserProfileDetails{
+    suspend fun getUserProfileDetails():UserProfileDetails{
         var userProfileDetails = UserProfileDetails(null)
         runCatching {
+            Log.d("-----------------------------", "getUserProfileDetails: ${SessionManager(activity).fetchAuthToken()}")
             var response = MyApi().getUserDetails(SessionManager(activity).fetchAuthToken(), SessionManager(activity).fetchJwtToken())
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
@@ -675,7 +676,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getTransactions(userid: String):Transactions{
+    suspend fun getTransactions():Transactions{
         var usertransactions = Transactions(null)
         runCatching {
             var response = MyApi().getTransactions(SessionManager(activity).fetchAuthToken(), SessionManager(activity).fetchJwtToken())
@@ -691,7 +692,6 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
         }
         return usertransactions
     }
-
 
 
     suspend fun getFreeVideos(subjectid: String):FreeVideos{

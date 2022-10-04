@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/suject_freetowatch_linearlayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginTop="10dp"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:ignore="MissingDefaultResource">
+
+    <ImageView
+        android:id="@+id/freetowatchImage"
+        android:layout_width="82dp"
+        android:layout_height="53dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="2dp"
+        android:src="@drawable/tafalogo">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/freeToWatch_Subject"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Period"
+        android:textColor="@color/white"
+        android:textSize="18dp" />
+
+</LinearLayout>

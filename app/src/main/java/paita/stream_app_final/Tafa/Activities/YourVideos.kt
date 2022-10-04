@@ -26,6 +26,7 @@ class YourVideos : AppCompatActivity() {
         val formname = intent.getStringExtra("formname").toString()
 
         CoroutineScope(Dispatchers.IO).launch() {
+
             withContext(Dispatchers.Main) {
                 yourvideos_spin_kit.setColor(Color.parseColor(colorname))
             }
@@ -39,8 +40,8 @@ class YourVideos : AppCompatActivity() {
                     yourvideos_spin_kit.visibility = View.GONE
                 }
             } else {
-
                 withContext(Dispatchers.Main) {
+
                     val layoutManager = LinearLayoutManager(this@YourVideos)
                     yourVideosRecyclerView.setLayoutManager(layoutManager)
 
@@ -50,7 +51,6 @@ class YourVideos : AppCompatActivity() {
                     yourvideos_spin_kit.visibility = View.GONE
 
                 }
-
             }
 
         }

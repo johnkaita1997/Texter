@@ -42,7 +42,7 @@ class SubjectPlansActivity : AppCompatActivity() {
 
             val subjectplanlist = myViewModel(this@SubjectPlansActivity).getsubjectplanlist(formid, subjectid)
 
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
 
                 if (subjectplanlist.isEmpty()) {
                     return@withContext
@@ -53,7 +53,6 @@ class SubjectPlansActivity : AppCompatActivity() {
 
             }
         }
-
 
 
     }

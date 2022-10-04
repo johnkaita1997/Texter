@@ -9,29 +9,24 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
 import android.widget.*
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.auth0.android.jwt.JWT
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.GsonBuilder
 import dmax.dialog.SpotsDialog
+import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import paita.stream_app_final.AppConstants.Constants
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.MainActivity
 import paita.stream_app_final.Tafa.Adapters.MyAuth
-import paita.stream_app_final.Tafa.Adapters.VideoViewerAdapter
-import paita.stream_app_final.Tafa.Adapters.Videosperunitname
 import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
 import paita.stream_app_final.Tafa.Shared.SessionManager
 import paita.stream_app_final.Tafa.Shared.ViewModel
-import kotlinx.android.synthetic.main.video_bottom_sheet_layout.view.*
-import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 private lateinit var redirectingDialog: ProgressDialog
@@ -130,8 +125,11 @@ fun Context.isLoggedIn(): Boolean {
 
 fun Context.getUserId(): String {
     val sessionManager = SessionManager(this)
-    val jwttoken = sessionManager.fetchJwtToken()
+    var jwttoken = sessionManager.fetchJwtToken()
+    jwttoken = jwttoken?.replace("Bearer ", "")
     Log.e("TOKEN", "getUsername: $jwttoken")
+
+
     val jwt = JWT(jwttoken.toString())
     val allClaims = jwt.claims
     val claim: String = jwt.getClaim("user").asString()!!
@@ -277,8 +275,8 @@ suspend fun Context.countyid(myviewmodel: ViewModel, countyname: String): String
 
 
 fun Context.getAuthDetails(): MyAuth {
-    val authtoken = "Bearer ${SessionManager(this).fetchAuthToken()}"
-    val jwttoken = "Bearer ${SessionManager(this).fetchJwtToken()}"
+    val authtoken = "${SessionManager(this).fetchAuthToken()}"
+    val jwttoken = "${SessionManager(this).fetchJwtToken()}"
     return MyAuth(authtoken, jwttoken)
 }
 
@@ -395,3 +393,9 @@ fun showMpesaAlert_Units(formid: String, alertDialog: AlertDialog, activity: Act
     btnNegative.layoutParams = layoutParams
 }
 
+
+fun Context.dateFormatter(oldDate: String): String {
+    val formatter = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+    val date = formatter.parse(oldDate)
+    return date.toString()
+}

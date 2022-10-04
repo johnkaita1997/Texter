@@ -23,11 +23,11 @@ import paita.stream_app_final.AppConstants.Constants.mpesa_callback_url
 import paita.stream_app_final.AppConstants.Constants.thepasskey
 import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.SubjectPlansActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import paita.stream_app_final.Tafa.Activities.SubjectPlansActivity
 
 class SubjectPaymentAdapter(var activity: Activity, var subjectlist: RetroSubjects, private val mContext: Context, var mBottomSheetDialog: BottomSheetDialog, val formid: String) : RecyclerView.Adapter<SubjectPaymentAdapter.SubjectHolder>() {
 

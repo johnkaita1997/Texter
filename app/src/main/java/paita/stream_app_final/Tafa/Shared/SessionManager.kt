@@ -19,11 +19,11 @@ class SessionManager(context: Context) {
     }
 
     fun fetchAuthToken(): String? {
-        return prefs.getString("authtoken", null)
+        return "Bearer ${prefs.getString("authtoken", null)}"
     }
 
     fun fetchJwtToken(): String? {
-        return prefs.getString("jwttoken", null)
+        return "Bearer ${prefs.getString("jwttoken", null)}"
     }
 
     fun logout(): Boolean {

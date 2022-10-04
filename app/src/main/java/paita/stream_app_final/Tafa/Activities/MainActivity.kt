@@ -7,11 +7,15 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
-import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Authentication.LoginActivity
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import paita.stream_app_final.Extensions.*
+import paita.stream_app_final.R
+import paita.stream_app_final.Tafa.Adapters.SubjectFreeAdapter
+import paita.stream_app_final.Tafa.Authentication.LoginActivity
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +38,8 @@ class MainActivity : AppCompatActivity() {
     private fun initall() {
 
         callTheFormIds()
+
+        initTheFreeToWatchVideos()
 
         form_one.setOnClickListener {
             if (this::formoneid.isInitialized) {
@@ -75,23 +81,28 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-
         settingsImageview.setOnClickListener {
 
             val popup = PopupMenu(this, it)
             popup.inflate(R.menu.pop_menu)
+
             popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
                 override fun onMenuItemClick(menuitem: MenuItem?): Boolean {
                     return when (menuitem!!.getItemId()) {
+                        R.id.myvideos -> {
+                            goToActivity_Unfinished(this@MainActivity, YourVideos::class.java)
+                            true
+                        }
                         R.id.logout -> {
                             logoutUser()
                             true
                         }
-                        R.id.subscriptions -> {
-//                            goToActivity_Unfinished(this@MainActivity, SubscriptionActivity::class.java)
+                        R.id.contact -> {
+                            goToActivity_Unfinished(this@MainActivity, ContactUsActivity::class.java)
                             true
                         }
-                        R.id.account -> {
+                        R.id.myprofile -> {
+                            goToActivity_Unfinished(this@MainActivity, ProfileActivity::class.java)
                             true
                         }
                         else -> false
@@ -99,6 +110,28 @@ class MainActivity : AppCompatActivity() {
                 }
             })
             popup.show()
+
+        }
+
+    }
+
+    private fun initTheFreeToWatchVideos() {
+
+        val viewPool = RecyclerView.RecycledViewPool()
+        val layoutManager = GridLayoutManager(this, 2)
+        subjectFreeRecyclerView.setLayoutManager(layoutManager)
+        subjectFreeRecyclerView.setRecycledViewPool(viewPool)
+        subjectFreeRecyclerView.setItemViewCacheSize(100)
+
+        CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
+
+            val subjectList = async { myViewModel(this@MainActivity).getSubjects (formid = "") }
+
+            val subject_freetowatch_Adapter = SubjectFreeAdapter(this@MainActivity, subjectList.await())
+
+            withContext(Dispatchers.Main){
+                subjectFreeRecyclerView.setAdapter(subject_freetowatch_Adapter)
+            }
 
         }
 
@@ -181,19 +214,12 @@ class MainActivity : AppCompatActivity() {
         * */
     }
 
-
     override fun onBackPressed() {
-        val alert = AlertDialog.Builder(this)
-            .setTitle("Tafa")
-            .setCancelable(false)
-            .setMessage("Are you sure you want to exit")
-            .setIcon(R.drawable.tafalogo)
+        val alert = AlertDialog.Builder(this).setTitle("Tafa").setCancelable(false).setMessage("Are you sure you want to exit").setIcon(R.drawable.tafalogo)
             .setPositiveButton("Exit", DialogInterface.OnClickListener { dialog, _ ->
                 dialog.dismiss()
                 finish()
-            })
-            .setNegativeButton("Dismis", DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() })
-            .show()
+            }).setNegativeButton("Dismis", DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }).show()
     }
 
 

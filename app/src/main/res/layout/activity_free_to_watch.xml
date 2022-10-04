@@ -54,14 +54,13 @@
             android:layout_marginLeft="123dp"
             android:layout_marginTop="30dp"
             android:gravity="top"
-            android:text="SUBJECTS"
-            android:textAllCaps="true"
+            android:text="Free Subject Videos"
             android:textAppearance="@style/good_mornin" />
 
 
         <!-- Rectangle 9 -->
         <View
-            android:id="@+id/settingsImageviewform"
+            android:id="@+id/settingsImageviewfreetowatch"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_alignParentTop="true"
@@ -88,15 +87,32 @@
             android:padding="10dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/form_one_subject_rView"
+                android:id="@+id/freetowatchrecyclerview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="35dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="90dp"
                 android:scrollbars="vertical" />
 
 
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/watchFullVideos"
+            android:layout_width="match_parent"
+            android:layout_height="57dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/rectanglebutton"
+            android:backgroundTint="@color/formtwocolor"
+            android:gravity="center"
+            android:text="Watch Full Videos"
+            android:textAppearance="@style/good_mornin"
+            android:textColor="@color/white" />
+
 
     </RelativeLayout>
 
