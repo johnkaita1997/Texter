@@ -1,8 +1,17 @@
 package paita.stream_app_final.Tafa.Adapters
 
+import com.google.android.gms.common.Feature
 import com.google.gson.annotations.SerializedName
 
-data class User(var email: String, var first_name: String, var last_name: String, var phone: String, var password: String, var confirm_password: String, var county: String, var code: String, var school: String)
+data class User(var email: String,
+                var first_name: String,
+                var last_name: String,
+                var phone: String,
+                var password: String,
+                var confirm_password: String,
+                var county: String,
+                var code: String,
+                var school: String)
 
 data class theResponse(var details: LoginResponse)
 
@@ -22,7 +31,7 @@ data class Success_Login_Details(val access_token: String, val expires_in: Int, 
 
 
 class RetroSubjects : ArrayList<RetroSubjectsItem>()
-data class RetroSubjectsItem(val description: String, val id: String, val name: String, val thumbnail: String, val color_codes:String, val background: String?)
+data class RetroSubjectsItem(val description: String, val id: String, val name: String, val thumbnail: String, val color_codes: String, val background: String?)
 
 
 class MyUnit : ArrayList<Detail>()
@@ -50,7 +59,7 @@ data class UnitPricesItem(val amount: String, val date_created: String, val date
 
 data class Unit(val form: String, val id: String, val name: String, val subject: String)
 
-data class Subject(val description: String?, val id: String?, val name: String, val thumbnail: String?, val color_codes:String?, val background: String?)
+data class Subject(val description: String?, val id: String?, val name: String, val thumbnail: String?, val color_codes: String?, val background: String?)
 
 
 data class PriceControl(
@@ -122,57 +131,39 @@ data class YourVideo(val id: String, val index: Int, val label: String, val unit
 data class YourTopic(val amount: Double, val form: Form, val id: String, val name: String, val subject: Subject, val subtopics: List<Subtopic>)
 
 
+class UserProfileDetails(val details: Details_UserProfile?)
+data class Details_UserProfile(val account_status: String, val county: String, val date_created: String, val id: String, val name: String, val phone: String, val school: String, val username: String)
+
+data class Transactions(val details: List<Detail_Transaction>?)
+data class Detail_Transaction(val id: String, val status: String, val transaction_date: String, val units: List<String>)
 
 
+data class FreeVideos(val details: List<Detail_FreeVideos>?)
+data class Detail_FreeVideos(val id: String, val label: String, val thumbnail: String, val videoid: String)
 
 
+class Polygon(val features: List<Feature>?, val type: String?)
+
+data class Feature(val geometry: Geometry, val properties: Properties, val type: String)
+
+data class Geometry(val coordinates: List<List<List<Double>>>, val type: String)
+
+class Properties
+
+class TrendingVideos(val details: List<TrendingVideoDetail>?)
+class TrendingVideoDetail(val thumbnail: String, val videoid: String)
 
 
-
-
-
-
-class UserProfileDetails(
-    val details: Details_UserProfile?
+class PaidVideos(
+    val count: Int?,
+    val next: String?,
+    val previous: Any?,
+    val results: List<PaidVideoResult>?
 )
-data class Details_UserProfile(
-    val account_status: String,
-    val county: String,
-    val date_created: String,
-    val id: String,
-    val name: String,
-    val phone: String,
-    val school: String,
-    val username: String
-)
-
-data class Transactions(
-    val details: List<Detail_Transaction>?
-)
-data class Detail_Transaction(
-    val id: String,
-    val status: String,
-    val transaction_date: String,
-    val units: List<String>
-)
-
-
-data class FreeVideos(
-    val details: List<Detail_FreeVideos>?
-)
-data class Detail_FreeVideos(
-    val id: String,
+data class PaidVideoResult(
     val label: String,
-    val thumbnail: String,
     val videoid: String
 )
-
-
-
-
-
-
-
 
 
 

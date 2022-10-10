@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.Extensions.playVideos
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
 
@@ -44,36 +45,8 @@ class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDe
         holder.itemView.customwatchvideo.setBackgroundColor(Color.parseColor(colorname))
 
         holder.itemView.customwatchvideo.setOnClickListener {
-
-            val theProgressDialog = ProgressDialog(activity)
-            theProgressDialog.setTitle("Fetching")
-            theProgressDialog.setMessage("Fetching Video...")
-            theProgressDialog.setCancelable(true)
-            theProgressDialog.show()
-
             val videoid = videoObject.videos.get(0).videoid
-
-            CoroutineScope(Dispatchers.IO).launch() {
-                val vidocypherResponse = activity.myViewModel(activity).getPlaybackInfo(videoid)
-
-                withContext(Dispatchers.Main) {
-                    if (vidocypherResponse.otp == "") {
-                        theProgressDialog.dismiss()
-                        return@withContext
-                    }
-
-                    val otp = vidocypherResponse.otp
-                    val playbackinfo = vidocypherResponse.playbackInfo
-
-                    val intent = Intent(activity, VideoViewerActivity::class.java)
-                    intent.putExtra("otp", otp)
-                    intent.putExtra("playbackinfo", playbackinfo)
-                    theProgressDialog.dismiss()
-                    activity.startActivity(intent)
-                }
-
-            }
-
+            activity.playVideos(videoid)
         }
 
 

@@ -7,14 +7,14 @@ import android.util.Log
 import android.widget.Spinner
 import androidx.lifecycle.AndroidViewModel
 import dmax.dialog.SpotsDialog
+import kotlinx.coroutines.*
+import org.json.JSONObject
 import paita.stream_app_final.AppConstants.Constants
 import paita.stream_app_final.Extensions.*
+import paita.stream_app_final.Tafa.Activities.ConfirmOtpActivity
 import paita.stream_app_final.Tafa.Activities.MainActivity
 import paita.stream_app_final.Tafa.Adapters.*
 import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
-import kotlinx.coroutines.*
-import org.json.JSONObject
-import paita.stream_app_final.Tafa.Activities.ConfirmOtpActivity
 
 class ViewModel(application: Application, myactivity: Activity) : AndroidViewModel(application) {
 
@@ -29,6 +29,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
         if (activity.activityisrunning()) {
             withContext(Dispatchers.Main) {
                 if (mydialog != null) if (mydialog.isShowing) mydialog.dismiss()
+                Log.d("----------", "networkResponseFailure: KERROR - ${it.message}")
                 activity.makeLongToast("Error! ${it.message.toString()}")
             }
         }
@@ -48,6 +49,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
             withContext(Dispatchers.Main) {
                 if (mydialog != null) if (mydialog.isShowing) mydialog.dismiss()
                 activity.showAlertDialog(responseString)
+                Log.d("----------", "networkResponseFailure: KERROR - ${responseString}")
             }
         }
     }
@@ -383,7 +385,6 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-
     suspend fun loginuser(email: String, password: String, mydialog: SpotsDialog) {
 
         runCatching {
@@ -430,9 +431,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-
-
-    suspend fun loginuser_register(email: String, password: String, mobile : String, mydialog: SpotsDialog) {
+    suspend fun loginuser_register(email: String, password: String, mobile: String, mydialog: SpotsDialog) {
 
         runCatching {
             val response = MyApi().login(LoginBody(email, password))
@@ -472,7 +471,16 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
         }
     }
 
-    suspend fun createUser (email: String, first_name: String, last_name: String, phone: String, password: String, confirm_password: String, county: String, code: String, school: String, mydialog: SpotsDialog) {
+    suspend fun createUser(email: String,
+                           first_name: String,
+                           last_name: String,
+                           phone: String,
+                           password: String,
+                           confirm_password: String,
+                           county: String,
+                           code: String,
+                           school: String,
+                           mydialog: SpotsDialog) {
         val user = User(email, first_name, last_name, phone, password, confirm_password, county, code, school)
         runCatching {
             val response = MyApi().register(user)
@@ -645,7 +653,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun confirmOTP(confirmcode: String, mobileNumber: String):Boolean{
+    suspend fun confirmOTP(confirmcode: String, mobileNumber: String): Boolean {
         var mystatus = false
         runCatching {
             val status = MyApi().verifyOtp(VerifyOtp(confirmcode, mobileNumber)).code()
@@ -657,10 +665,10 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getUserProfileDetails():UserProfileDetails{
+    suspend fun getUserProfileDetails(): UserProfileDetails {
         var userProfileDetails = UserProfileDetails(null)
         runCatching {
-            Log.d("-----------------------------", "getUserProfileDetails: ${SessionManager(activity).fetchAuthToken()}")
+            Log.d("---------", "getUserProfileDetails: ${SessionManager(activity).fetchAuthToken()}")
             var response = MyApi().getUserDetails(SessionManager(activity).fetchAuthToken(), SessionManager(activity).fetchJwtToken())
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
@@ -676,7 +684,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getTransactions():Transactions{
+    suspend fun getTransactions(): Transactions {
         var usertransactions = Transactions(null)
         runCatching {
             var response = MyApi().getTransactions(SessionManager(activity).fetchAuthToken(), SessionManager(activity).fetchJwtToken())
@@ -694,7 +702,33 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getFreeVideos(subjectid: String):FreeVideos{
+    suspend fun getPolygon(): Polygon {
+        var thePolygon = Polygon(null, null)
+        runCatching {
+            var response =
+                MyApi().getPolygon("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0b20iLCJpc3MiOiJodHRwOi8vMTkyLjE2OC41MC42OTo4MDkwL2xvZ2luIiwiZXhwIjoxNjY1MDk1NDQ2LCJhdXRob3JpdGllcyI6WyJzdHVkZW50OnJlYWQiLCJST0xFX0FETUlOVFJBSU5FRSIsImNvdXJzZTpyZWFkIl19.d47_-EOsze5HdC33E2oIOvISHJMxLWq3Q0qkgPGwMFc")
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                thePolygon = response.body()!!
+
+//                val newObject = JSONObject(thePolygon.features.toString())
+//                Log.d("--------------------", "getPolygon: ${newObject}")
+
+                /* val objectObject = newObject.get(0) as JSONObject
+                 val coordinates = objectObject.getJSONObject("geometry").getJSONArray("coordinates").getJSONArray(0)
+                 Log.d("--------------------", "getPolygon: ${coordinates}")*/
+
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return thePolygon
+    }
+
+    suspend fun getFreeVideos(subjectid: String): FreeVideos {
         var freeVideos = FreeVideos(null)
         runCatching {
             var response = MyApi().getFreeVideos(subjectid)
@@ -712,8 +746,54 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
+    suspend fun getTrendingVideos(): List<TrendingVideoDetail>? {
+        var trendingVideos = TrendingVideos(null).details
+        runCatching {
+            var response = MyApi().getTrendingVideos()
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                trendingVideos = response.body()!!.details
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return trendingVideos
+    }
 
 
+    suspend fun getPaidVideos(formid: String, subjectid: String): PaidVideos {
+        var paidVideos = PaidVideos(null, null, null, null)
+        runCatching {
+            val response = MyApi().getPaidVideos(formid, subjectid, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken)
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                paidVideos = response.body()!!
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return paidVideos
+    }
+
+
+    suspend fun getNext(myurl: String, formid: String, subjectid: String): PaidVideos {
+        var paidVideos = PaidVideos(null, null, null, null)
+        runCatching {
+            val response = MyApi().getNext(myurl, formid, subjectid, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken)
+            if (!response.isSuccessful) {
+            } else {
+                paidVideos = response.body()!!
+            }
+        }.onFailure {
+        }
+        return paidVideos
+    }
 
 
 }

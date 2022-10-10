@@ -1,7 +1,5 @@
 package paita.stream_app_final.Tafa.Activities
 
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -9,7 +7,6 @@ import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_form.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -36,18 +33,23 @@ class FormActivity : AppCompatActivity() {
 
     private fun initall() {
 
-        val actualid = intent.getStringExtra("actualid").toString()
+        val actualformid = intent.getStringExtra("actualid").toString()
         val colorname = intent.getStringExtra("colorname").toString()
         val actualformname = intent.getStringExtra("formname").toString()
         val formnumber = intent.getStringExtra("formnumber").toString()
+
+        var paid = false
+        if (intent.hasExtra("paid")) {
+            paid = true
+        }
 
         myviewmodel = ViewModel(this.application, this)
 
         val layoutManager = LinearLayoutManager(this)
         form_one_subject_rView.setLayoutManager(layoutManager)
 
-        subject_list_adpater = FormSubjectAdapter(this, subjectList, this, colorname, formnumber, actualformname)
-        fetch_Subject_Lists(actualid)
+        subject_list_adpater = FormSubjectAdapter(this, subjectList, this, colorname, formnumber, actualformid, actualformname, paid)
+        fetch_Subject_Lists(actualformid)
 
         settingsImageviewform.setOnClickListener {
 

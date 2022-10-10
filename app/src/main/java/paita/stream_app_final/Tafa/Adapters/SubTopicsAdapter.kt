@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.coroutines.*
@@ -87,7 +88,6 @@ class SubTopicsAdapter(var activity: Activity,
                 val selectedItem = subjectobject
                 val subunitamount = selectedItem.amount
                 val subunitname = selectedItem.name
-
 
                 CoroutineScope(Dispatchers.IO).launch() {
                     if (!paid) {
@@ -269,6 +269,7 @@ class SubTopicsAdapter(var activity: Activity,
                     if (index == 0) {
 
                         val videoid = it?.videoid
+
                         CoroutineScope(Dispatchers.IO).launch() {
 
                             val vidocypherResponse = activity.myViewModel(activity).getPlaybackInfo(videoid.toString())
@@ -276,18 +277,21 @@ class SubTopicsAdapter(var activity: Activity,
                             withContext(Dispatchers.Main) {
                                 if (vidocypherResponse.otp == "") {
                                     theProgressDialog.dismiss()
-
                                     return@withContext
                                 }
 
                                 val otp = vidocypherResponse.otp
                                 val playbackinfo = vidocypherResponse.playbackInfo
 
-                                val intent = Intent(mContext, VideoViewerActivity::class.java)
+                                val intent = Intent(activity, VideoViewerActivity::class.java)
                                 intent.putExtra("otp", otp)
                                 intent.putExtra("playbackinfo", playbackinfo)
-                                theProgressDialog.dismiss()
-                                mContext.startActivity(intent)
+
+                                withContext(Dispatchers.Main) {
+                                    theProgressDialog.dismiss()
+                                }
+
+                                activity.startActivity(intent)
                             }
                         }
                     }

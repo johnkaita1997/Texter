@@ -39,7 +39,11 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_login.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_main.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_one_launcher.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_related_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_sign_up.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/custom_paid_videos.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/custom_trending_topics.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/custom_trending_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxxhdpi/activity_one_launcher.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_complains.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_confirm_otp.xml" value="0.25" />
@@ -57,8 +61,10 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_mpesa.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_mpesa_test.xml" value="0.14907407407407408" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_one_launcher.xml" value="0.12" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_paid_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_payment_dialog.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_profile_user_details.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_related_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_sign_up.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_subject_plans.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_subscription.xml" value="0.18" />
@@ -77,11 +83,13 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_dialog.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_freeto_watch.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_freetowatch.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_paid_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_subject_freetowatch.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_subjects.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_subjects_formfour.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_subjects_formthree.xml" value="0.15" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_subjects_formtwo.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_trending_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/customyourvideos.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_bottom_home.xml" value="0.18" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_container.xml" value="0.2" />

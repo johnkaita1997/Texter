@@ -8,12 +8,14 @@ import android.view.MenuItem
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Adapters.SubjectFreeAdapter
+import paita.stream_app_final.Tafa.Adapters.TrendingVideoAdapter
 import paita.stream_app_final.Tafa.Authentication.LoginActivity
 
 
@@ -30,17 +32,21 @@ class MainActivity : AppCompatActivity() {
         initall()
     }
 
-    private suspend fun fetchFormId(formidname: String): String {
-        val formid = getFormId(myViewModel(this), formidname)
-        return formid
-    }
-
     private fun initall() {
 
         callTheFormIds()
 
         initTheFreeToWatchVideos()
 
+        initTrendingVideos()
+
+        initFormButtonClicks()
+
+        settingsClick(settingsImageview)
+
+    }
+
+    private fun initFormButtonClicks() {
         form_one.setOnClickListener {
             if (this::formoneid.isInitialized) {
                 val intent = Intent(this, FormActivity::class.java)
@@ -81,35 +87,24 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
-        settingsImageview.setOnClickListener {
 
-            val popup = PopupMenu(this, it)
-            popup.inflate(R.menu.pop_menu)
+    }
 
-            popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
-                override fun onMenuItemClick(menuitem: MenuItem?): Boolean {
-                    return when (menuitem!!.getItemId()) {
-                        R.id.myvideos -> {
-                            goToActivity_Unfinished(this@MainActivity, YourVideos::class.java)
-                            true
-                        }
-                        R.id.logout -> {
-                            logoutUser()
-                            true
-                        }
-                        R.id.contact -> {
-                            goToActivity_Unfinished(this@MainActivity, ContactUsActivity::class.java)
-                            true
-                        }
-                        R.id.myprofile -> {
-                            goToActivity_Unfinished(this@MainActivity, ProfileActivity::class.java)
-                            true
-                        }
-                        else -> false
-                    }
-                }
-            })
-            popup.show()
+    private fun initTrendingVideos() {
+
+        val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        trendingvideosRecyclerView.setLayoutManager(layoutManager)
+        trendingvideosRecyclerView.setItemViewCacheSize(100)
+
+        CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
+
+            val trendingVideoList = async { myViewModel(this@MainActivity).getTrendingVideos() }
+
+            val subject_freetowatch_Adapter = TrendingVideoAdapter(this@MainActivity, trendingVideoList.await())
+
+            withContext(Dispatchers.Main) {
+                trendingvideosRecyclerView.setAdapter(subject_freetowatch_Adapter)
+            }
 
         }
 
@@ -119,17 +114,18 @@ class MainActivity : AppCompatActivity() {
 
         val viewPool = RecyclerView.RecycledViewPool()
         val layoutManager = GridLayoutManager(this, 2)
+
         subjectFreeRecyclerView.setLayoutManager(layoutManager)
         subjectFreeRecyclerView.setRecycledViewPool(viewPool)
         subjectFreeRecyclerView.setItemViewCacheSize(100)
 
         CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
 
-            val subjectList = async { myViewModel(this@MainActivity).getSubjects (formid = "") }
+            val subjectList = async { myViewModel(this@MainActivity).getSubjects(formid = "") }
 
             val subject_freetowatch_Adapter = SubjectFreeAdapter(this@MainActivity, subjectList.await())
 
-            withContext(Dispatchers.Main){
+            withContext(Dispatchers.Main) {
                 subjectFreeRecyclerView.setAdapter(subject_freetowatch_Adapter)
             }
 
@@ -155,13 +151,6 @@ class MainActivity : AppCompatActivity() {
             formtwoid = twoid.await()
             formthreeid = threeid.await()
             formfourid = fourid.await()
-        }
-    }
-
-    private fun logoutUser() {
-        if (sessionManager().logout()) {
-            makeLongToast("You have been logged out successfully")
-            goToActivity(this, LoginActivity::class.java)
         }
     }
 

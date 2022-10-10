@@ -145,5 +145,11 @@ interface MyApi {
     @GET("api/v1/users/account/profile") suspend fun getUserDetails( @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<UserProfileDetails>
     @GET("api/v1/users/user-transactions") suspend fun getTransactions( @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?,): Response<Transactions>
     @GET("api/v1/video/get-free-videos") suspend fun getFreeVideos(@Query("subject_id") subject_Id: String): Response<FreeVideos>
+    @GET("geo/polygon") suspend fun getPolygon(@Header("Authorization") authorizationBearer: String): Response<Polygon>
+
+    @GET("api/v1/video/app-trending-videos") suspend fun getTrendingVideos(): Response<TrendingVideos>
+    @GET("api/v1/video/list-related-videos") suspend fun getPaidVideos(@Query("form") formid: String, @Query("subject") subjectid: String,  @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?): Response<PaidVideos>
+
+    @GET suspend fun getNext(@Url url: String, @Query("form") formid: String, @Query("subject") subjectid: String, @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?): Response<PaidVideos>
 
 }

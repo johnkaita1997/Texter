@@ -3,17 +3,14 @@ package paita.stream_app_final.Tafa.Adapters
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.custom_freeto_watch.view.*
 import kotlinx.android.synthetic.main.custom_subject_freetowatch.view.*
+import kotlinx.android.synthetic.main.custom_trending_videos.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,37 +18,49 @@ import kotlinx.coroutines.withContext
 import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.Extensions.playVideos
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.FreeToWatchActivity
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
 
-
-class FreeToWatchAdapter(var activity: Activity, val videoList: List<Detail_FreeVideos>?) : RecyclerView.Adapter<FreeToWatchAdapter.SubjectHolder>() {
+class TrendingVideoAdapter(var activity: Activity, val trendingVideoList: List<TrendingVideoDetail>?) : RecyclerView.Adapter<TrendingVideoAdapter.SubjectHolder>() {
 
     lateinit var view: View
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SubjectHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        view = layoutInflater.inflate(R.layout.custom_freeto_watch, parent, false)
+        view = layoutInflater.inflate(R.layout.custom_trending_videos, parent, false)
         return SubjectHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return videoList!!.size
+        return trendingVideoList!!.size
     }
 
     override fun onBindViewHolder(holder: SubjectHolder, position: Int) {
 
-        val videoObject = videoList!!.get(position);
+        val subjectObject = trendingVideoList?.get(position);
 
-        holder.itemView.freetowatchLinearlayout.setOnClickListener {
-            val videoid = videoObject.videoid
-            activity.playVideos(videoid)
+        holder.setVideoImage(subjectObject, activity)
+
+        holder.itemView.trendingVideoCard.setOnClickListener {
+            val videoId = subjectObject?.videoid
+            activity.playVideos(videoId.toString())
         }
 
     }
 
 
     class SubjectHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        private val trendingVideoImage: ImageView
+
+        init {
+            trendingVideoImage = itemView.findViewById(R.id.trendingVideoImage)
+        }
+
+        fun setVideoImage(subjectObject: TrendingVideoDetail?, activity: Activity) {
+            val videoThumbnail = subjectObject?.thumbnail
+            Picasso.get().load(videoThumbnail).fit().noFade().into(trendingVideoImage)
+        }
+
     }
 
 }

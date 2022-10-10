@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.topiclist.*
 import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
@@ -15,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import paita.stream_app_final.Extensions.playVideos
 
 
 class VideoViewerAdapter(var activity: Activity, var subunitslist: List<Thedetail?>, private val mContext: Context) : RecyclerView.Adapter<VideoViewerAdapter.ContactHolder>() {
@@ -45,24 +47,7 @@ class VideoViewerAdapter(var activity: Activity, var subunitslist: List<Thedetai
                 val id = selectedItem.id
                 val videoid = selectedItem.videoid
 
-                CoroutineScope(Dispatchers.IO).launch() {
-                    val vidocypherResponse = activity.myViewModel(activity).getPlaybackInfo(videoid)
-
-                    withContext(Dispatchers.Main){
-                        if (vidocypherResponse.otp == "") {
-                            return@withContext
-                        }
-
-                        val otp = vidocypherResponse.otp
-                        val playbackinfo = vidocypherResponse.playbackInfo
-
-                        val intent = Intent(mContext, VideoViewerActivity::class.java)
-                        intent.putExtra("otp", otp)
-                        intent.putExtra("playbackinfo", playbackinfo)
-                        mContext.startActivity(intent)
-                    }
-                }
-
+                activity.playVideos(videoid)
 
             }
         }

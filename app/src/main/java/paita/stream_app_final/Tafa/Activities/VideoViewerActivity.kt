@@ -23,20 +23,22 @@ import com.vdocipher.aegis.player.PlayerHost
 import com.vdocipher.aegis.player.VdoInitParams
 import com.vdocipher.aegis.player.VdoPlayer
 import com.vdocipher.aegis.player.VdoPlayer.PlaybackEventListener
-import com.vdocipher.aegis.player.VdoPlayerSupportFragment
+import com.vdocipher.aegis.ui.view.VdoPlayerUIFragment
+import org.json.JSONException
 import paita.stream_app_final.Extensions.makeLongToast
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Shared.Utils
 import paita.stream_app_final.Tafa.Shared.VdoPlayerControlView
 import paita.stream_app_final.Tafa.Shared.VdoPlayerControlView.*
-import org.json.JSONException
 import java.io.IOException
 
 
 class VideoViewerActivity : AppCompatActivity() {
 
     private lateinit var theplayer: VdoPlayer
-    private lateinit var playerFragment: VdoPlayerSupportFragment
+
+    //    private lateinit var playerFragment: VdoPlayerSupportFragment
+    private lateinit var playerFragment: VdoPlayerUIFragment
     private lateinit var playerControlView: VdoPlayerControlView
     private lateinit var mSession: MediaSessionCompat
     private var currentOrientation: Int = 0
@@ -59,34 +61,58 @@ class VideoViewerActivity : AppCompatActivity() {
         otp = intent.getStringExtra("otp").toString()
         playbackinfo = intent.getStringExtra("playbackinfo").toString()
 
-        playerControlView = findViewById(R.id.player_control_view);
-        playerFragment = supportFragmentManager.findFragmentById(R.id.vdo_player_fragment) as VdoPlayerSupportFragment
+        /* playerControlView = findViewById(R.id.player_control_view);
+         playerFragment = supportFragmentManager.findFragmentById(R.id.vdo_player_fragment) as VdoPlayerSupportFragment*/
+
+        playerFragment = supportFragmentManager.findFragmentById(R.id.vdo_player_fragment) as VdoPlayerUIFragment
         playerFragment.initialize(object : PlayerHost.InitializationListener {
-
             override fun onInitializationSuccess(playerhost: PlayerHost?, player: VdoPlayer?, wasRestored: Boolean) {
+                player?.addPlaybackEventListener(playbackListener)
 
-                currentOrientation = getResources().getConfiguration().orientation;
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                val vdoParams = VdoInitParams.Builder().setOtp(otp).setPlaybackInfo(playbackinfo).setPreferredCaptionsLanguage("en").setForceHighestSupportedBitrate(true)
+                    .enableAutoResume()
+                    .build()
 
-                theplayer = player!!
-                player.addPlaybackEventListener(playbackListener)
+                /*val vdoParams = VdoInitParams
+                    .createParamsWithOtp(otp, playbackinfo)
+                    .autoplay*/
 
-                playerControlView.setPlayer(player);
-                showControls(true);
-                initializeMediaSession();
-                playerControlView.setFullscreenActionListener(fullscreenToggleListener);
-                playerControlView.setControllerVisibilityListener(visibilityListener);
-                playerControlView.setVdoParamsGenerator(vdoParamsGenerator);
-
-                val vdoParams = VdoInitParams.createParamsWithOtp(otp, playbackinfo)
-                player.load(vdoParams)
-
+                player?.load(vdoParams)
             }
 
-            override fun onInitializationFailure(p0: PlayerHost?, p1: ErrorDescription?) {
+            override fun onInitializationFailure(playerhost: PlayerHost?, player: ErrorDescription?) {
                 TODO("Not yet implemented")
             }
-        })
+
+        });
+
+
+//        playerFragment.initialize(object : PlayerHost.InitializationListener {
+//
+//            override fun onInitializationSuccess(playerhost: PlayerHost?, player: VdoPlayer?, wasRestored: Boolean) {
+//
+//                currentOrientation = getResources().getConfiguration().orientation;
+//                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+//
+//                theplayer = player!!
+//                player.addPlaybackEventListener(playbackListener)
+//
+//                playerControlView.setPlayer(player);
+//                showControls(true);
+//                initializeMediaSession();
+//                playerControlView.setFullscreenActionListener(fullscreenToggleListener);
+//                playerControlView.setControllerVisibilityListener(visibilityListener);
+//                playerControlView.setVdoParamsGenerator(vdoParamsGenerator);
+//
+//                val vdoParams = VdoInitParams.createParamsWithOtp(otp, playbackinfo)
+//                player.load(vdoParams)
+//
+//            }
+//
+//            override fun onInitializationFailure(p0: PlayerHost?, p1: ErrorDescription?) {
+//                TODO("Not yet implemented")
+//            }
+//        })
 
 
     }

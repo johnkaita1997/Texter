@@ -9,6 +9,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.text.TextUtils
 import android.util.Log
+import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import com.auth0.android.jwt.JWT
 import com.google.gson.GsonBuilder
@@ -18,15 +20,15 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import paita.stream_app_final.AppConstants.Constants
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.MainActivity
+import paita.stream_app_final.Tafa.Activities.*
 import paita.stream_app_final.Tafa.Adapters.MyAuth
+import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
 import paita.stream_app_final.Tafa.Shared.SessionManager
 import paita.stream_app_final.Tafa.Shared.ViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 private lateinit var redirectingDialog: ProgressDialog
@@ -399,3 +401,89 @@ fun Context.dateFormatter(oldDate: String): String {
     val date = formatter.parse(oldDate)
     return date.toString()
 }
+
+
+fun Context.playVideos(videoId: String) {
+
+    val theProgressDialog = ProgressDialog(this)
+    theProgressDialog.setTitle("Fetching")
+    theProgressDialog.setMessage("Fetching Video...")
+    theProgressDialog.setCancelable(true)
+    theProgressDialog.show()
+
+    CoroutineScope(Dispatchers.IO).launch() {
+
+        val vidocypherResponse = myViewModel(this@playVideos as Activity).getPlaybackInfo(videoId.toString())
+
+        withContext(Dispatchers.Main) {
+            if (vidocypherResponse.otp == "") {
+                theProgressDialog.dismiss()
+                return@withContext
+            }
+
+            val otp = vidocypherResponse.otp
+            val playbackinfo = vidocypherResponse.playbackInfo
+
+            val intent = Intent(this@playVideos, VideoViewerActivity::class.java)
+            intent.putExtra("otp", otp)
+            intent.putExtra("playbackinfo", playbackinfo)
+
+            withContext(Dispatchers.Main) {
+                theProgressDialog.dismiss()
+            }
+
+            startActivity(intent)
+        }
+    }
+
+}
+
+suspend fun Context.fetchFormId(formidname: String): String {
+    val formid = getFormId(myViewModel(this@fetchFormId as Activity), formidname)
+    return formid
+}
+
+
+fun Context.settingsClick(settingsImageview: View) {
+
+    settingsImageview.setOnClickListener {
+
+        val popup = PopupMenu(this, it)
+        popup.inflate(R.menu.pop_menu)
+
+        popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
+            override fun onMenuItemClick(menuitem: MenuItem?): Boolean {
+                return when (menuitem!!.getItemId()) {
+                    R.id.myvideos -> {
+                        goToActivity_Unfinished(this@settingsClick as Activity, YourVideos::class.java)
+                        true
+                    }
+                    R.id.logout -> {
+                        logoutUser()
+                        true
+                    }
+                    R.id.contact -> {
+                        goToActivity_Unfinished(this@settingsClick as Activity, ContactUsActivity::class.java)
+                        true
+                    }
+                    R.id.myprofile -> {
+                        goToActivity_Unfinished(this@settingsClick as Activity, ProfileActivity::class.java)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        })
+        popup.show()
+
+    }
+}
+
+
+fun Context.logoutUser() {
+    if (sessionManager().logout()) {
+        makeLongToast("You have been logged out successfully")
+        goToActivity(this@logoutUser as Activity, LoginActivity::class.java)
+    }
+}
+

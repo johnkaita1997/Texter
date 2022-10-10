@@ -67,8 +67,8 @@
             android:layout_marginLeft="123dp"
             android:layout_marginTop="30dp"
             android:gravity="top"
-            android:textAllCaps="true"
             android:text="Welcome"
+            android:textAllCaps="true"
             android:textAppearance="@style/good_mornin" />
 
 
@@ -92,16 +92,52 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/rectangle_8"
             android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:orientation="vertical">
 
-            <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-                android:id="@+id/youtube_player_view"
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rectangle_8"
+                android:layout_marginHorizontal="0dp"
                 android:layout_marginTop="10dp"
-                app:autoPlay="false"
-                app:videoId="esZT9Zh0Vvg" />
+                android:layout_marginBottom="10dp"
+                android:background="#e6e6e6"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:visibility="visible"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#e6e6e6"
+                    android:orientation="vertical">
+
+                    <!-- SJ -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="10dp"
+                        android:background="@color/formtwocolor"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:text="Trending Videos"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="16dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/trendingvideosRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="5dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
 
             <androidx.cardview.widget.CardView
@@ -109,8 +145,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/rectangle_8"
                 android:layout_marginHorizontal="0dp"
-                android:layout_marginTop="30dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:background="#e6e6e6"
                 android:orientation="vertical"
                 android:padding="10dp"

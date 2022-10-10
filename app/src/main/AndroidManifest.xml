@@ -59,21 +59,18 @@
             android:name=".Tafa.Activities.WebViewActivity"
             android:exported="false" />
         <activity
-            android:name=".Tafa.Activities.SubscriptionActivity"
-            android:exported="false"
-            android:label="@string/title_activity_subscription"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".Tafa.Activities.TopicsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".Tafa.Activities.PaidVideosView"
             android:exported="false"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".Tafa.Activities.FormActivity"
             android:exported="false" />
         <activity
-            android:name=".Tafa.Activities.VideoViewerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
-            android:exported="false" />
+            android:name=".Tafa.Activities.VideoViewerActivity"/>
         <activity
             android:name=".Tafa.Activities.MainActivity"
             android:exported="true"

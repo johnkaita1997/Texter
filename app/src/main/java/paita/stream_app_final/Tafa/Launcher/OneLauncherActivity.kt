@@ -27,6 +27,7 @@ import paita.stream_app_final.AppConstants.Constants.permission_request
 import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.MainActivity
+import paita.stream_app_final.Tafa.Activities.TestActivity
 import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import paita.stream_app_final.Tafa.Shared.ConnectionDetector
 import paita.stream_app_final.Tafa.Shared.SessionManager
@@ -44,6 +45,7 @@ class OneLauncherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_one_launcher)
         getSupportActionBar()?.hide()
+//        goToActivity(this, TestActivity::class.java)
         initall()
 //        biometricLogin()
     }

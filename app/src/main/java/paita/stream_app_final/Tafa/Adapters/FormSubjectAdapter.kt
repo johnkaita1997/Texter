@@ -18,14 +18,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import paita.stream_app_final.Extensions.makeLongToast
 import paita.stream_app_final.R
+import paita.stream_app_final.Tafa.Activities.PaidVideosView
 import paita.stream_app_final.Tafa.Activities.TopicsActivity
 import paita.stream_app_final.Tafa.Adapters.FormSubjectAdapter.ContactHolder
 import java.net.URL
 
 
-class FormSubjectAdapter(var activity: Activity, var subjectlist: ArrayList<Subject>, private val mContext: Context, val colorname: String, val formnumber: String, val actualformname: String) :
-        RecyclerView.Adapter<ContactHolder>() {
+class FormSubjectAdapter(var activity: Activity,
+                         var subjectlist: ArrayList<Subject>,
+                         private val mContext: Context,
+                         val colorname: String,
+                         val formnumber: String,
+                         val formid: String,
+                         val actualformname: String,
+                         val paid: Boolean) : RecyclerView.Adapter<ContactHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater.inflate(R.layout.custom_subjects, parent, false)
@@ -52,15 +60,32 @@ class FormSubjectAdapter(var activity: Activity, var subjectlist: ArrayList<Subj
                 val id = selectedItem.id
                 val description = selectedItem.description
 
-                val intent = Intent(mContext, TopicsActivity::class.java)
-                intent.putExtra("subjectname", name)
-                intent.putExtra("subjectid", id)
-                intent.putExtra("subjectdescription", description)
-                intent.putExtra("formname", formnumber)
-                intent.putExtra("formnumber", formnumber)
-                intent.putExtra("actualformname", actualformname)
-                intent.putExtra("colorname", colorname)
-                mContext.startActivity(intent)
+                if (paid) {
+
+                    val intent = Intent(mContext, PaidVideosView::class.java)
+                    intent.putExtra("subjectname", name)
+                    intent.putExtra("subjectid", id)
+                    intent.putExtra("formid", formid)
+                    intent.putExtra("subjectdescription", description)
+                    intent.putExtra("formname", formnumber)
+                    intent.putExtra("formnumber", formnumber)
+                    intent.putExtra("actualformname", actualformname)
+                    intent.putExtra("colorname", colorname)
+                    mContext.startActivity(intent)
+
+                } else {
+
+                    val intent = Intent(mContext, TopicsActivity::class.java)
+                    intent.putExtra("subjectname", name)
+                    intent.putExtra("subjectid", id)
+                    intent.putExtra("subjectdescription", description)
+                    intent.putExtra("formname", formnumber)
+                    intent.putExtra("formnumber", formnumber)
+                    intent.putExtra("actualformname", actualformname)
+                    intent.putExtra("colorname", colorname)
+                    mContext.startActivity(intent)
+
+                }
 
             }
         }
