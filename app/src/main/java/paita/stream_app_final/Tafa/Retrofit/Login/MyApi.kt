@@ -152,4 +152,6 @@ interface MyApi {
     @GET suspend fun getNext(@Url url: String, @Query("form") formid: String, @Query("subject") subjectid: String, @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?): Response<PaidVideos>
 
     @POST("api/v1/mfa/otp/generate") suspend fun getOTP(@Body otpObj: OTP): Response<OTPResponse>
+    @GET("api/v1/users/app-version") suspend fun getAppVersion(): Response<AppVersion>
+
 }

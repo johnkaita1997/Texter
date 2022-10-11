@@ -814,5 +814,23 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
+    suspend fun getAppVersion(): Double {
+        var otpresult = AppVersion(null).details?.version
+        runCatching {
+            val response = MyApi().getAppVersion()
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                otpresult = response.body()!!.details?.version
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return otpresult.toString().toDouble()
+    }
+
+
 
 }

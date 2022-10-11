@@ -1,10 +1,12 @@
 package paita.stream_app_final.Tafa.Launcher
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.biometrics.BiometricManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
@@ -23,11 +25,12 @@ import kotlinx.android.synthetic.main.activity_one_launcher.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import paita.stream_app_final.AppConstants.Constants.appVersionLocal
 import paita.stream_app_final.AppConstants.Constants.permission_request
 import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.MainActivity
-import paita.stream_app_final.Tafa.Activities.TestActivity
 import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import paita.stream_app_final.Tafa.Shared.ConnectionDetector
 import paita.stream_app_final.Tafa.Shared.SessionManager
@@ -78,10 +81,7 @@ class OneLauncherActivity : AppCompatActivity() {
             }
         })
 
-        val promptInfo = PromptInfo.Builder().setTitle("Tech Projects")
-            .setDescription("Use your fingerprint to login")
-            .setDeviceCredentialAllowed(true)
-            .build()
+        val promptInfo = PromptInfo.Builder().setTitle("Tech Projects").setDescription("Use your fingerprint to login").setDeviceCredentialAllowed(true).build()
 
         biometricPrompt.authenticate(promptInfo)
 
@@ -154,8 +154,21 @@ class OneLauncherActivity : AppCompatActivity() {
             100 -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //Check for connectivity
                 if (cd.isConnected) {
-                    //Now go to the next page
-                    gotonextpage()
+
+                    CoroutineScope(Dispatchers.IO).launch() {
+                        val appVersion = myViewModel(this@OneLauncherActivity).getAppVersion()
+                        if (appVersionLocal < appVersion) {
+                            withContext(Dispatchers.Main){
+                              uppdateApplication(appVersion)
+                            }
+                        } else {
+                            withContext(Dispatchers.Main){
+                                //Now go to the next page
+                                gotonextpage()
+                            }
+                        }
+                    }
+
                 } else {
                     internet_connection_error_Dilog()
                 }
@@ -172,6 +185,27 @@ class OneLauncherActivity : AppCompatActivity() {
                     finish()
                     System.exit(0)
                 }).show()
+        val btnPositive = alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
+        val layoutParams = btnPositive?.layoutParams as LinearLayout.LayoutParams
+        layoutParams.weight = 10f
+        btnPositive.layoutParams = layoutParams
+    }
+
+    private fun uppdateApplication(appVersion: Double) {
+        val alertDialog: android.app.AlertDialog? =
+            android.app.AlertDialog.Builder(this).setMessage("A newer Version ${appVersion} of TAFA APP is available. It includes bug fixes and improvements on performance. Download to stay up to date.").setCancelable(false).setIcon(R.drawable.tafalogo).setTitle("Feature Updates")
+                .setPositiveButton("Update", DialogInterface.OnClickListener { _, _ ->
+                    try {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+                    } catch (e: ActivityNotFoundException) {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                    }
+                })
+                .setNegativeButton("Dismiss", DialogInterface.OnClickListener { _, _ ->
+                    finish()
+                    System.exit(0)
+                })
+                .show()
         val btnPositive = alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
         val layoutParams = btnPositive?.layoutParams as LinearLayout.LayoutParams
         layoutParams.weight = 10f

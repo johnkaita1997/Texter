@@ -195,6 +195,15 @@ class OTPResponse(
     val details: String?,
 )
 
+class AppVersion(
+    val details: VersionDetails?
+)
+data class VersionDetails(
+    val date_added: String,
+    val id: String,
+    val version: String
+)
+
 
 
 
