@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="yourstyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
@@ -118,12 +118,12 @@
 
     <style name="modifiedEditText" parent="parent">
         <item name="android:textSize">@dimen/newsMoreTextSize</item>
-        <item name="android:backgroundTint">@color/primaryTextColor</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/primaryTextColor</item>
     </style>
 
     <style name="loginButton" parent="viewParent">
         <item name="android:background">@drawable/button_background_blue</item>
-        <item name="android:backgroundTint">@color/mainicolor</item>
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/mainicolor</item>
         <item name="android:textColor">@color/whiteTextColor</item>
         <item name="android:textStyle">bold</item>
     </style>

@@ -2,15 +2,14 @@ package paita.stream_app_final.Tafa.Authentication
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import dmax.dialog.SpotsDialog
-import paita.stream_app_final.Extensions.*
-import paita.stream_app_final.R
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import paita.stream_app_final.Extensions.*
+import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.WebViewActivity
 
 class LoginActivity : AppCompatActivity() {

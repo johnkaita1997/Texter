@@ -33,7 +33,7 @@ class PaidVideoAdapter(var activity: Activity, val paidVideoList: MutableList<Pa
 
         holder.itemView.paidvideolabelname.setOnClickListener {
             val videoId = paidVideoObject.videoid
-            activity.playVideos(videoId)
+            activity.playVideos(videoId, paidVideoObject.label)
         }
 
     }

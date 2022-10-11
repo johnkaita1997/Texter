@@ -1,24 +1,22 @@
 package paita.stream_app_final.Tafa.Activities
 
 import android.content.Intent
-import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_your_videos.*
 import kotlinx.android.synthetic.main.activity_your_videos.form_four
 import kotlinx.android.synthetic.main.activity_your_videos.form_one
 import kotlinx.android.synthetic.main.activity_your_videos.form_three
 import kotlinx.android.synthetic.main.activity_your_videos.form_two
+import kotlinx.android.synthetic.main.activity_your_videos.settingsImageview
 import kotlinx.coroutines.*
-import paita.stream_app_final.Extensions.coroutineexception
-import paita.stream_app_final.Extensions.fetchFormId
-import paita.stream_app_final.Extensions.makeLongToast
-import paita.stream_app_final.Extensions.myViewModel
+import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Adapters.YourVideosAdapter
+import paita.stream_app_final.Tafa.Adapters.ContinueWatchingVideo
+import paita.stream_app_final.Tafa.Shared.WatchingDatabase
 
 class YourVideos : AppCompatActivity() {
 
@@ -37,6 +35,53 @@ class YourVideos : AppCompatActivity() {
 
         callTheFormIds()
         initFormButtonClicks()
+        continueWatchingInit()
+        settingsClick(settingsImageview)
+    }
+
+    private fun continueWatchingInit() {
+
+
+        val database = WatchingDatabase(this@YourVideos).getVideoDao()
+
+        CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
+
+            if (database.getAllContinueWatchingVideo().isEmpty()) {
+                withContext(Dispatchers.Main){
+//                    makeLongToast("Db Empty")
+                }
+            } else {
+
+                var videoId = ""
+                var videolabel = ""
+
+                contCard.visibility = View.VISIBLE
+                database.getAllContinueWatchingVideo().forEach {
+                    contlabel.setText(it.videoLabel)
+                    videolabel = it.videoLabel
+                    videoId = it.videoid
+                }
+
+                contCard.setOnClickListener {
+                    if (!videoId.equals("") && !videolabel.equals("")) {
+
+                        val database = WatchingDatabase(this@YourVideos).getVideoDao()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if (database.getAllContinueWatchingVideo().isNotEmpty()) {
+                                database.getAllContinueWatchingVideo().forEach {
+                                    database.deleteNote(it)
+                                }
+                            }
+                            database.addContinueWatchingVideo(ContinueWatchingVideo(videoId, videolabel))
+                        }
+                        playVideos(videoId, videolabel)
+                    }
+                }
+
+
+            }
+
+        }
 
     }
 

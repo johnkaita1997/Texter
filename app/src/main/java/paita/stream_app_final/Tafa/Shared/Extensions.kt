@@ -21,11 +21,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 import paita.stream_app_final.AppConstants.Constants
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.*
+import paita.stream_app_final.Tafa.Adapters.ContinueWatchingVideo
 import paita.stream_app_final.Tafa.Adapters.MyAuth
 import paita.stream_app_final.Tafa.Authentication.LoginActivity
 import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
 import paita.stream_app_final.Tafa.Shared.SessionManager
 import paita.stream_app_final.Tafa.Shared.ViewModel
+import paita.stream_app_final.Tafa.Shared.WatchingDatabase
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
@@ -403,7 +405,21 @@ fun Context.dateFormatter(oldDate: String): String {
 }
 
 
-fun Context.playVideos(videoId: String) {
+fun Context.playVideos(videoId: String, label: String) {
+
+
+    val database = WatchingDatabase(this).getVideoDao()
+
+    CoroutineScope(Dispatchers.IO).launch {
+
+        if (database.getAllContinueWatchingVideo().isNotEmpty()) {
+            database.getAllContinueWatchingVideo().forEach {
+                database.deleteNote(it)
+            }
+        }
+        database.addContinueWatchingVideo(ContinueWatchingVideo(videoId, label))
+
+    }
 
     val theProgressDialog = ProgressDialog(this)
     theProgressDialog.setTitle("Fetching")
@@ -413,7 +429,7 @@ fun Context.playVideos(videoId: String) {
 
     CoroutineScope(Dispatchers.IO).launch() {
 
-        val vidocypherResponse = myViewModel(this@playVideos as Activity).getPlaybackInfo(videoId.toString())
+        val vidocypherResponse = myViewModel(this@playVideos as Activity).getPlaybackInfo(videoId)
 
         withContext(Dispatchers.Main) {
             if (vidocypherResponse.otp == "") {

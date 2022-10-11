@@ -796,4 +796,23 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
+    suspend fun getOTP(otp: OTP): String? {
+        var otpresult = OTPResponse("").details
+        runCatching {
+            val response = MyApi().getOTP(otp)
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                otpresult = response.body()!!.details
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+        return otpresult
+    }
+
+
+
 }

@@ -2,20 +2,13 @@ package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.topiclist.*
-import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import paita.stream_app_final.Extensions.playVideos
 
 
@@ -47,7 +40,7 @@ class VideoViewerAdapter(var activity: Activity, var subunitslist: List<Thedetai
                 val id = selectedItem.id
                 val videoid = selectedItem.videoid
 
-                activity.playVideos(videoid)
+                activity.playVideos(videoid, subjectobject.label)
 
             }
         }

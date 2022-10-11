@@ -1,22 +1,14 @@
 package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.customyourvideos.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.Extensions.playVideos
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
 
 class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDetail>, val formname: String, val colorname: String) : RecyclerView.Adapter<YourVideosAdapter.SubjectHolder>() {
 
@@ -46,7 +38,7 @@ class YourVideosAdapter(var activity: Activity, var thevideos: ArrayList<YoursDe
 
         holder.itemView.customwatchvideo.setOnClickListener {
             val videoid = videoObject.videos.get(0).videoid
-            activity.playVideos(videoid)
+            activity.playVideos(videoid, topicName)
         }
 
 

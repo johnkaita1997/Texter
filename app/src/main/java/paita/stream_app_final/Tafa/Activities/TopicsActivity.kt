@@ -99,6 +99,8 @@ class TopicsActivity : AppCompatActivity() {
         colorname = intent.getStringExtra("colorname").toString()
         actualformname = intent.getStringExtra("actualformname").toString()
 
+        topicNameTextView.setText(subjectname)
+
         var amount = 0.0
 
         CoroutineScope(Dispatchers.IO).launch() {

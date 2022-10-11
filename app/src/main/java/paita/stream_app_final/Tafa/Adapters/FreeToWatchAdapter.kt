@@ -1,28 +1,13 @@
 package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.Intent
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_freeto_watch.view.*
-import kotlinx.android.synthetic.main.custom_subject_freetowatch.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.Extensions.playVideos
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.FreeToWatchActivity
-import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
 
 
 class FreeToWatchAdapter(var activity: Activity, val videoList: List<Detail_FreeVideos>?) : RecyclerView.Adapter<FreeToWatchAdapter.SubjectHolder>() {
@@ -45,7 +30,7 @@ class FreeToWatchAdapter(var activity: Activity, val videoList: List<Detail_Free
 
         holder.itemView.freetowatchLinearlayout.setOnClickListener {
             val videoid = videoObject.videoid
-            activity.playVideos(videoid)
+            activity.playVideos(videoid, videoObject.label)
         }
 
     }

@@ -9,9 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.settingsImageview
 import kotlinx.android.synthetic.main.activity_paid_videos.*
 import kotlinx.coroutines.*
-import paita.stream_app_final.Extensions.coroutineexception
-import paita.stream_app_final.Extensions.myViewModel
-import paita.stream_app_final.Extensions.settingsClick
+import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Adapters.PaidVideoAdapter
 
@@ -51,6 +49,9 @@ class PaidVideosView : AppCompatActivity() {
             val padVideoAdapter = PaidVideoAdapter(this@PaidVideosView, videoList)
 
             withContext(Dispatchers.Main) {
+                if (videoList.isEmpty()) {
+                    showAlertDialog("You haven't subscribed to any videos")
+                }
                 paidvideosRecycler.setAdapter(padVideoAdapter)
             }
 
@@ -63,7 +64,7 @@ class PaidVideosView : AppCompatActivity() {
 
                     if (!recyclerView.canScrollVertically(1)) {
 
-                        paidvideos_spin_kit.visibility = View.VISIBLE
+//                        paidvideos_spin_kit.visibility = View.VISIBLE
 
                         CoroutineScope(Dispatchers.IO).launch() {
                             val response = myViewModel(this@PaidVideosView).getNext(next, formid, subjectid)
@@ -77,7 +78,7 @@ class PaidVideosView : AppCompatActivity() {
 
                                 withContext(Dispatchers.Main) {
                                     padVideoAdapter.notifyDataSetChanged()
-                                    paidvideos_spin_kit.visibility = View.GONE
+//                                    paidvideos_spin_kit.visibility = View.GONE
 
                                 }
                             }

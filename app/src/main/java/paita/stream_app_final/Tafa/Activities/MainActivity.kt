@@ -4,8 +4,6 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
-import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +14,6 @@ import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Adapters.SubjectFreeAdapter
 import paita.stream_app_final.Tafa.Adapters.TrendingVideoAdapter
-import paita.stream_app_final.Tafa.Authentication.LoginActivity
 
 
 class MainActivity : AppCompatActivity() {

@@ -13,7 +13,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.custom_dialog.view.*
 import kotlinx.coroutines.*
@@ -21,6 +20,7 @@ import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
 import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
 import paita.stream_app_final.Tafa.Retrofit.Login.MyApi
+import paita.stream_app_final.Tafa.Shared.WatchingDatabase
 
 class SubTopicsAdapter(var activity: Activity,
                        var color: String,
@@ -104,7 +104,7 @@ class SubTopicsAdapter(var activity: Activity,
                         val subunitslist = async {
                             activity.myViewModel(activity).fetchvideosperunitname(unitid)
                         }
-                        showUnitVideos(unitid, subunitslist.await(), theProgressDialog)
+                        showUnitVideos(unitid, subunitslist.await(), theProgressDialog, subunitname)
                     }
                 }
 
@@ -114,7 +114,7 @@ class SubTopicsAdapter(var activity: Activity,
 
     }
 
-    private suspend fun showSubscriptionView(unitid: String, subunitamount: Double, unitname: String) {
+    private suspend fun showSubscriptionView(unitid: String, subunitamount: Double, subunitname: String) {
 
         // Create an alert builder
         val builder: AlertDialog.Builder = AlertDialog.Builder(activity)
@@ -133,7 +133,7 @@ class SubTopicsAdapter(var activity: Activity,
             val text00 = "Dear "
             val text0 = "${name}"
             val textA = ", enter your M-Pesa phone number below to subscribe to "
-            val textB = unitname
+            val textB = subunitname
             val textC = ". Press "
             val textD = "Pay Now"
             val textE = " button to initiate payment. You will receive a prompt notification on your phone, enter your pin and press OK to complete payment"
@@ -198,7 +198,7 @@ class SubTopicsAdapter(var activity: Activity,
                                                         activity.myViewModel(activity).fetchvideosperunitname(unitid)
                                                     }
                                                     activity.finish()
-                                                    showUnitVideos(unitid, subunitslist.await(), theProgressDialog)
+                                                    showUnitVideos(unitid, subunitslist.await(), theProgressDialog, subunitname)
 
                                                 } else if (response.body()?.details?.status.equals("PENDING")) {
                                                 }
@@ -259,7 +259,7 @@ class SubTopicsAdapter(var activity: Activity,
     }
 
 
-    private suspend fun showUnitVideos(unitid: String, theobject: Videosperunitname, theProgressDialog: ProgressDialog) {
+    private suspend fun showUnitVideos(unitid: String, theobject: Videosperunitname, theProgressDialog: ProgressDialog, subunitname: String) {
 
         CoroutineScope(Dispatchers.Main).launch() {
 
@@ -269,6 +269,16 @@ class SubTopicsAdapter(var activity: Activity,
                     if (index == 0) {
 
                         val videoid = it?.videoid
+
+                        val database = WatchingDatabase(activity).getVideoDao()
+                        CoroutineScope(Dispatchers.IO).launch {
+                            if (database.getAllContinueWatchingVideo().isNotEmpty()) {
+                                database.getAllContinueWatchingVideo().forEach {
+                                    database.deleteNote(it)
+                                }
+                            }
+                            database.addContinueWatchingVideo(ContinueWatchingVideo(videoid.toString(), subunitname))
+                        }
 
                         CoroutineScope(Dispatchers.IO).launch() {
 
@@ -292,6 +302,7 @@ class SubTopicsAdapter(var activity: Activity,
                                 }
 
                                 activity.startActivity(intent)
+
                             }
                         }
                     }

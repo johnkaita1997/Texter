@@ -1,7 +1,28 @@
 package paita.stream_app_final.Tafa.Adapters
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.android.gms.common.Feature
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+
+
+
+
+/*FOR ROOM DATABASE*/
+@Entity
+data class ContinueWatchingVideo(val videoid: String, val videoLabel: String): Serializable {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}
+
+
+
+
+
+
+
+
 
 data class User(var email: String,
                 var first_name: String,
@@ -165,10 +186,14 @@ data class PaidVideoResult(
     val videoid: String
 )
 
+data class OTP(
+    val expiry_time: Int,
+    val send_to: String
+)
 
-
-
-
+class OTPResponse(
+    val details: String?,
+)
 
 
 

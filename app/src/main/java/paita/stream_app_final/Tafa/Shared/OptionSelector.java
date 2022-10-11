@@ -35,7 +35,7 @@ public class OptionSelector implements DialogInterface.OnClickListener, View.OnC
         void onTracksSelected(DownloadOptions downloadOptions, int[] selectedTracks);
     }
 
-    private static final String TAG = "OptionSelector";
+    public static final String TAG = "OptionSelector";
 
     enum OptionStyle {
         SHOW_INDIVIDUAL_TRACKS,
@@ -44,7 +44,7 @@ public class OptionSelector implements DialogInterface.OnClickListener, View.OnC
 
     private final DownloadOptions downloadOptions;
     private final long durationMs;
-    private final OptionStyle optionStyle;
+    public final OptionStyle optionStyle;
     private final OptionsSelectedCallback selectedCallback;
 
     private List<Integer> selectedTracks = new ArrayList<>();

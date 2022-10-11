@@ -149,7 +149,7 @@ interface MyApi {
 
     @GET("api/v1/video/app-trending-videos") suspend fun getTrendingVideos(): Response<TrendingVideos>
     @GET("api/v1/video/list-related-videos") suspend fun getPaidVideos(@Query("form") formid: String, @Query("subject") subjectid: String,  @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?): Response<PaidVideos>
-
     @GET suspend fun getNext(@Url url: String, @Query("form") formid: String, @Query("subject") subjectid: String, @Header("Authorization") authorization: String?, @Header("JWTAUTH") jwtauth: String?): Response<PaidVideos>
 
+    @POST("api/v1/mfa/otp/generate") suspend fun getOTP(@Body otpObj: OTP): Response<OTPResponse>
 }

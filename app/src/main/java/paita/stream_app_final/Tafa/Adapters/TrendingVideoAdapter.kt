@@ -1,8 +1,6 @@
 package paita.stream_app_final.Tafa.Adapters
 
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.custom_subject_freetowatch.view.*
 import kotlinx.android.synthetic.main.custom_trending_videos.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import paita.stream_app_final.Extensions.myViewModel
 import paita.stream_app_final.Extensions.playVideos
 import paita.stream_app_final.R
-import paita.stream_app_final.Tafa.Activities.VideoViewerActivity
 
 class TrendingVideoAdapter(var activity: Activity, val trendingVideoList: List<TrendingVideoDetail>?) : RecyclerView.Adapter<TrendingVideoAdapter.SubjectHolder>() {
 
@@ -42,7 +34,7 @@ class TrendingVideoAdapter(var activity: Activity, val trendingVideoList: List<T
 
         holder.itemView.trendingVideoCard.setOnClickListener {
             val videoId = subjectObject?.videoid
-            activity.playVideos(videoId.toString())
+            activity.playVideos(videoId.toString(), "Trending")
         }
 
     }

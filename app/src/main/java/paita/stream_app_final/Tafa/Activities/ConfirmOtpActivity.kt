@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import paita.stream_app_final.Extensions.*
 import paita.stream_app_final.R
+import paita.stream_app_final.Tafa.Adapters.OTP
 
 class ConfirmOtpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,16 @@ class ConfirmOtpActivity : AppCompatActivity() {
                     }
                 }
 
+            }
+
+        }
+
+        resendOTP.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
+                myViewModel(this@ConfirmOtpActivity).getOTP(OTP(600, mobileNumber))
+                withContext(Dispatchers.Main){
+                    showAlertDialog("You will receive an OTP shortly")
+                }
             }
         }
 
