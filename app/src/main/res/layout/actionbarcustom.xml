@@ -1,0 +1,84 @@
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:elevation="20dp"
+    app:cardCornerRadius="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/appnametextview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Prop Swift"
+                android:textColor="@color/black"
+                android:textSize="22dp"
+                android:textStyle="bold" />
+
+
+            <ImageView
+                android:id="@id/menuicon"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/menubig" />
+
+            <ImageView
+                android:id="@+id/profilepicicon"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="0dp"
+                android:layout_toLeftOf="@+id/menuicon"
+                android:src="@drawable/profilepic" />
+
+            <ImageView
+                android:layout_marginTop="4dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_toLeftOf="@+id/profilepicicon"
+                android:src="@drawable/bell" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_marginBottom="10dp"
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="Property"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/main_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/white"
+            android:backgroundTint="@color/white"
+            app:tabIndicator="@color/white"
+            app:tabIndicatorColor="@color/proplightblue"
+            app:tabIndicatorHeight="2dp"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextColor="@color/black" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

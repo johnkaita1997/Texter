@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tafa</string>
+    <string name="app_name">PropSwift</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="login_password_hint">Password</string>
@@ -11,7 +11,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="already_have_an_account">Already have an account? <font fgcolor='#FFFF00'> Login</font> </string>
+    <string name="already_have_an_account">Already have an account? <font fgcolor='#0000FF'> Login</font> </string>
     <string name="resetPassword">Forgot Your Password?  <font fgcolor='#FFFF00'>  Reset Now</font> </string>
     <string name="dont_have_an_account">Dont Have An Account?<font fgcolor='#FFFF00'>  Create One</font>  </string>
     <string name="view_all_bets"><u>View all bets</u></string>
@@ -51,5 +51,29 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_downloads">DownloadsActivity</string>
+
+    <string name="hiletsgetstarted">Hi! Let Us Get Started</string>
+    <string name="whichbestdscribesyou">Which best describes you?</string>
+    <string name="amaman">Am a man</string>
+    <string name="amawoman">Am a woman</string>
+    <string name="amanother">I prefer not to say</string>
+
+    <string name="gotit">Got It!</string>
+    <string name="enteryourbirthdate">Enter your Date of Birth!</string>
+    <string name="done">Done!</string>
+    <string name="title_activity_choose_login">ChooseLogin</string>
+
+    <string name="choosehowtologin">Choose How To Login</string>
+    <string name="continuewithgoogle">Continue With Google</string>
+    <string name="continuewithfacebook">Continue With Facebook</string>
+    <string name="continuewithnumber">Continue With Number</string>
+
+    <string name="contactinformation">Contact Information</string>
+    <string name="continued">Continue</string>
+    <string name="finish">Finish</string>
+    <string name="enteryourphonenumber">Enter Your Phone Number</string>
+    <string name="desc_two">For maintaining and anticipating need for, a arange of processes and functions, ostensibly for the purpose of improved operations and reduced budget</string>
+    <string name="descriptionother">The only thing we can manage better than projects is people</string>
+
 
 </resources>

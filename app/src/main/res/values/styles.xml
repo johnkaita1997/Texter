@@ -18,19 +18,19 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
+  <!--  <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
         <item name="android:activityOpenEnterAnimation">@anim/fadein</item>
         <item name="android:activityOpenExitAnimation">@anim/fadeout</item>
-    </style>
+    </style>-->
 
     <style name="CustomDialog" parent="@android:style/Theme.Dialog">
-        <item name="android:windowAnimationStyle">@style/CustomDialogAnimation</item>
+<!--        <item name="android:windowAnimationStyle">@style/CustomDialogAnimation</item>-->
     </style>
 
-    <style name="CustomDialogAnimation">
+   <!-- <style name="CustomDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/translate_left_side</item>
         <item name="android:windowExitAnimation">@anim/translate_right_side</item>
-    </style>
+    </style>-->
 
     <style name="Divider">
         <item name="android:layout_width">match_parent</item>
@@ -122,7 +122,7 @@
     </style>
 
     <style name="loginButton" parent="viewParent">
-        <item name="android:background">@drawable/button_background_blue</item>
+<!--        <item name="android:background">@drawable/button_background_blue</item>-->
         <item name="android:backgroundTint" tools:targetApi="lollipop">@color/mainicolor</item>
         <item name="android:textColor">@color/whiteTextColor</item>
         <item name="android:textStyle">bold</item>
@@ -136,17 +136,6 @@
 
 
     !-- set the rounded drawable as background to your bottom sheet -->
-
-    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
-        <item name="android:background">@drawable/bg_bottom_sheet_dialog_fragment</item>
-    </style>
-
-    <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowIsFloating">false</item>
-        <item name="bottomSheetStyle">@style/BottomSheet</item>
-    </style>
-
-    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />
 
 
     <!-- styles.xml -->

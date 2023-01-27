@@ -60,4 +60,15 @@
     <color name="basecolor">#5968B0</color>
     <color name="safebasecolor">#6282B3</color>
 
+
+    <color name="propbrownligt">#E7BCA7</color>
+    <color name="propbrownheavy">#E3B8A3</color>
+    <color name="proplightgreen">#A2E5DE</color>
+    <color name="propwhite">#FFFFFF</color>
+    <color name="propdarkblue">#8B37DE</color>
+    <color name="proplightblue">#BB37DE</color>
+
+
+
+
 </resources>

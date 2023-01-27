@@ -10,6 +10,8 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable-hdpi/gradient.xml" value="0.135" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable-hdpi/rectangle_onetwo.xml" value="0.1415" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/backbutton.xml" value="0.131" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/background_white_rounded_5dp.xml" value="0.1455" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/calendar_item_background.xml" value="0.1455" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/halfbackground.xml" value="0.2075" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/menumenu.xml" value="0.1495" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/rectangle.xml" value="0.202" />
@@ -21,6 +23,7 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/rectangle_two.xml" value="0.202" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/rectanglebutton.xml" value="0.179" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/sample_list_item.xml" value="0.15" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/drawable/second_special_calendar_item.xml" value="0.1455" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-large/activity_one_launcher.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-large/custom_freetowatch.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-sw600dp/activity_one_launcher.xml" value="0.1" />
@@ -34,6 +37,7 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/activity_video_viewer.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/custom_subjects.xml" value="0.19375" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/customyourvideos.xml" value="0.12" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/model_character_list_item.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/subtopiclist.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xlarge/topiclist.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout-xxhdpi/activity_form_one.xml" value="0.1" />
@@ -71,11 +75,12 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_profile_user_details.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_register.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_related_videos.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_rick_and_morty_main.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_sign_up.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_subject_plans.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_subscription.xml" value="0.18" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_subscription2.xml" value="0.2" />
-        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_test.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_test.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_topic.xml" value="0.16" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_topics.xml" value="0.17307692307692307" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_uscontact_us.xml" value="0.15" />
@@ -85,6 +90,8 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_web_view.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/activity_your_videos.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/bottom_sheet_layout.xml" value="0.16" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/calendar_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/cell_cart.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_bottom_sheet_layout.xml" value="0.2436548223350254" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_dialog.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_freeto_watch.xml" value="0.25" />
@@ -97,20 +104,49 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_subjects_formtwo.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/custom_trending_videos.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/customyourvideos.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/epox_carousel.xml" value="0.67" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/epox_character_details_header.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/epox_character_list_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/epox_task.xml" value="0.3284182305630027" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/epox_title.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/epoxy_header_view.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/first_special_calendar_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/first_special_selected_calendar_item.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_bottom_home.xml" value="0.18" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_container.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_first.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_notifications.xml" value="0.18425925925925926" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_profile.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/fragment_second.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/item_layout.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/item_task.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/item_task_corousel.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/item_title.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/item_transaction_units.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/item_transactions.xml" value="0.16" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/itemdataclass.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/layout_center_viewpager.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/list_divider.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_character_details_data_point.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_character_details_header.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_character_details_image.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_character_list_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_character_list_item_square.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_character_list_title.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_episode_carousel_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_episode_list_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_episode_list_title.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_loading.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_local_exception_error_state.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/model_title.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/my_bottom_sheet_layout.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/my_bottom_sheet_layout_subjectlist.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/network_security_config.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/recycler_create_post.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/sample_list_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/second_special_calendar_item.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/second_special_selected_calendar_item.xml" value="0.12" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/singlefood_layout.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/subscription_form_bottom_sheet_layout.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/subtopiclist.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/layout/topiclist.xml" value="0.1" />
@@ -122,6 +158,69 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/menu/popup_menu.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1225" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kafa/app/src/main/res/mipmap-anydpi-v26/mainicone.xml" value="0.1225" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/drawable-hdpi/rectanglebutton.xml" value="0.1175" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/drawable/app_launch.xml" value="0.118" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/drawable/smiling_peo.xml" value="0.118" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout-xlarge/item_layout.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_choose_login2.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_contact_information.xml" value="0.1526293287729799" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_launcher.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_profile_basic.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_test.xml" value="0.3180846515604959" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_verification.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_welcome.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_welcome_one.xml" value="0.17" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/activity_welcome_two.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/background_three.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/choose_login_child.xml" value="0.15" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/fragment_first.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/fragment_second.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/launcher_activity.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/launcher_welcomeone.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/launcher_welcomeone_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/launcher_welcomeone_text.xml" value="0.16209371042634022" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/launcher_welcometwo_child.xml" value="0.18" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/login_contactinformation_child.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/login_verification_child.xml" value="0.16209371042634022" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/singlefood_layout.xml" value="0.3180846515604959" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/welcomeone_text.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/drawable-anydpi/rectangle.xml" value="0.1835" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/drawable-hdpi/rectanglebutton.xml" value="0.126" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-large/fragment_expenses.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-large/receipt_expenses.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/fragment_owned.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/launcher_welcomeone.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/receipt_rent.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/view_fragment_rented.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/view_fragmentowned.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/view_fragmentrented.xml" value="0.1" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/actionbarcustom.xml" value="0.25" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_addproperty.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_login.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_profile_basic.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_property.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_receipts.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_sign_up.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_welcome.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/background_three.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/choose_login_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/fragment_expenses.xml" value="0.25" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/fragment_owned.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/fragment_rented.xml" value="0.18" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/launcher_activity.xml" value="0.18" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/launcher_welcomeon.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/launcher_welcomeone.xml" value="0.18" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/launcher_welcomeone_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/launcher_welcometwo_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/login_contactinformation_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/login_verification_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/receipt_expenses.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/receipt_rent.xml" value="0.16" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/view_fragmentRented.xml" value="0.17400598546387344" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/view_fragmentowned.xml" value="0.33" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/view_fragmentrented.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/menu/pop_menu.xml" value="0.16417272338606242" />
       </map>
     </option>
   </component>

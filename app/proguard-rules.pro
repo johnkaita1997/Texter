@@ -15,3 +15,5 @@
 -keep class org.apache.harmony.awt** {*;}
 -keep class org.apache.harmony.misc** {*;}
 -keep class com.vdocipher.aegis** { *;  }
+-keepclassmembers class * extends androidx.viewbinding.ViewBinding { public static *** bind(android.view.View); }
+-keep public class * implements com.ixuea.android.downloader.db.DownloadDBController
