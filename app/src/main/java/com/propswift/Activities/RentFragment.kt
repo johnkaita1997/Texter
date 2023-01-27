@@ -1,5 +1,4 @@
-package com.propswift.Launchers
-
+package com.propswift.Activities
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -24,16 +23,16 @@ import com.skydoves.powermenu.PowerMenuItem
 import kotlinx.coroutines.*
 
 
-class ExpensesFragment : Fragment() {
+class RentFragment : Fragment() {
 
     private lateinit var viewy: View
-    private var _binding: FragmentExpensesBinding? = null
+    private var _binding: FragmentRentedBinding? = null
     private val binding get() = _binding!!
-    private var filter = "general"
+    private var filter = "paid"
     private var date = "paid"
 
     @RequiresApi(Build.VERSION_CODES.O) override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _binding = FragmentExpensesBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentRentedBinding.inflate(layoutInflater, container, false)
         viewy = binding.root
         initiate_Views()
         return viewy
@@ -41,8 +40,8 @@ class ExpensesFragment : Fragment() {
 
     private fun initiate_Views() {
 
-        val powerMenu: PowerMenu = PowerMenu.Builder(requireContext()).addItem(PowerMenuItem("General", false)) // add an item.
-            .addItem(PowerMenuItem("Incurred", false)) // aad an item list.
+        val powerMenu: PowerMenu = PowerMenu.Builder(requireContext()).addItem(PowerMenuItem("Paid", false)) // add an item.
+            .addItem(PowerMenuItem("Unpaid", false)) // aad an item list.
             .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
             .setMenuRadius(10f) // sets the corner radius.
             .setMenuShadow(10f) // sets the shadow.
@@ -57,8 +56,8 @@ class ExpensesFragment : Fragment() {
 
         CoroutineScope(Dispatchers.IO).launch() {
 
-            val allGeneralExpenses = async { activity?.myViewModel(requireActivity())?.getExpensesGeneralAll() }
-            val paidRent = allGeneralExpenses.await()
+            val allPaidRent = async { activity?.myViewModel(requireActivity())?.getpaidrentAll() }
+            val paidRent = allPaidRent.await()
 
             withContext(Dispatchers.Main) {
 
@@ -70,7 +69,7 @@ class ExpensesFragment : Fragment() {
                     override fun buildModels(controller: EpoxyController) {
                         controller.apply {
                             paidRent.details!!.forEachIndexed { index, item ->
-                                ExpensesGeneralModalClass_(activity, item).id(index).addTo(this@apply)
+                                RentReceiptModalClass_(activity, item).id(index).addTo(this@apply)
                             }
                         }
                     }
@@ -81,8 +80,8 @@ class ExpensesFragment : Fragment() {
         }
 
 
-        binding.generalIncurredBtn.setOnClickListener {
-            powerMenu.showAsDropDown(binding.generalIncurredBtn)
+        binding.paidUnpaidButton.setOnClickListener {
+            powerMenu.showAsDropDown(binding.paidUnpaidButton)
         }
 
         binding.monthPickerButton.setOnClickListener {
@@ -96,24 +95,25 @@ class ExpensesFragment : Fragment() {
 }
 
 
-@SuppressLint("NonConstantResourceId") @EpoxyModelClass(layout = R.layout.receipt_expenses) abstract class ExpensesGeneralModalClass(var activity: FragmentActivity?, var item: ExpenseDetail) :
-        EpoxyModelWithHolder<ExpensesGeneralModalClass.ViewHolder>() {
+@SuppressLint("NonConstantResourceId") @EpoxyModelClass(layout = R.layout.receipt_rent) abstract class RentReceiptModalClass(var activity: FragmentActivity?, var item: RentDetail) :
+        EpoxyModelWithHolder<RentReceiptModalClass.ViewHolder>() {
 
-    private lateinit var binding: ReceiptExpensesBinding
+    private lateinit var binding: ReceiptRentBinding
     override fun bind(holder: ViewHolder) = Unit
 
     inner class ViewHolder : EpoxyHolder() {
         @SuppressLint("SetTextI18n") override fun bindView(itemView: View) {
-            binding = ReceiptExpensesBinding.bind(itemView)
+            binding = ReceiptRentBinding.bind(itemView)
 
-            binding.expenseDateTv.setText(item.date_incurred)
-            binding.expensereceiptNoTv.setText(item.id)
-            binding.expenseAmountTv.setText("Expenses Incurred   :   KES 50,000")
+            binding.rentDateTv.setText(item.date_paid)
+            binding.rentreceiptNoTv.setText(item.id)
+            binding.rentAmountTv.setText("Amount Paid   :   KES 50,000")
             binding.propertyName.setText(item.property.name)
 
             itemView.setOnClickListener {
                 activity?.showAlertDialog(item.toString())
             }
+
 
         }
     }

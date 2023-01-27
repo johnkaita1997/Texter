@@ -12,9 +12,9 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.widget.*
-import com.propswift.Launchers.AddProperty
-import com.propswift.Launchers.PropertyActivity
-import com.propswift.Launchers.ReceiptsActivity
+import com.propswift.Activities.AddProperty
+import com.propswift.Activities.PropertyActivity
+import com.propswift.Activities.ReceiptsActivity
 import com.propswift.R
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.CoroutineExceptionHandler

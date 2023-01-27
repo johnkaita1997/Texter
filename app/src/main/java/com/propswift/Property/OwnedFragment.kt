@@ -1,4 +1,4 @@
-package com.propswift.Launchers
+package com.propswift.Activities
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -10,9 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.airbnb.epoxy.*
-import com.propswift.Launchers.*
 import com.propswift.R
-import com.propswift.Retrofit.Login.*
 import com.propswift.Shared.*
 import com.propswift.databinding.*
 import kotlinx.coroutines.CoroutineScope

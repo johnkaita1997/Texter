@@ -31,23 +31,23 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.propswift.Launchers.ReceiptsActivity"
+            android:name="com.propswift.Activities.ReceiptsActivity"
             android:exported="false" />
         <activity
-            android:name="com.propswift.Launchers.PropertyActivity"
+            android:name="com.propswift.Activities.PropertyActivity"
             android:exported="false" />
         <activity
-            android:name="com.propswift.Launchers.AddProperty"
+            android:name="com.propswift.Activities.AddProperty"
             android:exported="false" />
         <activity
-            android:name="com.propswift.Launchers.MainActivity"
+            android:name="com.propswift.Activities.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustNothing|stateHidden" />
         <activity
-            android:name="com.propswift.Launchers.WelcomeOneActivity"
+            android:name="com.propswift.Activities.WelcomeOneActivity"
             android:exported="false" />
         <activity
-            android:name="com.propswift.Launchers.LauncherActivity"
+            android:name="com.propswift.Activities.LauncherActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

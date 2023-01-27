@@ -9,7 +9,7 @@
     android:backgroundTint="@color/transparent"
     android:orientation="vertical"
     android:padding="10dp"
-    tools:context=".Launchers.WelcomeOneActivity">
+    tools:context=".Activities.WelcomeOneActivity">
 
 
     <RelativeLayout

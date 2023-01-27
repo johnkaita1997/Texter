@@ -5,7 +5,7 @@ import android.app.Application
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.propswift.Launchers.MainActivity
+import com.propswift.Activities.MainActivity
 import com.propswift.Retrofit.Login.MyApi
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.Dispatchers

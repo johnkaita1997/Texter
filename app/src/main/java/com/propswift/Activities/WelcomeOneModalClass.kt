@@ -1,4 +1,4 @@
-package com.propswift.Launchers
+package com.propswift.Activities
 
 /*
 @ModelView(autoLayout = ModelView.Size.MATCH_WIDTH_WRAP_HEIGHT)

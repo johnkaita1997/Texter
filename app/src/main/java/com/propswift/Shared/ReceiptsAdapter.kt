@@ -3,8 +3,8 @@ package com.propswift.Shared
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.propswift.Launchers.ExpensesFragment
-import com.propswift.Launchers.RentFragment
+import com.propswift.Activities.ExpensesFragment
+import com.propswift.Activities.RentFragment
 
 
 class ReceiptsAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {

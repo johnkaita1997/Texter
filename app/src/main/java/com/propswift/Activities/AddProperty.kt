@@ -1,4 +1,4 @@
-package com.propswift.Launchers
+package com.propswift.Activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

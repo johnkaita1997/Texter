@@ -7,7 +7,7 @@
     android:scrollIndicators="top"
     android:scrollbars="none"
     android:paddingHorizontal="20dp"
-    tools:context=".Launchers.WelcomeOneActivity">
+    tools:context=".Activities.WelcomeOneActivity">
 
     <LinearLayout
         android:layout_width="match_parent"

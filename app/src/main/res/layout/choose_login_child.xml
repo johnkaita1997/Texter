@@ -9,7 +9,7 @@
     android:backgroundTint="@color/transparent"
     android:orientation="vertical"
     android:padding="20dp"
-    tools:context=".Launchers.ChooseLogin">
+    tools:context=".Activities.ChooseLogin">
 
     <androidx.cardview.widget.CardView
         android:layout_centerInParent="true"
