@@ -255,6 +255,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
 
 
 
+    //comment
     suspend fun getExpensesGeneralAll(): ExpenseObject {
         var expenseList = ExpenseObject(null)
         runCatching {
