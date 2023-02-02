@@ -5,8 +5,16 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.propswift.R
-import com.propswift.databinding.*
-import com.propswift.Shared.*
+import com.propswift.Shared.Constants.userid
+import com.propswift.Shared.Constants.username
+import com.propswift.Shared.colorChanger
+import com.propswift.Shared.myViewModel
+import com.propswift.Shared.settingsClick
+import com.propswift.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +28,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initall() {
+
+        CoroutineScope(Dispatchers.IO).launch() {
+            val loggedinUser = myViewModel(this@MainActivity).getUserProfileDetails().details
+            loggedinUser.let {
+                withContext(Dispatchers.Main) {
+                    val firstname = it?.first_name
+                    val lastname = it?.last_name
+                    val combined = "Hallo $firstname $lastname"
+                    binding.helloThere.setText(combined)
+                    userid = it?.user_id.toString()
+                    username = combined
+                }
+            }
+        }
+
+        CoroutineScope(Dispatchers.IO).launch() {
+            val totalAmount = myViewModel(this@MainActivity).getTotal()
+            totalAmount.let {
+                withContext(Dispatchers.Main) {
+                    binding.amountSpent.setText("Amount Spent : KES ${it.details.toString()}")
+                }
+            }
+        }
+
+
+        CoroutineScope(Dispatchers.IO).launch() {
+            val totalAmount = myViewModel(this@MainActivity).getTotalNumberofReceipts()
+            totalAmount.let {
+                withContext(Dispatchers.Main) {
+                    binding.numberOfReceipts.setText("Number of receipts : ${it.details.toString()}")
+                }
+            }
+        }
+
         settingsClick(binding.menuicon)
         colorChanger(binding.cardone, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardtwo, R.color.propbrownligt, R.color.proplightgreen)

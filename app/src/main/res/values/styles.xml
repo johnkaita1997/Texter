@@ -1,4 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+<resources xmlns:tools="http://schemas.android.com/tools"
+
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="yourstyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
@@ -103,7 +105,7 @@
 
     <style name="viewParent.headerText">
         <item name="android:textColor">@color/contentTextColor</item>
-        <item name="android:textSize">@dimen/headerTextSize</item>
+        <item name="android:textSize">25sp</item>
         <item name="android:textStyle">bold</item>
     </style>
 
@@ -117,7 +119,7 @@
     </style>
 
     <style name="modifiedEditText" parent="parent">
-        <item name="android:textSize">@dimen/newsMoreTextSize</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:backgroundTint" tools:targetApi="lollipop">@color/primaryTextColor</item>
     </style>
 
@@ -129,7 +131,7 @@
     </style>
 
     <style name="spinnerHintText" parent="parent">
-        <item name="android:textSize">@dimen/newsMoreTextSize</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:paddingLeft">5dp</item>
     </style>
@@ -186,18 +188,6 @@
             #FFFFFF
         </item>
 
-    </style>
-
-
-    <style name="VdoMediaButton">
-        <item name="android:background">?android:attr/selectableItemBackground</item>
-        <item name="android:layout_width">@dimen/vdo_media_button_width</item>
-        <item name="android:layout_height">@dimen/vdo_media_button_height</item>
-    </style>
-
-    <style name="ShapeAppearanceOverlay.App.rounded" parent="">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">10dp</item>
     </style>
 
 </resources>

@@ -1,11 +1,28 @@
 package com.propswift.Shared
 
+import android.net.Uri
+import com.marwaeltayeb.progressdialog.ProgressDialog
+import com.propswift.Activities.MainActivity
 import dmax.dialog.SpotsDialog
+
 
 object Constants {
 
     var gender = ""
+    var isDialogShown = false
     lateinit var mydialog: SpotsDialog
+    lateinit var progress: ProgressDialog
+    val isprogressInitialized get() = this::progress.isInitialized
+    var datemap = mutableMapOf<String, String>()
+    var expenseDateMap = mutableMapOf<String, String>()
+    var rentalDateMap = mutableMapOf<String, String>()
+    private val TAG = MainActivity::class.java.simpleName
+    const val REQUEST_IMAGE = 100
+    var expenseImageList = mutableListOf<Uri>()
+    var expenseImageUploadList = listOf<String>()
+    var userid = ""
+    var username = ""
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAGINATION START

@@ -36,10 +36,8 @@
 
     <string name="baseurl">http://127.0.0.1:8080/</string>
 
-
     <!-- strings.xml -->
-    <string name="welcome_to">Welcome to our recorded video learning \nmaterials in all subjects also all topics in\nvarious subjects are included.
-</string>
+    <string name="welcome_to">Welcome to our recorded video learning \nmaterials in all subjects also all topics in\nvarious subjects are included</string>
     <string name="spinner_title">AndroidSpinnerExample</string>
     <string name="title_activity_subscription">SubscriptionActivity</string>
     <!-- Strings used for fragments for navigation -->
@@ -74,6 +72,5 @@
     <string name="enteryourphonenumber">Enter Your Phone Number</string>
     <string name="desc_two">For maintaining and anticipating need for, a arange of processes and functions, ostensibly for the purpose of improved operations and reduced budget</string>
     <string name="descriptionother">The only thing we can manage better than projects is people</string>
-
 
 </resources>

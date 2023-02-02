@@ -15,16 +15,25 @@
 
 
     <item
-        android:id="@+id/notes"
-        android:title="Notes"
+        android:id="@+id/managers"
+        android:title="Managers"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/settings"
+        android:id="@+id/todoList"
         android:orderInCategory="100"
-        android:title="Settings"
+        android:title="To-do List"
         app:showAsAction="never"
         >
+    </item>
+
+    <item
+        android:id="@+id/logout"
+        android:orderInCategory="100"
+        android:title="Logout"
+        app:showAsAction="never"
+        >
+
     </item>
 
 

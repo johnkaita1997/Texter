@@ -186,6 +186,7 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/kenyandate/app/src/main/res/layout/welcomeone_text.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/drawable-anydpi/rectangle.xml" value="0.1835" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/drawable-hdpi/rectanglebutton.xml" value="0.126" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/drawable/file_provider.xml" value="0.1225" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-large/fragment_expenses.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-large/receipt_expenses.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/fragment_owned.xml" value="0.1" />
@@ -195,16 +196,21 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/view_fragmentowned.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout-xlarge/view_fragmentrented.xml" value="0.1" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/actionbarcustom.xml" value="0.25" />
-        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_addproperty.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_addexpense.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_addproperty.xml" value="0.22" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_image_picker.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_login.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_profile_basic.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_property.xml" value="0.2" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_property_managerment.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_receipts.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_sign_up.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/activity_welcome.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/background_three.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/bottom_property.xml" value="0.2" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/choose_login_child.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/file_provider.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/fragment_expenses.xml" value="0.25" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/fragment_owned.xml" value="0.16417272338606242" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/fragment_rented.xml" value="0.18" />
@@ -221,6 +227,8 @@
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/view_fragmentowned.xml" value="0.33" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/layout/view_fragmentrented.xml" value="0.22" />
         <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/menu/pop_menu.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/xml/file_paths.xml" value="0.16417272338606242" />
+        <entry key="..\:/Developement/Android Apps/Kotlin Apps/propswift/app/src/main/res/xml/file_provider.xml" value="0.16417272338606242" />
       </map>
     </option>
   </component>

@@ -1,3 +1,2 @@
+rootProject.name='propswift'
 include ':app'
-rootProject.name='IssueTracker'
-include ':app', ':daraja'

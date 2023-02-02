@@ -21,10 +21,13 @@ class SessionManager(context: Context) {
 
     fun fetchAuthToken(): String? {
         return "Bearer ${prefs.getString("authtoken", null)}"
+//        return "Bearer mpKtbwDVR0vLnGN9s18kBc9EG6mQ8B"
     }
 
     fun fetchJwtToken(): String? {
         return "Bearer ${prefs.getString("jwttoken", null)}"
+//        return "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJ1c2VyIjoiZjg3OTJiMGEtMDg2YS00ZGNmLWI5ZWQtYTg4MzgwMTA2MzM4Iiwicm9sZXMiOltdLCJleHAiOjE2NzUzODkwMDQsImlhdCI6MTY3NTMwMjYwNCwiYXVkIjoidXJuOmpzdCJ9._aUjZJvAst1nzhWpkXDgwuB7FzjVa50XpQ5XLjmw1LcX8V3UByIMfpJM9QPFmHOh34KiyHSO_i5iLAKkOi3J7Q"
+
     }
 
     fun logout(): Boolean {

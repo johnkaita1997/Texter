@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.epoxy.*
@@ -34,6 +35,12 @@ class WelcomeOneActivity : AppCompatActivity() {
         if (!isLoggedIn()) {
             initRecycler_Register()
         } else {
+            CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
+                val e = SessionManager(this@WelcomeOneActivity).fetchu().toString()
+                val p = SessionManager(this@WelcomeOneActivity).fetchp().toString()
+                Log.d("-------", "initall: $e,  $p")
+                myViewModel(this@WelcomeOneActivity).refreshtoken(e, p)
+            }
             goToActivity(this, MainActivity::class.java)
         }
     }
@@ -76,7 +83,9 @@ class WelcomeOneActivity : AppCompatActivity() {
 
 
 //LOGIN ACTIVITY//
-@SuppressLint("NonConstantResourceId") @EpoxyModelClass(layout = R.layout.activity_login) abstract class LoginModalClass(var activity: Activity) : EpoxyModelWithHolder<LoginModalClass.ViewHolder>() {
+@SuppressLint("NonConstantResourceId")
+@EpoxyModelClass(layout = R.layout.activity_login)
+abstract class LoginModalClass(var activity: Activity) : EpoxyModelWithHolder<LoginModalClass.ViewHolder>() {
 
     private lateinit var binding: ActivityLoginBinding
 
@@ -88,8 +97,9 @@ class WelcomeOneActivity : AppCompatActivity() {
 
         binding.loginbutton.setOnClickListener {
 
-            mydialog =activity.myDialog()
-            activity.showDialog(mydialog,"Logging you in")
+            mydialog = activity.myDialog()
+
+            activity.showDialog(mydialog, "Logging you in")
 
             val validatelist = mutableListOf(binding.kaemail, binding.kapassword)
             if (activity.validated(validatelist)) {
@@ -113,8 +123,9 @@ class WelcomeOneActivity : AppCompatActivity() {
 
 
 //REGISTER ACTIVITY//
-@SuppressLint("NonConstantResourceId") @EpoxyModelClass(layout = R.layout.activity_sign_up) abstract class RegisterModalClass(var activity: Activity) :
-        EpoxyModelWithHolder<RegisterModalClass.ViewHolder>() {
+@SuppressLint("NonConstantResourceId")
+@EpoxyModelClass(layout = R.layout.activity_sign_up)
+abstract class RegisterModalClass(var activity: Activity) : EpoxyModelWithHolder<RegisterModalClass.ViewHolder>() {
 
     private lateinit var binding: ActivitySignUpBinding
 
@@ -126,8 +137,8 @@ class WelcomeOneActivity : AppCompatActivity() {
 
         binding.createaccount.setOnClickListener {
 
-            mydialog =activity.myDialog()
-            activity.showDialog(mydialog,"Creating your account")
+            mydialog = activity.myDialog()
+            activity.showDialog(mydialog, "Creating your account")
 
             val validatelist = mutableListOf(binding.youremail, binding.yourpassword, binding.yourconfirmpassword, binding.yournameFirst, binding.yournameLast)
             if (activity.validated(validatelist)) {

@@ -3,8 +3,8 @@ package com.propswift.Activities
 import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
-import com.propswift.databinding.*
-import com.propswift.Shared.*
+import com.propswift.Shared.goToActivity
+import com.propswift.databinding.LauncherActivityBinding
 
 class LauncherActivity : AppCompatActivity() {
 

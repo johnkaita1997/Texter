@@ -63,7 +63,7 @@
 
 
                     <TextView
-                        android:id="@+id/propertynameSecond"
+                        android:id="@+id/propertylocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
@@ -133,6 +133,7 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/receiptcard"
                 android:layout_width="150dp"
                 android:layout_below="@+id/expensescard"
                 android:layout_alignParentEnd="true"
@@ -184,7 +185,7 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/rectanglebutton"
                 android:backgroundTint="@color/propdarkblue"
-                android:text="Remove"
+                android:text="Delete"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="5dp"
+    tools:context=".Property.PropertyParentActivity">
+
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/expense_type"
+        android:background="@drawable/rectanglebutton"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="16dp"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:editable="false"
+        android:hint="General or incurred"
+        android:inputType="text"
+        android:singleLine="true" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/amount"
+        android:background="@drawable/rectanglebutton"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:editable="false"
+        android:hint="Amount of expense"
+        android:inputType="phone"
+        android:singleLine="true" />
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/receipt"
+        android:background="@drawable/rectanglebutton"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:editable="false"
+        android:hint="Receipt ASDFJNVIINLK"
+        android:inputType="phone"
+        android:singleLine="true" />
+
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/description"
+        android:background="@drawable/rectanglebutton"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:padding="10dp"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:editable="false"
+        android:hint="Receipt ASDFJNVIINLK"
+        android:inputType="phone"
+        android:singleLine="true" />
+
+
+    <Button
+        android:id="@+id/selectProperty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/rectanglebutton"
+        android:backgroundTint="@color/propdarkblue"
+        android:text="Select Property"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/date_incurred"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/rectanglebutton"
+        android:backgroundTint="@color/propdarkblue"
+        android:text="Date Incurred"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+    <Button
+        android:id="@+id/saveExpense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/rectanglebutton"
+        android:backgroundTint="@color/propdarkblue"
+        android:text="Save Expense"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+
+</LinearLayout>

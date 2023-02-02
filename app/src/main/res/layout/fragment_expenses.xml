@@ -25,7 +25,7 @@
             android:layout_gravity="center_horizontal"
             android:background="@drawable/rectanglebutton"
             android:backgroundTint="@color/propdarkblue"
-            android:text="Rent Paid"
+            android:text="Period"
             android:textAllCaps="false"
             android:textColor="@color/white" />
 
@@ -38,17 +38,16 @@
             android:layout_toLeftOf="@+id/month_picker_button"
             android:background="@drawable/rectanglebutton"
             android:backgroundTint="@color/propdarkblue"
-            android:text="Month"
+            android:text="General"
             android:textAllCaps="false"
             android:textColor="@color/white" />
-
 
     </RelativeLayout>
 
 
 
-    <com.airbnb.epoxy.EpoxyRecyclerView
-        android:id="@+id/epoxyRecyclerview"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/expensesRecyclerView"
         android:layout_marginTop="20dp"
         android:orientation="vertical"
         android:layout_width="match_parent"

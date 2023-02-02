@@ -1,59 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:paddingHorizontal="5dp"
-    tools:context=".Activities.AddProperty">
-
-    <include
-        android:id="@+id/include"
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       layout="@layout/actionbarcustom" />
+    tools:context=".Property.PropertyParentActivity">
 
     <androidx.appcompat.widget.AppCompatEditText
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/transparent"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:background="@drawable/rectanglebutton"
+        android:id="@+id/name"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/black"
         android:paddingHorizontal="2dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:textSize="16dp"
         android:editable="false"
         android:hint="Name of property"
-        android:inputType="phone"
+        android:inputType="text"
         android:singleLine="true" />
 
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:text="Rent"
         android:textColor="@color/black"
-        android:textSize="28dp" />
+        android:textSize="18dp" />
 
     <androidx.appcompat.widget.AppCompatEditText
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:id="@+id/rent_amount"
+        android:background="@drawable/rectanglebutton"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/transparent"
         android:paddingHorizontal="2dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:editable="false"
+        android:textSize="16dp"
+        android:textColor="@color/black"
         android:hint="Amount of rent"
         android:inputType="phone"
         android:singleLine="true" />
 
+
     <androidx.appcompat.widget.AppCompatEditText
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:id="@+id/location"
+        android:background="@drawable/rectanglebutton"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/transparent"
         android:paddingHorizontal="2dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:editable="false"
-        android:hint="Rent Due Date"
-        android:inputType="phone"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:hint="Location"
+        android:inputType="text"
         android:singleLine="true" />
+
+
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/area"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:background="@drawable/rectanglebutton"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="2dp"
+        android:layout_width="match_parent"
+        android:editable="false"
+        android:textSize="16dp"
+        android:textColor="@color/black"
+        android:hint="Area"
+        android:inputType="number"
+        android:singleLine="true" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:visibility="gone"
+        android:id="@+id/rentduedate"
+        android:background="@drawable/rectanglebutton"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="2dp"
+        android:layout_height="40dp"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:textSize="16dp"
+        android:text="Due Date"
+        android:editable="false"
+        android:textColor="@color/black"
+        android:hint="Rent Due Date"
+        android:inputType="text"
+        android:singleLine="true" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Ownership"
+        android:textColor="@color/black"
+        android:textSize="18dp" />
+
+
+    <RadioGroup
+        android:layout_marginTop="10dp"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroup">
+
+        <RadioButton
+            android:layout_marginRight="80dp"
+            android:layout_weight="1"
+            android:id="@+id/owner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="   Owner"
+            android:checked="false"
+            android:textSize="16dp" />
+
+        <RadioButton
+            android:layout_weight="1"
+            android:id="@+id/rento"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="   Rentor"
+            android:checked="false"
+            android:textSize="16dp" />
+    </RadioGroup>
 
 
 
@@ -63,90 +143,23 @@
         android:layout_height="wrap_content">
 
 
-        <TextView
-            android:gravity="center_vertical"
+        <Button
+            android:id="@+id/createproperty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Expense"
-            android:textColor="@color/black"
-            android:textSize="28dp" />
-
-        <Button
-            android:gravity="center"
-            android:layout_width="90dp"
-            android:layout_height="30dp"
-            android:layout_alignParentEnd="true"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
             android:background="@drawable/rectanglebutton"
-            android:backgroundTint="@color/safebasecolor"
-            android:text="Register"
+            android:backgroundTint="@color/propdarkblue"
+            android:gravity="center"
+            android:text="Create Property"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="16dp" />
 
     </RelativeLayout>
 
 
-
-
-
-
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/transparent"
-        android:paddingHorizontal="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:editable="false"
-        android:hint="Type of expense"
-        android:inputType="phone"
-        android:singleLine="true" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/transparent"
-        android:paddingHorizontal="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:editable="false"
-        android:hint="Amount of expense"
-        android:inputType="phone"
-        android:singleLine="true" />
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/transparent"
-        android:paddingHorizontal="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:editable="false"
-        android:hint="Exkpenses payment date"
-        android:inputType="phone"
-        android:singleLine="true" />
-
-
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/rectanglebutton"
-        android:backgroundTint="@color/safebasecolor"
-        android:text="Save"
-        android:textAllCaps="false"
-        android:textColor="@color/white" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/rectanglebutton"
-        android:backgroundTint="@color/safebasecolor"
-        android:text="Cancel"
-        android:textAllCaps="false"
-        android:textColor="@color/white" />
 
 
 
