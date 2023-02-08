@@ -26,7 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class RentalsFragment : Fragment(), LifecycleOwner{
+class RentalsFragment : Fragment(), LifecycleOwner {
 
     private lateinit var viewy: View
     private var _binding: FragmentRentedBinding? = null

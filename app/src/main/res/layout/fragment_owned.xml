@@ -11,6 +11,17 @@
     android:padding="10dp"
     tools:context=".Activities.WelcomeOneActivity">
 
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/filter"
+        android:backgroundTint="@color/transparent"
+        android:paddingHorizontal="2dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:editable="false"
+        android:hint="Property Name"
+        android:inputType="text"
+        android:singleLine="true" />
+
     <com.airbnb.epoxy.EpoxyRecyclerView
         android:id="@+id/epoxyRecyclerview"
         android:layout_marginTop="20dp"

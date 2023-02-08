@@ -6,15 +6,18 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.compose.ui.text.toLowerCase
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Receipts.ReceiptsParentActivity
 import com.propswift.Shared.OwnedDetail
+import com.propswift.Shared.RentDetail
 import com.propswift.Shared.RentedDetail
 import com.propswift.Shared.goToactivityIntent_Unfinished
+import org.apache.commons.lang3.mutable.Mutable
 
-class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesList: List<OwnedDetail>) : RecyclerView.Adapter<OwnedPropertyAdapter.ViewHolder>() {
+class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesList: MutableList<OwnedDetail>) : RecyclerView.Adapter<OwnedPropertyAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -53,16 +56,34 @@ class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesLi
         }
 
         holder.itemView.findViewById<Button>(R.id.removeBtn).setOnClickListener {
-
             activity.goToactivityIntent_Unfinished(activity, ReceiptsParentActivity::class.java, mutableMapOf("propertyid" to propertyId.toString()))
         }
-
-
 
 
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+
+    fun updateOwnedProperties(newOwnedPropertyList: MutableList<OwnedDetail>?) {
+        ownedPropertiesList.clear()
+        ownedPropertiesList = newOwnedPropertyList!!
+        notifyDataSetChanged()
+    }
+
+    fun filterOwnedProperties(stringObject : String) {
+        val newlist = mutableListOf<OwnedDetail>()
+        newlist.clear()
+        ownedPropertiesList.forEach {
+            if (it.name?.lowercase()?.contains(stringObject.lowercase()) == true) {
+                newlist.add(it)
+            }
+        }
+        ownedPropertiesList.clear()
+        ownedPropertiesList = newlist
+        notifyDataSetChanged()
+    }
+
+
 
 }

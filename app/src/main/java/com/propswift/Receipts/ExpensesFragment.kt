@@ -137,6 +137,7 @@ class ExpensesFragment : Fragment(), LifecycleOwner {
                             } else {
                                 thisyear = "19${thisyear}"
                             }
+
                             var monthNumber = 0
                             if (thismonth.equals("Jan")) monthNumber = 1
                             else if (thismonth == "Feb") monthNumber = 2
@@ -207,7 +208,7 @@ class ExpensesFragment : Fragment(), LifecycleOwner {
                             if (::propertyid.isInitialized) {
                                 viewmodel.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
                             } else {
-                               viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
+                                viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
                             }
                         }
                     }

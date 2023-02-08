@@ -17,6 +17,7 @@ import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.Shared.Constants.datemap
 import com.propswift.Shared.Constants.expenseImageUploadList
+import com.propswift.Shared.Constants.viewmodel
 import com.propswift.databinding.ActivityAddexpenseBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
@@ -44,8 +45,8 @@ abstract class AddExpenseModalClass(
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val listOfOwnedProperties = async { viewModel.getOwnedproperties() }
-                val thelist = runBlocking { listOfOwnedProperties.await() }
+                val thelist =  viewmodel.listOfOwnedProperties.value
+
 
                 val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
@@ -59,7 +60,7 @@ abstract class AddExpenseModalClass(
                     .setAutoDismiss(true)
 
                 withContext(GlobalScope.coroutineContext) {
-                    thelist.details.let {
+                    thelist.let {
                         it?.forEach {
                             powerMenu?.addItem(PowerMenuItem(it.name))
                             Log.d("-------", "initall: FOUND ITEM ${it.name}")
@@ -71,7 +72,7 @@ abstract class AddExpenseModalClass(
                     powerMenu?.setOnMenuItemClickListener { position, item ->
                         val chosenposition = position
                         val propertyname = item.title.toString()
-                        propertyid = thelist.details?.get(chosenposition)!!.id.toString()
+                        propertyid = thelist?.get(chosenposition)!!.id.toString()
                         binding.selectProperty.setText(propertyname)
                     }
                     powerMenu?.build()?.showAsDropDown(binding.selectProperty)

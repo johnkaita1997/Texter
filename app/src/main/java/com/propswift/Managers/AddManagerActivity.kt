@@ -40,7 +40,8 @@ class AddManagerActivity : AppCompatActivity() {
             CoroutineScope(Dispatchers.IO).launch() {
 
                 val listOfOwnedProperties = async { viewmodel.getOwnedproperties() }
-                val thelist = runBlocking { listOfOwnedProperties.await() }
+                val thelist = viewmodel.listOfOwnedProperties.value
+
                 Log.d("-------", "initall: FOUND THE LIST TO BE ${thelist.toString()}")
 
                 val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(this@AddManagerActivity)
@@ -55,19 +56,20 @@ class AddManagerActivity : AppCompatActivity() {
                     .setAutoDismiss(true)
 
                 withContext(GlobalScope.coroutineContext) {
-                    thelist.details.let {
+                    thelist.let {
                         it?.forEach {
                             powerMenu?.addItem(PowerMenuItem(it.name))
                             Log.d("-------", "initall: FOUND ITEM ${it.name}")
                         }
                     }
+
                 }
 
                 withContext(Dispatchers.Main) {
                     powerMenu?.setOnMenuItemClickListener { position, item ->
                         val chosenposition = position
                         val propertyname = item.title.toString()
-                        propertyid = thelist.details?.get(chosenposition)!!.id.toString()
+                        propertyid = thelist?.get(chosenposition)!!.id.toString()
                         binding.managerassignhouse.setText(propertyname)
                     }
                     powerMenu?.build()?.showAsDropDown(binding.managerassignhouse)

@@ -54,6 +54,13 @@ class MyViewModel
     val _getExpenses = MutableLiveData<MutableList<FetchExpenseObject_Detail>>()
     val getExpenses: LiveData<MutableList<FetchExpenseObject_Detail>> get() = _getExpenses
 
+    val _listOfOwnedProperties = MutableLiveData< MutableList<OwnedDetail>?>()
+    val listOfOwnedProperties: LiveData< MutableList<OwnedDetail>?> get() = _listOfOwnedProperties
+
+    val _listofRentedProperties = MutableLiveData< MutableList<RentedDetail>?>()
+    val listofRentedProperties: LiveData< MutableList<RentedDetail>?> get() = _listofRentedProperties
+
+
     val is_manager = false
 
 
@@ -249,9 +256,7 @@ class MyViewModel
     }
 
 
-    suspend fun getrentedproperties(): RentedProperties {
-        Log.d("-------", "initall: started rented")
-        var rentedList = RentedProperties(null)
+    suspend fun getrentedproperties() {
         runCatching {
             val response = api.getrentedproperties(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
@@ -261,17 +266,15 @@ class MyViewModel
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                rentedList = response.body()!!
+                val rentedList = response.body()!!.details
+                _listofRentedProperties.postValue(rentedList as MutableList<RentedDetail>?)
             }
         }.onFailure {
             networkResponseFailure(it, null)
         }
-        return rentedList
     }
 
-    suspend fun getOwnedproperties(): OwnedProperties {
-        Log.d("-------", "initall: started owned")
-        var rentedList = OwnedProperties(null)
+    suspend fun getOwnedproperties() {
         runCatching {
             val response = api.getownedproperties(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
@@ -281,7 +284,8 @@ class MyViewModel
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                rentedList = response.body()!!
+                val ownedList = response.body()!!.details
+                _listOfOwnedProperties.postValue(ownedList as MutableList<OwnedDetail>?)
             }
         }.onFailure {
             networkResponseFailure(it, null)
@@ -290,7 +294,6 @@ class MyViewModel
 //                activity.showAlertDialog(rentedList.details.toString())
             }
         }
-        return rentedList
     }
 
 

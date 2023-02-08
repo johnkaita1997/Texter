@@ -13,7 +13,7 @@ import com.propswift.Receipts.ReceiptsParentActivity
 import com.propswift.Shared.RentedDetail
 import com.propswift.Shared.goToactivityIntent_Unfinished
 
-class RentedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesList: List<RentedDetail>?) : RecyclerView.Adapter<RentedPropertyAdapter.ViewHolder>() {
+class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyList: MutableList<RentedDetail>?) : RecyclerView.Adapter<RentedPropertyAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -24,12 +24,12 @@ class RentedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesL
     }
 
     override fun getItemCount(): Int {
-        return ownedPropertiesList!!.size
+        return rentedPropertyList!!.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val rentObject = ownedPropertiesList!!.get(position);
+        val rentObject = rentedPropertyList!!.get(position);
 
         holder.itemView.findViewById<TextView>(R.id.propertyname).setText("${rentObject.name}")
         holder.itemView.findViewById<TextView>(R.id.propertylocation).setText("${rentObject.location}")
@@ -57,11 +57,29 @@ class RentedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesL
         }
 
 
-
-
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+
+    fun updateRentedProperties(newRentedList: MutableList<RentedDetail>?) {
+        rentedPropertyList?.clear()
+        rentedPropertyList = newRentedList!!
+        notifyDataSetChanged()
+    }
+
+    fun filterRentedProperties(stringObject: String) {
+        val newlist = mutableListOf<RentedDetail>()
+        newlist.clear()
+        rentedPropertyList!!.forEach {
+            if (it.name?.lowercase()?.contains(stringObject.lowercase()) == true) {
+                newlist.add(it)
+            }
+        }
+        rentedPropertyList!!.clear()
+        rentedPropertyList = newlist
+        notifyDataSetChanged()
+    }
+
 
 }
