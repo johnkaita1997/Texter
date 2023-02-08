@@ -29,7 +29,8 @@ import kotlinx.coroutines.*
 @EpoxyModelClass(layout = R.layout.activity_addexpense)
 abstract class AddExpenseModalClass(
     var activity: Activity,
-    var startForProfileImageResult: ActivityResultLauncher<Intent>
+    var startForProfileImageResult: ActivityResultLauncher<Intent>,
+    var viewModel: MyViewModel
 ) :
     EpoxyModelWithHolder<AddExpenseModalClass.ViewHolder>() {
 
@@ -43,11 +44,8 @@ abstract class AddExpenseModalClass(
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val listOfOwnedProperties =
-                    async { activity.myViewModel(activity).getOwnedproperties() }
+                val listOfOwnedProperties = async { viewModel.getOwnedproperties() }
                 val thelist = runBlocking { listOfOwnedProperties.await() }
-                Log.d("-------", "initall: FOUND THE LIST TO BE ${thelist.toString()}")
-
 
                 val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
@@ -121,7 +119,7 @@ abstract class AddExpenseModalClass(
 
                                         val expenseObject = ExpenseUploadObject(amount.toInt(), date, description, expenseType, expenseImageUploadList, propertyid, receipt)
                                         CoroutineScope(Dispatchers.IO).launch() {
-                                            activity.myViewModel(activity).addExpense(expenseObject)
+                                            viewModel.addExpense(expenseObject, binding.root)
                                             withContext(Dispatchers.Main) {
                                                 activity.showAlertDialog("Expense was added successfully")
                                             }

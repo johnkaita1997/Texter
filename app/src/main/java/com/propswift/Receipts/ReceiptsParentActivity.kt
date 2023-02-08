@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.propswift.Shared.settingsClick
 import com.propswift.databinding.ActivityReceiptsBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class ReceiptsParentActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReceiptsBinding

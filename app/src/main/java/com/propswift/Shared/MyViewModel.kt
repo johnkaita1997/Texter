@@ -1,27 +1,61 @@
 package com.propswift.Shared
 
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import android.widget.LinearLayout
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.propswift.Activities.MainActivity
+import com.propswift.Dagger.MyApplication
 import com.propswift.Retrofit.MyApi
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.*
 import okhttp3.MultipartBody
 import org.json.JSONObject
+import javax.inject.Inject
+import javax.inject.Named
+import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 
+@HiltViewModel
+class MyViewModel
+@Inject constructor(
+    @Named("myapi") private val api: MyApi,
+    @ApplicationContext private val appcontext: Context
+) : ViewModel() {
 
-class ViewModel(application: Application, myactivity: Activity) : AndroidViewModel(application) {
-
-    var activity: Activity
+    lateinit var activity: Activity
 
     init {
-        activity = myactivity
+        activity = (appcontext as MyApplication).currentActivity!!
     }
+
+
+    val _listOfTodoItems = MutableLiveData<MutableList<GetToDoListTasks_Details>>()
+    val listOfTodoItems: LiveData<MutableList<GetToDoListTasks_Details>> get() = _listOfTodoItems
+
+    val _bothNames = MutableLiveData<String>()
+    val bothNames: LiveData<String> get() = _bothNames
+
+    val _totalAmount = MutableLiveData<String>()
+    val totalAmount: LiveData<String> get() = _totalAmount
+
+    val _getTotalNumberofReceipts = MutableLiveData<String>()
+    val getTotalNumberofReceipts: LiveData<String> get() = _getTotalNumberofReceipts
+
+    val _listRentals = MutableLiveData<MutableList<RentDetail>>()
+    val listRentals: LiveData<MutableList<RentDetail>> get() = _listRentals
+
+    val _getExpenses = MutableLiveData<MutableList<FetchExpenseObject_Detail>>()
+    val getExpenses: LiveData<MutableList<FetchExpenseObject_Detail>> get() = _getExpenses
+
+    val is_manager = false
+
 
     fun Context.coroutineexception(activity: Activity): CoroutineContext {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -82,7 +116,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
 
         runCatching {
 
-            val response = MyApi().login(LoginBody(email, password))
+            val response = api.login(LoginBody(email, password))
 
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
@@ -130,7 +164,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     ) {
 
         runCatching {
-            val response = MyApi().login(LoginBody(email, password))
+            val response = api.login(LoginBody(email, password))
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
                 handleResponse(jsonObj, response.toString(), mydialog)
@@ -172,7 +206,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     ) {
         val user = User(email, first_name, last_name, middle_name, username, password, confirm_password)
         runCatching {
-            val response = MyApi().register(user)
+            val response = api.register(user)
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
                 handleResponse(jsonObj, response.toString(), mydialog)
@@ -189,7 +223,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     suspend fun refreshtoken(e: String, p: String) {
 
         runCatching {
-            val response = MyApi().login(LoginBody(e, p))
+            val response = api.login(LoginBody(e, p))
             if (!response.isSuccessful) {
                 return@runCatching
             } else {
@@ -219,7 +253,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
         Log.d("-------", "initall: started rented")
         var rentedList = RentedProperties(null)
         runCatching {
-            val response = MyApi().getrentedproperties(
+            val response = api.getrentedproperties(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -239,7 +273,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
         Log.d("-------", "initall: started owned")
         var rentedList = OwnedProperties(null)
         runCatching {
-            val response = MyApi().getownedproperties(
+            val response = api.getownedproperties(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -260,10 +294,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getRentals(rentFilter: RentFilter): List<RentDetail> {
-        var rentedList = listOf<RentDetail>()
+    suspend fun getRentals(rentFilter: RentFilter) {
         runCatching {
-            val response = MyApi().getRentals(
+            val response = api.getRentals(
                 rentFilter.filter, rentFilter.property_id, rentFilter.date_from, rentFilter.date_to, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -271,19 +304,19 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                rentedList = response.body()!!.details!!
+                val rentedList = response.body()!!.details!!
+                _listRentals.postValue(rentedList as MutableList<RentDetail>?)
             }
         }.onFailure {
             networkResponseFailure(it, null)
         }
-        return rentedList
     }
 
 
     suspend fun getunpaidrentAll(): RentalObject {
         var rentedList = RentalObject(null)
         runCatching {
-            val response = MyApi().getRentals(
+            val response = api.getRentals(
                 "unpaid", null, null, null, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -301,10 +334,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
 
 
     //comment
-    suspend fun getExpenses(expenseFilter: ExpenseFilter): List<FetchExpenseObject_Detail> {
-        var expenseList = listOf<FetchExpenseObject_Detail>()
+    suspend fun getExpenses(expenseFilter: ExpenseFilter) {
         runCatching {
-            val response = MyApi().getExpenses(
+            val response = api.getExpenses(
                 expenseFilter.filter, expenseFilter.property_id, expenseFilter.date_from, expenseFilter.date_to, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -312,17 +344,17 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                expenseList = response.body()!!.details!!
+                val expenseList = response.body()!!.details!!
+                _getExpenses.postValue(expenseList as MutableList<FetchExpenseObject_Detail>?)
             }
         }.onFailure {
             networkResponseFailure(it, null)
         }
-        return expenseList
     }
 
     suspend fun createProperty(property: CreateProperty) {
         runCatching {
-            val response = MyApi().createProperty(
+            val response = api.createProperty(
                 property, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -345,7 +377,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
         var userDetails = UserDetails(null)
         runCatching {
             val userid = "f8792b0a-086a-4dcf-b9ed-a88380106338"
-            val response = MyApi().getUserDetails(
+            val response = api.getUserDetails(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, userid
             )
             if (!response.isSuccessful) {
@@ -365,7 +397,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     suspend fun getPropertyManagers(propertyid: String): MutableList<GetPropertyManagerDetails_Details> {
         var getPropertyManagers = mutableListOf<GetPropertyManagerDetails_Details>()
         runCatching {
-            val response = MyApi().getPropertyManagers(
+            val response = api.getPropertyManagers(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, propertyid
             )
             if (!response.isSuccessful) {
@@ -384,7 +416,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
 
     suspend fun addManager(manager: Manager) {
         runCatching {
-            val response = MyApi().addManager(
+            val response = api.addManager(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, manager
             )
             if (!response.isSuccessful) {
@@ -404,7 +436,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
 
     suspend fun removeManager(managerId: String, propertyId: String) {
         runCatching {
-            val response = MyApi().removeManager(
+            val response = api.removeManager(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, RemoveManager(managerId, propertyId)
             )
             if (!response.isSuccessful) {
@@ -423,7 +455,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     suspend fun getManagedPropertyForManager(): MutableList<ListOfManagedProperties_Detail> {
         var getManagedPropertyForManager = mutableListOf<ListOfManagedProperties_Detail>()
         runCatching {
-            val response = MyApi().getManagedPropertiesForManager(
+            val response = api.getManagedPropertiesForManager(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -440,9 +472,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun addToDoList(toDoList: ToDoListTask) {
+    suspend fun addToDoList(toDoList: ToDoListTask, viewModel: MyViewModel) {
         runCatching {
-            val response = MyApi().addToDoList(
+            val response = api.addToDoList(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, toDoList
             )
             if (!response.isSuccessful) {
@@ -460,29 +492,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getToDoList(): MutableList<GetToDoListTasks_Details> {
-        var getToDoListItems = mutableListOf<GetToDoListTasks_Details>()
-        runCatching {
-            val response = MyApi().getToDoList(
-                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
-            )
-            if (!response.isSuccessful) {
-                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
-                handleResponse(jsonObj, response.toString(), null)
-                return@runCatching
-            } else {
-                getToDoListItems = response.body()!!.details!!
-            }
-        }.onFailure {
-            networkResponseFailure(it, null)
-        }
-        return getToDoListItems
-    }
-
-
     suspend fun removeToDoList(itemId: String) {
         runCatching {
-            val response = MyApi().removeToDoList(
+            val response = api.removeToDoList(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, RemoveToDoId(itemId)
             )
             if (!response.isSuccessful) {
@@ -491,7 +503,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 return
             } else {
                 withContext(Dispatchers.Main) {
-                    activity.showAlertDialog("Manager was removed successfully")
+                    activity.showAlertDialog("Todo List was removed successfully")
                 }
             }
         }.onFailure {
@@ -500,31 +512,36 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun getUserProfileDetails(): GetProfileDetails {
-        var getUserProfileDetails = GetProfileDetails(null)
+    suspend fun getUserProfileDetails() {
         runCatching {
-            val response = MyApi().getUserProfileDetails(
-                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
-            )
+            val response = api.getUserProfileDetails(activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken)
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                getUserProfileDetails = response.body()!!
+                val getUserProfileDetails = response.body()!!.details
+
+                val myusername = getUserProfileDetails!!.username
+                val myuserid = getUserProfileDetails.user_id
+                val myfirstname = getUserProfileDetails.first_name
+                val mymiddle_name = getUserProfileDetails.middle_name
+                val mylast_name = getUserProfileDetails.last_name
+                val myis_manager = false
+                _bothNames.postValue("$myfirstname ${mylast_name}")
+
             }
         }.onFailure {
             networkResponseFailure(it, null)
         }
-        return getUserProfileDetails
     }
 
 
-    suspend fun uploadFile(filemap: MutableList<MultipartBody.Part>) : List<String> {
+    suspend fun uploadFile(filemap: MutableList<MultipartBody.Part>): List<String> {
 
         var imagelist = listOf<String>()
         runCatching {
-            val response = MyApi().uploadImage(
+            val response = api.uploadImage(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, filemap
             )
             if (!response.isSuccessful) {
@@ -534,7 +551,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
             } else {
                 withContext(Dispatchers.Main) {
                     activity.makeLongToast("Image Upload Was SuccessFul")
-                     imagelist = response.body()!!.details
+                    imagelist = response.body()!!.details
                 }
             }
         }.onFailure {
@@ -544,9 +561,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-    suspend fun addExpense(expense: ExpenseUploadObject) {
+    suspend fun addExpense(expense: ExpenseUploadObject, root: LinearLayout) {
         runCatching {
-            val response = MyApi().addExpense(
+            val response = api.addExpense(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, expense
             )
             if (!response.isSuccessful) {
@@ -554,7 +571,7 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 handleResponse(jsonObj, response.toString(), null)
                 return
             } else {
-
+                clearAllEditTexts(root)
             }
         }.onFailure {
             networkResponseFailure(it, null)
@@ -562,12 +579,9 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
     }
 
 
-
-
-    suspend fun getTotal(): Total {
-        var total = Total(null)
+    suspend fun getTotal() {
         runCatching {
-            val response = MyApi().getTotalSpent(
+            val response = api.getTotalSpent(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -575,18 +589,17 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                total = response.body()!!
+                val total = response.body()!!.details
+                _totalAmount.postValue(total.toString())
             }
         }.onFailure {
             networkResponseFailure(it, null)
         }
-        return total
     }
 
-    suspend fun getTotalNumberofReceipts(): Total {
-        var total = Total(null)
+    suspend fun getTotalNumberofReceipts() {
         runCatching {
-            val response = MyApi().getTotalNumberofReceipts(
+            val response = api.getTotalNumberofReceipts(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
             )
             if (!response.isSuccessful) {
@@ -594,12 +607,32 @@ class ViewModel(application: Application, myactivity: Activity) : AndroidViewMod
                 handleResponse(jsonObj, response.toString(), null)
                 return@runCatching
             } else {
-                total = response.body()!!
+                val total = response.body()!!.details
+                _getTotalNumberofReceipts.postValue(total.toString())
             }
         }.onFailure {
             networkResponseFailure(it, null)
         }
-        return total
+    }
+
+
+    suspend fun getToDoList() {
+        runCatching {
+            val response = api.getToDoList(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                withContext(Dispatchers.Main) {
+                    _listOfTodoItems.value = response.body()!!.details!!
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
     }
 
 

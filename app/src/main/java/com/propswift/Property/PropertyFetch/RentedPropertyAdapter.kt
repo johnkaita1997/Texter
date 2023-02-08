@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Receipts.ReceiptsParentActivity
-import com.propswift.Shared.OwnedDetail
 import com.propswift.Shared.RentedDetail
 import com.propswift.Shared.goToactivityIntent_Unfinished
 

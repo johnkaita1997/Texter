@@ -10,26 +10,31 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
 import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
 import com.propswift.R
 import com.propswift.Shared.*
-import com.propswift.Shared.Constants.rentalDateMap
 import com.propswift.databinding.FragmentRentedBinding
 import com.propswift.databinding.ReceiptRentBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class RentalsFragment : Fragment() {
+@AndroidEntryPoint
+class RentalsFragment : Fragment(), LifecycleOwner{
 
     private lateinit var viewy: View
     private var _binding: FragmentRentedBinding? = null
     private val binding get() = _binding!!
     private var date = "paid"
     lateinit var propertyid: String
+
+    private val viewmodel: MyViewModel by viewModels()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -51,38 +56,24 @@ class RentalsFragment : Fragment() {
         }
 
         val layoutManager = LinearLayoutManager(activity)
-        lateinit var expensesAdapter: RentAdapter
+        lateinit var rentalsAdapter: RentalsAdapter
         binding.rentalsRecyclerView.setLayoutManager(layoutManager)
+        rentalsAdapter = RentalsAdapter(requireActivity(), mutableListOf())
+        binding.rentalsRecyclerView.setAdapter(rentalsAdapter)
 
+        viewmodel.listRentals.observe(viewLifecycleOwner, Observer {
+            rentalsAdapter.updateRentalsAdapter(it)
+        })
 
         CoroutineScope(Dispatchers.IO).launch() {
-            withContext(Dispatchers.Main) {
-//                activity?.showProgress(requireActivity())
-            }
-
             if (::propertyid.isInitialized) {
-                val allRentals = activity?.myViewModel(requireActivity())?.getRentals(RentFilter(propertyid, "paid", null, null))
-                withContext(Dispatchers.Main) {
-                    expensesAdapter = RentAdapter(requireActivity(), allRentals)
-                    binding.rentalsRecyclerView.setAdapter(expensesAdapter)
-                    expensesAdapter.notifyDataSetChanged()
-                    activity?.dismissProgress()
-                }
+                viewmodel.getRentals(RentFilter(propertyid, "paid", null, null))
             } else {
-                val allRentals = activity?.myViewModel(requireActivity())?.getRentals(RentFilter(null, "paid", null, null))
-                withContext(Dispatchers.Main) {
-                    expensesAdapter = RentAdapter(requireActivity(), allRentals)
-                    binding.rentalsRecyclerView.setAdapter(expensesAdapter)
-                    expensesAdapter.notifyDataSetChanged()
-                    activity?.dismissProgress()
-                }
+                viewmodel.getRentals(RentFilter(null, "paid", null, null))
             }
-
         }
 
-
         binding.datePickerButton.setOnClickListener {
-
             DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved().titleTextColor(Color.RED)
                 .title("Pick Start And End Period")
                 .tab0Text("Start")
@@ -170,13 +161,7 @@ class RentalsFragment : Fragment() {
                     binding.datePickerButton.setText("${startDate} - ${endDate}")
 
                     CoroutineScope(Dispatchers.IO).launch() {
-                        val allRentals = activity?.myViewModel(requireActivity())?.getRentals(RentFilter(null, "paid", startDate, endDate))
-                        withContext(Dispatchers.Main) {
-                            expensesAdapter = RentAdapter(requireActivity(), allRentals)
-                            binding.rentalsRecyclerView.setAdapter(expensesAdapter)
-                            expensesAdapter.notifyDataSetChanged()
-                            activity?.dismissProgress()
-                        }
+                        viewmodel.getRentals(RentFilter(null, "paid", startDate, endDate))
                     }
 
                 }.display()
@@ -208,7 +193,6 @@ abstract class RentReceiptModalClass(var activity: FragmentActivity?, var item: 
 
             itemView.setOnClickListener {
             }
-
 
         }
     }

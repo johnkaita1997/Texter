@@ -4,7 +4,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.propswift.Shared.settingsClick
 import com.propswift.databinding.ActivityPropertyBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class PropertyFetchParentActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPropertyBinding

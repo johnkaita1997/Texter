@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 //REGISTER ACTIVITY//
 @SuppressLint("NonConstantResourceId")
 @EpoxyModelClass(layout = R.layout.activity_addproperty)
-abstract class AddPropertyModalClass(var activity: Activity) : EpoxyModelWithHolder<AddPropertyModalClass.ViewHolder>() {
+abstract class AddPropertyModalClass(var activity: Activity, var viewModel: MyViewModel) : EpoxyModelWithHolder<AddPropertyModalClass.ViewHolder>() {
 
     private lateinit var binding: ActivityAddpropertyBinding
 
@@ -50,7 +50,7 @@ abstract class AddPropertyModalClass(var activity: Activity) : EpoxyModelWithHol
                         val property = CreateProperty(
                             name, location, area.toDouble(), "square meters", rentAmount, isowner, expenseImageUploadList
                         )
-                        activity.myViewModel(activity).createProperty(property)
+                        viewModel.createProperty(property)
                     }
 
                 }

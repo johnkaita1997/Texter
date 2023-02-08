@@ -20,8 +20,7 @@ object Constants {
     const val REQUEST_IMAGE = 100
     var expenseImageList = mutableListOf<Uri>()
     var expenseImageUploadList = listOf<String>()
-    var userid = ""
-    var username = ""
+    lateinit var viewmodel : MyViewModel
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,6 +38,9 @@ object Constants {
     //var baseurl = "https://tafa.co.ke"
     //var baseurl = "http://192.168.50.69:8090"
     var baseurl = "http://192.168.100.4:8000"
+//    var baseurl = "http://192.168.215.132:8000"
+
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAYPAL START

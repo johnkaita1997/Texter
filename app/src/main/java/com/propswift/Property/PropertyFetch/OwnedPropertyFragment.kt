@@ -7,19 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
 import com.marwaeltayeb.progressdialog.ProgressDialog
 import com.propswift.Shared.*
 import com.propswift.databinding.FragmentOwnedBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
+
+@AndroidEntryPoint
 class OwnedPropertyFragment : Fragment() {
 
     private lateinit var viewy: View
     private var _binding: FragmentOwnedBinding? = null
     private val binding get() = _binding!!
     private lateinit var ownedProgress: ProgressDialog
+
+    private val viewmodel: MyViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,9 +42,9 @@ class OwnedPropertyFragment : Fragment() {
         binding.epoxyRecyclerview.setLayoutManager(layoutManager)
 
         CoroutineScope(Dispatchers.IO).launch() {
-           val listOfOwnedProperties = async { activity?.myViewModel(requireActivity())?.getOwnedproperties() }
+           val listOfOwnedProperties = async { viewmodel.getOwnedproperties() }
             withContext(Dispatchers.Main) {
-                listOfOwnedProperties!!.await()?.details.let {
+                listOfOwnedProperties.await().details.let {
                     if (it!!.isNotEmpty()) {
                         expensesAdapter = OwnedPropertyAdapter(requireActivity(), it)
                         binding.epoxyRecyclerview.setAdapter(expensesAdapter)

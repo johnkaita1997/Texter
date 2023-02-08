@@ -6,24 +6,27 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.propswift.R
-import com.propswift.Shared.dismissProgress
-import com.propswift.Shared.goToActivity_Unfinished
-import com.propswift.Shared.myViewModel
-import com.propswift.Shared.settingsClick
+import com.propswift.Shared.*
 import com.propswift.databinding.ActivityManagersBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
+@AndroidEntryPoint
 class ManagersActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityManagersBinding
     var propertyid = ""
+
+    private val viewmodel: MyViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +54,7 @@ class ManagersActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val listOfOwnedProperties = async { myViewModel(this@ManagersActivity).getOwnedproperties() }
+                val listOfOwnedProperties = async { viewmodel.getOwnedproperties() }
                 val thelist = runBlocking { listOfOwnedProperties.await() }
                 Log.d("-------", "initall: FOUND THE LIST TO BE ${thelist.toString()}")
 
@@ -80,9 +83,9 @@ class ManagersActivity : AppCompatActivity() {
                         binding.chooseproperty.setText(propertyname)
 
                         CoroutineScope(Dispatchers.IO).launch() {
-                            val allpropertyForManagers = myViewModel(this@ManagersActivity).getPropertyManagers(propertyid)
+                            val allpropertyForManagers = viewmodel.getPropertyManagers(propertyid)
                             withContext(Dispatchers.Main) {
-                                expensesAdapter = ManagersAdapter(this@ManagersActivity, allpropertyForManagers, propertyid)
+                                expensesAdapter = ManagersAdapter(this@ManagersActivity, allpropertyForManagers, propertyid, viewmodel)
                                 binding.managersRecyclerView.setAdapter(expensesAdapter)
                                 expensesAdapter.notifyDataSetChanged()
                                 dismissProgress()

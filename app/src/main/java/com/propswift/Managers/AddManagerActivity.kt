@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.propswift.R
@@ -13,12 +14,17 @@ import com.propswift.databinding.ActivityAddManagerBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
+
+@AndroidEntryPoint
 class AddManagerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddManagerBinding
     var propertyid = ""
+
+    private val viewmodel: MyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,8 +39,7 @@ class AddManagerActivity : AppCompatActivity() {
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val listOfOwnedProperties =
-                    async { this@AddManagerActivity.myViewModel(this@AddManagerActivity).getOwnedproperties() }
+                val listOfOwnedProperties = async { viewmodel.getOwnedproperties() }
                 val thelist = runBlocking { listOfOwnedProperties.await() }
                 Log.d("-------", "initall: FOUND THE LIST TO BE ${thelist.toString()}")
 
@@ -83,7 +88,7 @@ class AddManagerActivity : AppCompatActivity() {
                 if (validated(validatelist)) {
                     val (email, password, confirmpassword, firstname, lastname) = validatelist.map { mytext(it) }
                     CoroutineScope(Dispatchers.IO).launch() {
-                        myViewModel(this@AddManagerActivity).addManager(
+                        viewmodel.addManager(
                             Manager(
                                 confirmpassword, firstname, lastname, "", password, propertyid, email
                             )

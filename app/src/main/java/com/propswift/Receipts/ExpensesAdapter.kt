@@ -8,8 +8,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Shared.FetchExpenseObject_Detail
+import com.propswift.Shared.GetToDoListTasks_Details
 
-class ExpensesAdapter(var activity: FragmentActivity, var expenseList: List<FetchExpenseObject_Detail>?) : RecyclerView.Adapter<ExpensesAdapter.ViewHolder>() {
+class ExpensesAdapter(var activity: FragmentActivity, var expenseList: MutableList<FetchExpenseObject_Detail>?) : RecyclerView.Adapter<ExpensesAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -43,7 +44,12 @@ class ExpensesAdapter(var activity: FragmentActivity, var expenseList: List<Fetc
 
     }
 
-
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+
+    fun updateExpenseAdapter(newexpenseList: MutableList<FetchExpenseObject_Detail>?) {
+        expenseList?.clear()
+        expenseList = newexpenseList
+        notifyDataSetChanged()
+    }
 
 }

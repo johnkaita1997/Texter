@@ -10,12 +10,8 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.text.TextUtils
 import android.text.format.DateFormat
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.*
-import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.propswift.Activities.WelcomeOneActivity
@@ -25,7 +21,6 @@ import com.propswift.Property.PropertyParentActivity
 import com.propswift.R
 import com.propswift.Receipts.ReceiptsParentActivity
 import com.propswift.Shared.Constants.datemap
-import com.propswift.Shared.Constants.expenseDateMap
 import com.propswift.Shared.Constants.isDialogShown
 import com.propswift.Shared.Constants.isprogressInitialized
 import com.propswift.Shared.Constants.progress
@@ -149,9 +144,15 @@ fun openYoutubeLink(youtubeID: String) {
 }*/
 
 
-fun Context.myViewModel(activity: Activity): ViewModel {
-    return ViewModel(activity.application, activity)
+/*class MyViewModelFactory(private val activity: Activity) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return MyViewModel(activity.application, activity) as T
+    }
 }
+
+fun Context.myViewModel(activity: Activity): MyViewModel {
+    return MyViewModel(activity.application, activity)
+}*/
 
 fun Context.isLoggedIn(): Boolean {
     val preferences: SharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
@@ -391,5 +392,18 @@ fun Context.logoutUser() {
     if (SessionManager(this).logout()) {
         makeLongToast("You have been logged out successfully")
         goToActivity(this as Activity, WelcomeOneActivity::class.java)
+    }
+
+}
+
+
+fun clearAllEditTexts(parent: ViewGroup) {
+    for (i in 0 until parent.childCount) {
+        val child = parent.getChildAt(i)
+        if (child is EditText) {
+            child.setText("")
+        } else if (child is ViewGroup) {
+            clearAllEditTexts(child)
+        }
     }
 }

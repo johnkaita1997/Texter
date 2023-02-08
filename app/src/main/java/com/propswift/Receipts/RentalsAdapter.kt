@@ -7,9 +7,10 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
+import com.propswift.Shared.FetchExpenseObject_Detail
 import com.propswift.Shared.RentDetail
 
-class RentAdapter(var activity: FragmentActivity, var rentList: List<RentDetail>?) : RecyclerView.Adapter<RentAdapter.ViewHolder>() {
+class RentalsAdapter(var activity: FragmentActivity, var rentalsList: MutableList<RentDetail>?) : RecyclerView.Adapter<RentalsAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -20,12 +21,12 @@ class RentAdapter(var activity: FragmentActivity, var rentList: List<RentDetail>
     }
 
     override fun getItemCount(): Int {
-        return rentList!!.size
+        return rentalsList!!.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val rentObject = rentList!!.get(position);
+        val rentObject = rentalsList!!.get(position);
         val rentDate = rentObject.date_paid
         val rentAmount = rentObject.amount
 //        val receiptNumber = rentObject.
@@ -46,5 +47,11 @@ class RentAdapter(var activity: FragmentActivity, var rentList: List<RentDetail>
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+
+    fun updateRentalsAdapter(newRentalsList: MutableList<RentDetail>?) {
+        rentalsList?.clear()
+        rentalsList = newRentalsList
+        notifyDataSetChanged()
+    }
 
 }

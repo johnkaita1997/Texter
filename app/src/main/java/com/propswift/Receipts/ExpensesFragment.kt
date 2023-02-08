@@ -13,6 +13,9 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
 import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
@@ -22,6 +25,7 @@ import com.propswift.databinding.FragmentExpensesBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,7 +33,8 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 
 
-class ExpensesFragment : Fragment() {
+@AndroidEntryPoint
+class ExpensesFragment : Fragment(), LifecycleOwner {
 
     private lateinit var viewy: View
     private var _binding: FragmentExpensesBinding? = null
@@ -38,9 +43,10 @@ class ExpensesFragment : Fragment() {
     private var date = "paid"
     lateinit var propertyid: String
 
+    private val viewmodel: MyViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentExpensesBinding.inflate(layoutInflater, container, false)
         viewy = binding.root
         initiate_Views()
@@ -56,34 +62,22 @@ class ExpensesFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity)
         lateinit var expensesAdapter: ExpensesAdapter
         binding.expensesRecyclerView.setLayoutManager(layoutManager)
+        expensesAdapter = ExpensesAdapter(requireActivity(), mutableListOf())
+        binding.expensesRecyclerView.setAdapter(expensesAdapter)
 
+        viewmodel.getExpenses.observe(viewLifecycleOwner, Observer {
+            expensesAdapter.updateExpenseAdapter(it)
+
+        })
 
         CoroutineScope(Dispatchers.IO).launch() {
-
-            withContext(Dispatchers.Main) {
-//                activity?.showProgress(requireActivity())
-            }
-
             if (::propertyid.isInitialized) {
-                val allExpenses = activity?.myViewModel(requireActivity())?.getExpenses(ExpenseFilter(propertyid, null, null, null))
-                withContext(Dispatchers.Main) {
-                    expensesAdapter = ExpensesAdapter(requireActivity(), allExpenses)
-                    binding.expensesRecyclerView.setAdapter(expensesAdapter)
-                    expensesAdapter.notifyDataSetChanged()
-                    activity?.dismissProgress()
-                }
+                viewmodel.getExpenses(ExpenseFilter(propertyid, null, null, null))
             } else {
-                val allExpenses = activity?.myViewModel(requireActivity())?.getExpenses(ExpenseFilter(null, null, null, null))
-                withContext(Dispatchers.Main) {
-                    expensesAdapter = ExpensesAdapter(requireActivity(), allExpenses)
-                    binding.expensesRecyclerView.setAdapter(expensesAdapter)
-                    expensesAdapter.notifyDataSetChanged()
-                    activity?.dismissProgress()
-                }
+                viewmodel.getExpenses(ExpenseFilter(null, null, null, null))
             }
-
-
         }
+
 
         binding.generalIncurredBtn.setOnClickListener {
             val powerMenu: PowerMenu = PowerMenu.Builder(requireContext()).addItem(PowerMenuItem("General", false)) // add an item.
@@ -103,30 +97,14 @@ class ExpensesFragment : Fragment() {
 
                         CoroutineScope(Dispatchers.IO).launch() {
                             withContext(Dispatchers.Main) {
-                                activity?.showProgress(requireActivity())
-                            }
-
-                            withContext(Dispatchers.Main) {
                                 if (::propertyid.isInitialized) {
-                                    val myexpenses = activity?.myViewModel(requireActivity())?.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
-                                    withContext(Dispatchers.Main) {
-                                        expensesAdapter = ExpensesAdapter(requireActivity(), myexpenses)
-                                        binding.expensesRecyclerView.setAdapter(expensesAdapter)
-                                        expensesAdapter.notifyDataSetChanged()
-                                        activity?.dismissProgress()
-                                    }
+                                    viewmodel.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
                                 } else {
-                                    val theexpenselist = activity?.myViewModel(requireActivity())?.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
-                                    withContext(Dispatchers.Main) {
-                                        expensesAdapter = ExpensesAdapter(requireActivity(), theexpenselist)
-                                        binding.expensesRecyclerView.setAdapter(expensesAdapter)
-                                        expensesAdapter.notifyDataSetChanged()
-                                        activity?.dismissProgress()
-                                    }
+                                    viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
                                 }
-
                             }
                         }
+
                     } else {
                         activity?.makeLongToast("You did not select a period")
                     }
@@ -184,6 +162,7 @@ class ExpensesFragment : Fragment() {
                             }
 
                         } else {
+
                             val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
                             val thisday = (if (date.date < 10) "0" else "") + date.date
                             val thismonth = monthNames.get(date.month)
@@ -193,6 +172,7 @@ class ExpensesFragment : Fragment() {
                             } else {
                                 thisyear = "19${thisyear}"
                             }
+
                             var monthNumber = 0
                             if (thismonth.equals("Jan")) monthNumber = 1
                             else if (thismonth == "Feb") monthNumber = 2
@@ -224,25 +204,10 @@ class ExpensesFragment : Fragment() {
 
                     CoroutineScope(Dispatchers.IO).launch() {
                         withContext(Dispatchers.Main) {
-                            activity?.showProgress(requireActivity())
-                        }
-                        withContext(Dispatchers.Main) {
                             if (::propertyid.isInitialized) {
-                                val myexpenses = activity?.myViewModel(requireActivity())?.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
-                                withContext(Dispatchers.Main) {
-                                    expensesAdapter = ExpensesAdapter(requireActivity(), myexpenses)
-                                    binding.expensesRecyclerView.setAdapter(expensesAdapter)
-                                    expensesAdapter.notifyDataSetChanged()
-                                    activity?.dismissProgress()
-                                }
+                                viewmodel.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
                             } else {
-                                val theexpenselist = activity?.myViewModel(requireActivity())?.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
-                                withContext(Dispatchers.Main) {
-                                    expensesAdapter = ExpensesAdapter(requireActivity(), theexpenselist)
-                                    binding.expensesRecyclerView.setAdapter(expensesAdapter)
-                                    expensesAdapter.notifyDataSetChanged()
-                                    activity?.dismissProgress()
-                                }
+                               viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
                             }
                         }
                     }

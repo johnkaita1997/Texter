@@ -3,22 +3,34 @@ package com.propswift.Activities
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import com.propswift.Dagger.TestViewModel
 import com.propswift.R
-import com.propswift.Shared.Constants.userid
-import com.propswift.Shared.Constants.username
-import com.propswift.Shared.colorChanger
-import com.propswift.Shared.myViewModel
-import com.propswift.Shared.settingsClick
+import com.propswift.Shared.*
 import com.propswift.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Named
 
-class MainActivity : AppCompatActivity() {
+
+@AndroidEntryPoint
+class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     private lateinit var binding: ActivityMainBinding
+
+    @Inject
+    @Named("carname")
+    lateinit var carname: String
+
+    private val testviewModel: TestViewModel by viewModels()
+    private val viewmodel: MyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,43 +41,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun initall() {
 
-        CoroutineScope(Dispatchers.IO).launch() {
-            val loggedinUser = myViewModel(this@MainActivity).getUserProfileDetails().details
-            loggedinUser.let {
-                withContext(Dispatchers.Main) {
-                    val firstname = it?.first_name
-                    val lastname = it?.last_name
-                    val combined = "Hallo $firstname $lastname"
-                    binding.helloThere.setText(combined)
-                    userid = it?.user_id.toString()
-                    username = combined
-                }
-            }
-        }
 
-        CoroutineScope(Dispatchers.IO).launch() {
-            val totalAmount = myViewModel(this@MainActivity).getTotal()
-            totalAmount.let {
-                withContext(Dispatchers.Main) {
-                    binding.amountSpent.setText("Amount Spent : KES ${it.details.toString()}")
-                }
-            }
-        }
+        viewmodel.bothNames.observe(this, Observer {
+            makeLongToast("Here")
+            binding.helloThere.setText(it)
+        })
+        viewmodel.totalAmount.observe(
+            this, Observer {
+                binding.amountSpent.setText("Amount Spent : KES ${it}")
+            })
+        viewmodel.getTotalNumberofReceipts.observe(this, Observer {
+            binding.numberOfReceipts.setText("Number of receipts : $it")
+        })
 
 
         CoroutineScope(Dispatchers.IO).launch() {
-            val totalAmount = myViewModel(this@MainActivity).getTotalNumberofReceipts()
-            totalAmount.let {
-                withContext(Dispatchers.Main) {
-                    binding.numberOfReceipts.setText("Number of receipts : ${it.details.toString()}")
-                }
-            }
+            viewmodel.getUserProfileDetails()
+            viewmodel.getTotal()
+            viewmodel.getTotalNumberofReceipts()
         }
+
 
         settingsClick(binding.menuicon)
         colorChanger(binding.cardone, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardtwo, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardthree, R.color.propbrownligt, R.color.proplightgreen)
+
     }
 
     override fun onBackPressed() {
@@ -75,6 +76,7 @@ class MainActivity : AppCompatActivity() {
                 finish()
             }).setNegativeButton("Dismis", DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }).show()
     }
+
 
 }
 

@@ -7,21 +7,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
 import com.marwaeltayeb.progressdialog.ProgressDialog
 import com.propswift.R
+import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.RentedDetail
 import com.propswift.Shared.dismissProgress
-import com.propswift.Shared.myViewModel
 import com.propswift.Shared.showAlertDialog
 import com.propswift.databinding.FragmentRentedBinding
 import com.propswift.databinding.ViewFragmentrentedBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 
+
+@AndroidEntryPoint
 class RentedPropertyFragment : Fragment() {
 
     private lateinit var viewy: View
@@ -29,6 +34,7 @@ class RentedPropertyFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var rentedProgress: ProgressDialog
 
+    private val viewmodel: MyViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,9 +51,9 @@ class RentedPropertyFragment : Fragment() {
         binding.rentalsRecyclerView.setLayoutManager(layoutManager)
 
         CoroutineScope(Dispatchers.IO).launch() {
-            val listOfRentedProperties = async { activity?.myViewModel(requireActivity())?.getrentedproperties() }
+            val listOfRentedProperties = async {viewmodel.getrentedproperties() }
             withContext(Dispatchers.Main) {
-                listOfRentedProperties.await()?.details.let {
+                listOfRentedProperties.await().details.let {
                     if (it!!.isNotEmpty()) {
                         expensesAdapter = RentedPropertyAdapter(requireActivity(), it)
                         binding.rentalsRecyclerView.setAdapter(expensesAdapter)

@@ -2,21 +2,26 @@ package com.propswift.ToDoList
 
 import android.graphics.Color
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
-import com.propswift.Shared.ToDoListTask
-import com.propswift.Shared.makeLongToast
-import com.propswift.Shared.myViewModel
+import com.propswift.Shared.*
 import com.propswift.databinding.ActivityAddToDoBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
+@AndroidEntryPoint
 class AddToDoActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddToDoBinding
     private var duedate = ""
 
+    val viewModel : MyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +34,7 @@ class AddToDoActivity : AppCompatActivity() {
 
     private fun initall() {
 
+//        val viewModel = ViewModelProvider(this, MyViewModelFactory(this)).get(MyViewModel::class.java)
 
         binding.submitToDo.setOnClickListener {
             if (binding.todotext.text.isBlank()) {
@@ -37,13 +43,14 @@ class AddToDoActivity : AppCompatActivity() {
                 makeLongToast("Enter a due date first")
             } else {
                 CoroutineScope(Dispatchers.IO).launch() {
-                    myViewModel(this@AddToDoActivity).addToDoList(
+                    viewModel.addToDoList(
                         ToDoListTask(
                             duedate, binding.todotext.text.toString().trim()
-                        )
+                        ), viewModel
                     )
                 }
             }
+
 
         }
 

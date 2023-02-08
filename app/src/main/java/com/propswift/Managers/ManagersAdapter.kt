@@ -8,14 +8,14 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Shared.GetPropertyManagerDetails_Details
+import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.makeLongToast
-import com.propswift.Shared.myViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class ManagersAdapter(var activity: FragmentActivity, var managerList: MutableList<GetPropertyManagerDetails_Details>?, var propertyid: String) : RecyclerView.Adapter<ManagersAdapter.ViewHolder>() {
+class ManagersAdapter(var activity: FragmentActivity, var managerList: MutableList<GetPropertyManagerDetails_Details>?, var propertyid: String, var viewmodel: MyViewModel) : RecyclerView.Adapter<ManagersAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -39,7 +39,7 @@ class ManagersAdapter(var activity: FragmentActivity, var managerList: MutableLi
         holder.itemView.findViewById<TextView>(R.id.deleteManager).setOnClickListener {
 
             CoroutineScope(Dispatchers.IO).launch() {
-                activity.myViewModel(activity).removeManager(managerid.toString(), propertyid)
+               viewmodel.removeManager(managerid.toString(), propertyid)
                 withContext(Dispatchers.Main) {
                     activity.makeLongToast("Manager removed successfully")
                 }

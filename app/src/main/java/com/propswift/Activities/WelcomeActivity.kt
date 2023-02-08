@@ -7,22 +7,27 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.epoxy.*
 import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.Shared.Constants.mydialog
+import com.propswift.Shared.Constants.viewmodel
 import com.propswift.databinding.ActivityLoginBinding
 import com.propswift.databinding.ActivitySignUpBinding
 import com.propswift.databinding.ActivityWelcomeBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class WelcomeOneActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWelcomeBinding
+    private val viewmodel: MyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +44,7 @@ class WelcomeOneActivity : AppCompatActivity() {
                 val e = SessionManager(this@WelcomeOneActivity).fetchu().toString()
                 val p = SessionManager(this@WelcomeOneActivity).fetchp().toString()
                 Log.d("-------", "initall: $e,  $p")
-                myViewModel(this@WelcomeOneActivity).refreshtoken(e, p)
+                viewmodel.refreshtoken(e, p)
             }
             goToActivity(this, MainActivity::class.java)
         }
@@ -68,9 +73,9 @@ class WelcomeOneActivity : AppCompatActivity() {
                     }*/
 
                     if (intent.hasExtra("true")) {
-                        LoginModalClass_(this@WelcomeOneActivity).id(0).addTo(this)
+                        LoginModalClass_(this@WelcomeOneActivity, viewmodel).id(0).addTo(this)
                     } else {
-                        RegisterModalClass_(this@WelcomeOneActivity).id(0).addTo(this)
+                        RegisterModalClass_(this@WelcomeOneActivity, viewmodel).id(0).addTo(this)
                     }
 
                 }
@@ -81,11 +86,10 @@ class WelcomeOneActivity : AppCompatActivity() {
 
 }
 
-
 //LOGIN ACTIVITY//
 @SuppressLint("NonConstantResourceId")
 @EpoxyModelClass(layout = R.layout.activity_login)
-abstract class LoginModalClass(var activity: Activity) : EpoxyModelWithHolder<LoginModalClass.ViewHolder>() {
+abstract class LoginModalClass(var activity: Activity, var viewModel: MyViewModel) : EpoxyModelWithHolder<LoginModalClass.ViewHolder>() {
 
     private lateinit var binding: ActivityLoginBinding
 
@@ -105,7 +109,7 @@ abstract class LoginModalClass(var activity: Activity) : EpoxyModelWithHolder<Lo
             if (activity.validated(validatelist)) {
                 val (email, password) = validatelist.map { activity.mytext(it) }
                 CoroutineScope(Dispatchers.IO).launch() {
-                    activity.myViewModel(activity).loginuser(email, password, mydialog)
+                    viewmodel.loginuser(email, password, mydialog)
                 }
             } else activity.dismiss(mydialog)
 
@@ -125,7 +129,7 @@ abstract class LoginModalClass(var activity: Activity) : EpoxyModelWithHolder<Lo
 //REGISTER ACTIVITY//
 @SuppressLint("NonConstantResourceId")
 @EpoxyModelClass(layout = R.layout.activity_sign_up)
-abstract class RegisterModalClass(var activity: Activity) : EpoxyModelWithHolder<RegisterModalClass.ViewHolder>() {
+abstract class RegisterModalClass(var activity: Activity, var viewModel: MyViewModel) : EpoxyModelWithHolder<RegisterModalClass.ViewHolder>() {
 
     private lateinit var binding: ActivitySignUpBinding
 
@@ -144,7 +148,7 @@ abstract class RegisterModalClass(var activity: Activity) : EpoxyModelWithHolder
             if (activity.validated(validatelist)) {
                 val (email, password, confirmpassword, firstname, lastname) = validatelist.map { activity.mytext(it) }
                 CoroutineScope(Dispatchers.IO).launch() {
-                    activity.myViewModel(activity).registeruser(email, firstname, lastname, "Middle", email, password, confirmpassword, mydialog)
+                    viewmodel.registeruser(email, firstname, lastname, "Middle", email, password, confirmpassword, mydialog)
                 }
             } else activity.dismiss(mydialog)
 

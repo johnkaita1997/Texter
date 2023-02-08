@@ -5,8 +5,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyRecyclerView
@@ -15,10 +15,11 @@ import com.github.drjacky.imagepicker.constant.ImageProvider
 import com.propswift.Activities.ImagesAdapter
 import com.propswift.Shared.Constants.expenseImageList
 import com.propswift.Shared.Constants.expenseImageUploadList
+import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.makeLongToast
-import com.propswift.Shared.myViewModel
 import com.propswift.Shared.settingsClick
 import com.propswift.databinding.PropertyProfileBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -28,10 +29,13 @@ import okhttp3.RequestBody
 import java.io.File
 
 
+@AndroidEntryPoint
 class PropertyParentActivity : AppCompatActivity() {
 
     private lateinit var binding: PropertyProfileBinding
     private lateinit var imagesAdapter: ImagesAdapter
+
+    private val viewmodel: MyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,7 +81,7 @@ class PropertyParentActivity : AppCompatActivity() {
                 }
 
                 CoroutineScope(Dispatchers.IO).launch() {
-                    val imagelist = myViewModel(this@PropertyParentActivity).uploadFile(themap)
+                    val imagelist = viewmodel.uploadFile(themap)
                     expenseImageUploadList = imagelist
                 }
 
@@ -96,10 +100,10 @@ class PropertyParentActivity : AppCompatActivity() {
                 controller.apply {
                     if (operation == "createproperty") {
                         binding.include.header.setText("Add Property")
-                        AddPropertyModalClass_(this@PropertyParentActivity).id(0).addTo(this)
+                        AddPropertyModalClass_(this@PropertyParentActivity, viewmodel).id(0).addTo(this)
                     } else if (operation == "createexpense") {
                         binding.include.header.setText("Add Expense")
-                        AddExpenseModalClass_(this@PropertyParentActivity, launcher).id(0).addTo(this)
+                        AddExpenseModalClass_(this@PropertyParentActivity, launcher, viewmodel).id(0).addTo(this)
                     }
 
                 }
