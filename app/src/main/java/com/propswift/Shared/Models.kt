@@ -66,6 +66,7 @@ data class OwnedDetail(
 class RentalObject(
     val details: List<RentDetail>?
 )
+
 data class RentDetail(
     val amount: String?,
     val amount_paid: String?,
@@ -88,6 +89,7 @@ data class RentFilter(
 class ExpenseObject(
     val details: List<ExpenseDetail>?
 )
+
 data class ExpenseDetail(
     val amount: String?,
     val created_at: String?,
@@ -165,6 +167,7 @@ data class DetailsUser(
 data class GetPropertyManagers(
     val details: MutableList<GetPropertyManagerDetails_Details>
 )
+
 data class GetPropertyManagerDetails_Details(
     val first_name: String?,
     val last_name: String?,
@@ -217,6 +220,7 @@ data class ToDoListTask(
 data class GetToDoListTasks(
     val details: MutableList<GetToDoListTasks_Details>?
 )
+
 data class GetToDoListTasks_Details(
     val actor: String?,
     val created_at: String?,
@@ -242,12 +246,13 @@ data class GetProfileDetails_Details(
     val last_name: String?,
     val middle_name: String?,
     val user_id: String?,
-    val username: String?
+    val username: String?,
+    val is_manager: Boolean
 )
 
 
 data class FetchExpenseObject(
-    val details: List<FetchExpenseObject_Detail>?
+    val details: MutableList<FetchExpenseObject_Detail>?
 )
 
 data class FetchExpenseObject_Detail(
@@ -260,7 +265,6 @@ data class FetchExpenseObject_Detail(
     val files: List<String?>,
     val id: String?,
     val `property`: Property,
-    val receipt: String?,
     val updated_at: String?
 )
 
@@ -281,11 +285,61 @@ data class ExpenseUploadObject(
     val description: String,
     val expense_type: String,
     val files: List<String>,
-    val property_id: String,
-    val receipt: String
+    val property_id: String
+)
+
+
+data class OtherReceiptsUploadObject(
+    val amount: Int,
+    val date_incurred: String,
+    val description: String,
+    val receipt: String,
+    val files: List<String>,
+    val property_id: String
 )
 
 
 class Total(
     val details: Double?
+)
+
+data class StringBody(
+    val request_id: String
+)
+
+
+data class OtherReceiptCallback(
+    val details: MutableList<OtherReceiptCallbackDetails>
+)
+data class OtherReceiptCallbackDetails(
+    val amount: String,
+    val created_at: String,
+    val date_incurred: String,
+    val deleted_at: Any,
+    val description: String,
+    val files: List<String>,
+    val id: String,
+    val `property`: String,
+    val receipt: String,
+    val updated_at: String
+)
+
+
+data class OtherReceiptFilter(
+    val property_id: String?,
+    val date_from: String?,
+    val date_to: String?,
+)
+
+
+data class RentPaymentModel(
+    val amount: Int,
+    val files: List<String>,
+    val payment_date: String,
+    val receipt: String,
+    val request_id: String
+)
+
+data class RentPaidCallback(
+    val details: String
 )

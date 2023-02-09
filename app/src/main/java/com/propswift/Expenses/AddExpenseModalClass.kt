@@ -1,4 +1,4 @@
-package com.propswift.Property
+package com.propswift.Expenses
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -10,6 +10,8 @@ import android.view.Gravity
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
@@ -17,7 +19,6 @@ import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.Shared.Constants.datemap
 import com.propswift.Shared.Constants.expenseImageUploadList
-import com.propswift.Shared.Constants.viewmodel
 import com.propswift.databinding.ActivityAddexpenseBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
@@ -31,7 +32,7 @@ import kotlinx.coroutines.*
 abstract class AddExpenseModalClass(
     var activity: Activity,
     var startForProfileImageResult: ActivityResultLauncher<Intent>,
-    var viewModel: MyViewModel
+    var myviewmodel: MyViewModel
 ) :
     EpoxyModelWithHolder<AddExpenseModalClass.ViewHolder>() {
 
@@ -41,12 +42,15 @@ abstract class AddExpenseModalClass(
     @OptIn(DelicateCoroutinesApi::class)
     override fun bind(holder: ViewHolder) {
 
+        CoroutineScope(Dispatchers.IO).launch() {
+            myviewmodel.getOwnedproperties()
+        }
+
         binding.selectProperty.setOnClickListener {
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val thelist =  viewmodel.listOfOwnedProperties.value
-
+                val thelist = myviewmodel.listOfOwnedProperties.value
 
                 val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
@@ -54,6 +58,7 @@ abstract class AddExpenseModalClass(
                     .setMenuShadow(10f) // sets the shadow.
                     .setWidth(900).setTextColor(ContextCompat.getColor(activity, R.color.black))
                     .setTextGravity(Gravity.CENTER)
+                    .setBackgroundColor(ContextCompat.getColor(activity, R.color.white))
                     .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
                     .setSelectedTextColor(Color.WHITE).setMenuColor(Color.WHITE)
                     .setSelectedMenuColor(ContextCompat.getColor(activity, R.color.colorPrimary))
@@ -77,7 +82,6 @@ abstract class AddExpenseModalClass(
                     }
                     powerMenu?.build()?.showAsDropDown(binding.selectProperty)
                 }
-
 
             }
         }
@@ -107,32 +111,24 @@ abstract class AddExpenseModalClass(
                                 if (binding.amount.text!!.isEmpty()) {
                                     activity.makeLongToast("You have to enter amount")
                                 } else {
-                                    if (binding.receipt.text!!.isEmpty()) {
-                                        activity.makeLongToast("You have to enter receipt number")
-                                    } else {
+                                    val combined = datemap.getValue("combined")
+                                    val date = combined
+                                    val description = binding.description.text.toString().trim()
+                                    val expenseType = binding.expenseType.text.toString().trim()
+                                    val amount = binding.amount.text.toString().trim()
 
-                                        val combined = datemap.getValue("combined")
-                                        val date = combined
-                                        val receipt = binding.receipt.text.toString().trim()
-                                        val description = binding.description.text.toString().trim()
-                                        val expenseType = binding.expenseType.text.toString().trim()
-                                        val amount = binding.amount.text.toString().trim()
-
-                                        val expenseObject = ExpenseUploadObject(amount.toInt(), date, description, expenseType, expenseImageUploadList, propertyid, receipt)
-                                        CoroutineScope(Dispatchers.IO).launch() {
-                                            viewModel.addExpense(expenseObject, binding.root)
-                                            withContext(Dispatchers.Main) {
-                                                activity.showAlertDialog("Expense was added successfully")
-                                            }
+                                    val expenseObject = ExpenseUploadObject(amount.toInt(), date, description, expenseType, expenseImageUploadList, propertyid)
+                                    CoroutineScope(Dispatchers.IO).launch() {
+                                        myviewmodel.addExpense(expenseObject, binding.root)
+                                        withContext(Dispatchers.Main) {
+                                            activity.showAlertDialog("Expense was added successfully")
                                         }
-
                                     }
+
                                 }
                             }
                         }
                     }
-
-
 
                 }
             }

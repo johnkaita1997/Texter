@@ -13,7 +13,6 @@ import com.airbnb.epoxy.*
 import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.Shared.Constants.mydialog
-import com.propswift.Shared.Constants.viewmodel
 import com.propswift.databinding.ActivityLoginBinding
 import com.propswift.databinding.ActivitySignUpBinding
 import com.propswift.databinding.ActivityWelcomeBinding
@@ -109,7 +108,7 @@ abstract class LoginModalClass(var activity: Activity, var viewModel: MyViewMode
             if (activity.validated(validatelist)) {
                 val (email, password) = validatelist.map { activity.mytext(it) }
                 CoroutineScope(Dispatchers.IO).launch() {
-                    viewmodel.loginuser(email, password, mydialog)
+                    viewModel.loginuser(email, password, mydialog)
                 }
             } else activity.dismiss(mydialog)
 
@@ -148,7 +147,7 @@ abstract class RegisterModalClass(var activity: Activity, var viewModel: MyViewM
             if (activity.validated(validatelist)) {
                 val (email, password, confirmpassword, firstname, lastname) = validatelist.map { activity.mytext(it) }
                 CoroutineScope(Dispatchers.IO).launch() {
-                    viewmodel.registeruser(email, firstname, lastname, "Middle", email, password, confirmpassword, mydialog)
+                    viewModel.registeruser(email, firstname, lastname, "Middle", email, password, confirmpassword, mydialog)
                 }
             } else activity.dismiss(mydialog)
 

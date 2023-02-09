@@ -1,4 +1,4 @@
-package com.propswift.Property.PropertyFetch
+package com.propswift.Property.ListProperties
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -17,6 +17,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
 import com.marwaeltayeb.progressdialog.ProgressDialog
+import com.propswift.Property.ListProperties.Rented.RentedPropertyAdapter
 import com.propswift.R
 import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.RentedDetail
@@ -47,7 +48,7 @@ class RentedPropertyFragment : Fragment() {
         val layoutManager = LinearLayoutManager(activity)
         lateinit var rentedPropertyAdapter: RentedPropertyAdapter
         binding.rentalsRecyclerView.setLayoutManager(layoutManager)
-        rentedPropertyAdapter = RentedPropertyAdapter(requireActivity(), mutableListOf())
+        rentedPropertyAdapter = RentedPropertyAdapter(requireActivity(), mutableListOf(), viewmodel)
         binding.rentalsRecyclerView.setAdapter(rentedPropertyAdapter)
 
         binding.filter.addTextChangedListener(object : TextWatcher {

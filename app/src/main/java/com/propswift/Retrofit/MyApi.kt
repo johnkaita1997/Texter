@@ -190,6 +190,42 @@ interface MyApi {
     ): Response<Total>
 
 
+    @POST("api/v1/property/remove-property")
+    suspend fun deleteProperty(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+        @Body propoertyid: StringBody,
+    ): Response<success>
+
+
+
+    @POST("api/v1/property/add-other-receipt")
+    suspend fun addOtherReceipt(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+        @Body otherReceiptsUploadObject: OtherReceiptsUploadObject,
+    ): Response<success>
+
+
+    @GET("api/v1/property/list-other-receipts")
+    suspend fun getOtherReceipts(
+        @Query("property_id") property_id: String?,
+        @Query("date_from") date_from: String?,
+        @Query("date_to") date_to: String?,
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+    ): Response<OtherReceiptCallback?>
+
+
+    @POST("api/v1/property/add-rent-payment")
+    suspend fun addRentPayment(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+        @Body rentpaymentbody: RentPaymentModel,
+    ): Response<RentPaidCallback>
+
+
+
 }
 
 

@@ -1,8 +1,9 @@
-package com.propswift.Property.PropertyFetch
+package com.propswift.Property.ListProperties
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.propswift.Property.ListProperties.Owned.OwnedPropertyFragment
 
 
 class PropertyFetchAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm!!) {

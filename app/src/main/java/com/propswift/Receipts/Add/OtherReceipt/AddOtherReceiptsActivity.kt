@@ -1,4 +1,4 @@
-package com.propswift.Property
+package com.propswift.Receipts.Add.OtherReceipt
 
 import android.app.Activity
 import android.net.Uri
@@ -7,6 +7,7 @@ import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyRecyclerView
@@ -18,7 +19,7 @@ import com.propswift.Shared.Constants.expenseImageUploadList
 import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.makeLongToast
 import com.propswift.Shared.settingsClick
-import com.propswift.databinding.PropertyProfileBinding
+import com.propswift.databinding.AddOtherReceiptHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,16 +31,16 @@ import java.io.File
 
 
 @AndroidEntryPoint
-class PropertyParentActivity : AppCompatActivity() {
+class AddOtherReceiptsActivity : AppCompatActivity(), LifecycleOwner {
 
-    private lateinit var binding: PropertyProfileBinding
+    private lateinit var binding: AddOtherReceiptHomeBinding
     private lateinit var imagesAdapter: ImagesAdapter
 
     private val viewmodel: MyViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = PropertyProfileBinding.inflate(layoutInflater)
+        binding = AddOtherReceiptHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initall()
 
@@ -48,6 +49,7 @@ class PropertyParentActivity : AppCompatActivity() {
 
     private fun initall() {
 
+        binding.include.header.setText("Add Receipt")
         settingsClick(binding.include.menuicon)
 
         var themap = mutableListOf<MultipartBody.Part>()
@@ -98,14 +100,8 @@ class PropertyParentActivity : AppCompatActivity() {
         binding.epoxyRecyclerview.buildModelsWith(object : EpoxyRecyclerView.ModelBuilderCallback {
             override fun buildModels(controller: EpoxyController) {
                 controller.apply {
-                    if (operation == "createproperty") {
-                        binding.include.header.setText("Add Property")
-                        AddPropertyModalClass_(this@PropertyParentActivity, viewmodel).id(0).addTo(this)
-                    } else if (operation == "createexpense") {
-                        binding.include.header.setText("Add Expense")
-                        AddExpenseModalClass_(this@PropertyParentActivity, launcher, viewmodel).id(0).addTo(this)
-                    }
-
+                    binding.include.header.setText("Add Expense")
+                    AddOtherReceiptsModalClass_(this@AddOtherReceiptsActivity, launcher, viewmodel).id(0).addTo(this)
                 }
 
             }

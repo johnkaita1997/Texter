@@ -2,8 +2,8 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="match_parent"
     android:background="@color/white"
+    android:layout_width="match_parent"
     android:backgroundTint="@color/white"
     android:layout_height="match_parent">
 
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/createnewproperty"
+        android:id="@+id/createexpense"
         android:background="?android:attr/selectableItemBackground"
         android:padding="8dp">
 
@@ -24,14 +24,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create New Property"
+            android:text="Create New Expense"
             android:layout_gravity="center_vertical"
             android:padding="8dp"/>
     </LinearLayout>
 
 
     <LinearLayout
-        android:id="@+id/viewProperties"
+        android:id="@+id/viewexpenses"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="8dp"
-            android:text="View Properties" />
+            android:text="View Expenses" />
 
     </LinearLayout>
 </LinearLayout>

@@ -1,4 +1,4 @@
-package com.propswift.Property.PropertyFetch
+package com.propswift.Property.ListProperties.Owned
 
 import android.os.Build
 import android.os.Bundle
@@ -44,7 +44,7 @@ class OwnedPropertyFragment : Fragment(), LifecycleOwner {
 
         val layoutManager = LinearLayoutManager(activity)
         lateinit var ownedPropertyAdapter: OwnedPropertyAdapter
-        ownedPropertyAdapter = OwnedPropertyAdapter(requireActivity(), mutableListOf())
+        ownedPropertyAdapter = OwnedPropertyAdapter(requireActivity(), mutableListOf(), viewmodel)
         binding.epoxyRecyclerview.setLayoutManager(layoutManager)
         binding.epoxyRecyclerview.setAdapter(ownedPropertyAdapter)
 

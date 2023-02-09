@@ -25,8 +25,7 @@ import kotlin.coroutines.CoroutineContext
 @HiltViewModel
 class MyViewModel
 @Inject constructor(
-    @Named("myapi") private val api: MyApi,
-    @ApplicationContext private val appcontext: Context
+    @Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context
 ) : ViewModel() {
 
     lateinit var activity: Activity
@@ -54,15 +53,17 @@ class MyViewModel
     val _getExpenses = MutableLiveData<MutableList<FetchExpenseObject_Detail>>()
     val getExpenses: LiveData<MutableList<FetchExpenseObject_Detail>> get() = _getExpenses
 
-    val _listOfOwnedProperties = MutableLiveData< MutableList<OwnedDetail>?>()
-    val listOfOwnedProperties: LiveData< MutableList<OwnedDetail>?> get() = _listOfOwnedProperties
+    val _listOfOwnedProperties = MutableLiveData<MutableList<OwnedDetail>?>()
+    val listOfOwnedProperties: LiveData<MutableList<OwnedDetail>?> get() = _listOfOwnedProperties
 
-    val _listofRentedProperties = MutableLiveData< MutableList<RentedDetail>?>()
-    val listofRentedProperties: LiveData< MutableList<RentedDetail>?> get() = _listofRentedProperties
+    val _listofRentedProperties = MutableLiveData<MutableList<RentedDetail>?>()
+    val listofRentedProperties: LiveData<MutableList<RentedDetail>?> get() = _listofRentedProperties
 
+    val _isManager = MutableLiveData<Boolean?>()
+    val isManager: MutableLiveData<Boolean?> get() = _isManager
 
-    val is_manager = false
-
+    val _getOtherReceipts = MutableLiveData<MutableList<OtherReceiptCallbackDetails>>()
+    val getOtherReceipts: LiveData<MutableList<OtherReceiptCallbackDetails>> get() = _getOtherReceipts
 
     fun Context.coroutineexception(activity: Activity): CoroutineContext {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -79,13 +80,9 @@ class MyViewModel
 
 
     suspend fun networkResponseFailure(it: Throwable, mydialog: SpotsDialog?) {
-
         if (activity.activityisrunning()) {
             withContext(Dispatchers.Main) {
-
-//                activity.dismiss(mydialog!!)
                 Log.d("----------", "networkResponseFailure: KERROR - ${it.message}")
-//                activity.makeLongToast("Error! ${it.message.toString()}")
                 activity.showAlertDialog("Error! ${it.message.toString()}")
                 try {
                     activity.dismissProgress()
@@ -97,9 +94,7 @@ class MyViewModel
         return
     }
 
-    suspend fun handleResponse(
-        jsonObj: JSONObject, responseString: String, mydialog: SpotsDialog?
-    ) {
+    suspend fun handleResponse(jsonObj: JSONObject, responseString: String, mydialog: SpotsDialog?) {
         if (jsonObj.has("details")) {
             val message = jsonObj.getString("details")
             if (activity.activityisrunning()) {
@@ -355,7 +350,7 @@ class MyViewModel
         }
     }
 
-    suspend fun createProperty(property: CreateProperty) {
+    suspend fun createProperty(property: CreateProperty, root: LinearLayout) {
         runCatching {
             val response = api.createProperty(
                 property, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
@@ -367,7 +362,8 @@ class MyViewModel
             } else {
                 withContext(Dispatchers.Main) {
                     activity.dismissProgress()
-                    activity.showAlertDialog("Property was created successfully")
+                    activity.showAlertDialog(response.message().toString())
+                    clearAllEditTexts(root)
                 }
             }
         }.onFailure {
@@ -530,8 +526,14 @@ class MyViewModel
                 val myfirstname = getUserProfileDetails.first_name
                 val mymiddle_name = getUserProfileDetails.middle_name
                 val mylast_name = getUserProfileDetails.last_name
-                val myis_manager = false
-                _bothNames.postValue("$myfirstname ${mylast_name}")
+                val myis_manager = getUserProfileDetails.is_manager
+
+                if (myis_manager) {
+                    _bothNames.postValue("$myfirstname ${mylast_name} - Manager")
+                } else {
+                    _bothNames.postValue("$myfirstname ${mylast_name} - Admin")
+                }
+                _isManager.postValue(myis_manager)
 
             }
         }.onFailure {
@@ -631,6 +633,91 @@ class MyViewModel
             } else {
                 withContext(Dispatchers.Main) {
                     _listOfTodoItems.value = response.body()!!.details!!
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun removeProperty(propertyId: String, rentedorowned: String) {
+        runCatching {
+            val response = api.deleteProperty(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, StringBody(propertyId)
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return
+            } else {
+                withContext(Dispatchers.Main) {
+                    activity.showAlertDialog(response.body()?.details.toString())
+                }
+                CoroutineScope(Dispatchers.IO).launch() {
+                    if (rentedorowned == "rented") getrentedproperties() else getOwnedproperties()
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun addOtherReceipt(otherReceiptObject: OtherReceiptsUploadObject, root: LinearLayout) {
+        runCatching {
+            val response = api.addOtherReceipt(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, otherReceiptObject
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return
+            } else {
+                clearAllEditTexts(root)
+                withContext(Dispatchers.Main) {
+                    activity.showAlertDialog(response.body()?.details.toString())
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun getOtherReceipts(othereceipt: OtherReceiptFilter) {
+        runCatching {
+            val response = api.getOtherReceipts(
+                othereceipt.property_id, othereceipt.date_from, othereceipt.date_to, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                val otherreceiptsList = response.body()!!.details
+                _getOtherReceipts.postValue(otherreceiptsList)
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun addRent(addRentObject: RentPaymentModel, root: LinearLayout, propertyid: String?) {
+        runCatching {
+            val response = api.addRentPayment(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, addRentObject
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return
+            } else {
+                getRentals(RentFilter(propertyid, "unpaid", null, null))
+                withContext(Dispatchers.Main) {
+                    clearAllEditTexts(root)
+                    activity.showAlertDialog(response.body()?.details.toString())
                 }
             }
         }.onFailure {

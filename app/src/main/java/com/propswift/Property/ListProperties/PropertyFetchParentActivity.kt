@@ -1,4 +1,4 @@
-package com.propswift.Property.PropertyFetch
+package com.propswift.Property.ListProperties
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

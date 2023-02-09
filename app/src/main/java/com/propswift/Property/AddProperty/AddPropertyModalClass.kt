@@ -1,4 +1,4 @@
-package com.propswift.Property
+package com.propswift.Property.AddProperty
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -50,7 +50,7 @@ abstract class AddPropertyModalClass(var activity: Activity, var viewModel: MyVi
                         val property = CreateProperty(
                             name, location, area.toDouble(), "square meters", rentAmount, isowner, expenseImageUploadList
                         )
-                        viewModel.createProperty(property)
+                        viewModel.createProperty(property, binding.root)
                     }
 
                 }

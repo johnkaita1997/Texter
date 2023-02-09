@@ -1,4 +1,4 @@
-package com.propswift.Property.PropertyFetch
+package com.propswift.Property.ListProperties.Owned
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,13 +7,18 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Receipts.ReceiptsParentActivity
-import com.propswift.Shared.RentedDetail
+import com.propswift.Shared.MyViewModel
+import com.propswift.Shared.OwnedDetail
 import com.propswift.Shared.goToactivityIntent_Unfinished
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyList: MutableList<RentedDetail>?) : RecyclerView.Adapter<RentedPropertyAdapter.ViewHolder>() {
+class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesList: MutableList<OwnedDetail>, var viewmodel: MyViewModel) : RecyclerView.Adapter<OwnedPropertyAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -24,12 +29,12 @@ class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyLi
     }
 
     override fun getItemCount(): Int {
-        return rentedPropertyList!!.size
+        return ownedPropertiesList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val rentObject = rentedPropertyList!!.get(position);
+        val rentObject = ownedPropertiesList.get(position);
 
         holder.itemView.findViewById<TextView>(R.id.propertyname).setText("${rentObject.name}")
         holder.itemView.findViewById<TextView>(R.id.propertylocation).setText("${rentObject.location}")
@@ -52,34 +57,34 @@ class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyLi
         }
 
         holder.itemView.findViewById<Button>(R.id.removeBtn).setOnClickListener {
-
-            activity.goToactivityIntent_Unfinished(activity, ReceiptsParentActivity::class.java, mutableMapOf("propertyid" to propertyId.toString()))
+            CoroutineScope(Dispatchers.IO).launch() {
+                viewmodel.removeProperty(propertyId.toString(), "owned")
+            }
         }
-
-
     }
 
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
-    fun updateRentedProperties(newRentedList: MutableList<RentedDetail>?) {
-        rentedPropertyList?.clear()
-        rentedPropertyList = newRentedList!!
+    fun updateOwnedProperties(newOwnedPropertyList: MutableList<OwnedDetail>?) {
+        ownedPropertiesList.clear()
+        ownedPropertiesList = newOwnedPropertyList!!
         notifyDataSetChanged()
     }
 
-    fun filterRentedProperties(stringObject: String) {
-        val newlist = mutableListOf<RentedDetail>()
+    fun filterOwnedProperties(stringObject : String) {
+        val newlist = mutableListOf<OwnedDetail>()
         newlist.clear()
-        rentedPropertyList!!.forEach {
+        ownedPropertiesList.forEach {
             if (it.name?.lowercase()?.contains(stringObject.lowercase()) == true) {
                 newlist.add(it)
             }
         }
-        rentedPropertyList!!.clear()
-        rentedPropertyList = newlist
+        ownedPropertiesList.clear()
+        ownedPropertiesList = newlist
         notifyDataSetChanged()
     }
+
 
 
 }

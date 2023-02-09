@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemLayout"
+    android:paddingTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
+    android:backgroundTint="@color/transparent"
     android:orientation="vertical"
-    tools:context=".Property.ListProperties.PropertyFetchParentActivity">
+    android:padding="10dp"
+    tools:context=".Activities.WelcomeOneActivity">
+
 
     <include
         android:id="@+id/include"
@@ -12,13 +18,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/tab_Pager"
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/expensesRecyclerView"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="#DCDCDC" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 
 </LinearLayout>

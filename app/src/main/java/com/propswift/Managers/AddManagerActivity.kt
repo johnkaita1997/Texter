@@ -48,6 +48,7 @@ class AddManagerActivity : AppCompatActivity() {
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
                     .setMenuRadius(10f) // sets the corner radius.
                     .setMenuShadow(10f) // sets the shadow.
+                    .setBackgroundColor(ContextCompat.getColor(this@AddManagerActivity, R.color.white))
                     .setWidth(900).setTextColor(ContextCompat.getColor(this@AddManagerActivity, R.color.black))
                     .setTextGravity(Gravity.CENTER)
                     .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
@@ -74,6 +75,8 @@ class AddManagerActivity : AppCompatActivity() {
                     }
                     powerMenu?.build()?.showAsDropDown(binding.managerassignhouse)
                 }
+
+
             }
 
         }

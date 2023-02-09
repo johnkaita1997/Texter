@@ -7,22 +7,20 @@
     android:orientation="vertical"
     android:paddingHorizontal="5dp">
 
-
-
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/expense_type"
+        android:id="@+id/receipt"
         android:background="@drawable/rectanglebutton"
         android:layout_marginTop="20dp"
         android:paddingHorizontal="2dp"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:textSize="16dp"
         android:padding="10dp"
+        android:textSize="16dp"
         android:textColor="@color/black"
         android:editable="false"
-        android:hint="General or incurred"
-        android:inputType="text"
-        android:singleLine="true" />
+        android:hint="Receipt Number"
+        android:inputType="text" />
+
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/amount"
@@ -35,40 +33,10 @@
         android:textSize="16dp"
         android:textColor="@color/black"
         android:editable="false"
-        android:hint="Amount of expense"
+        android:hint="Amount Incurred"
         android:inputType="phone"
         android:singleLine="true" />
 
-
-    <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/description"
-        android:background="@drawable/rectanglebutton"
-        android:layout_marginTop="20dp"
-        android:paddingHorizontal="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:padding="10dp"
-        android:maxLines="7"
-        android:lines="7"
-        android:textSize="16dp"
-        android:textColor="@color/black"
-        android:gravity="start"
-        android:editable="false"
-        android:hint="Description"
-        android:inputType="textMultiLine" />
-
-
-    <Button
-        android:id="@+id/selectProperty"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/rectanglebutton"
-        android:backgroundTint="@color/propdarkblue"
-        android:text="Select Property"
-        android:textAllCaps="false"
-        android:textColor="@color/white" />
 
     <Button
         android:id="@+id/date_incurred"

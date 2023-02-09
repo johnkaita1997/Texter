@@ -34,6 +34,22 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+
+        <activity
+            android:name=".Receipts.Add.RentReceipt.AddRentReceipt"
+            android:exported="false" />
+        <activity
+            android:name=".Expenses.ViewExpensesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Receipts.Add.RentReceipt.ListPendingRent"
+            android:exported="false" />
+        <activity
+            android:name=".Property.ListProperties.AddExpensesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Receipts.Add.OtherReceipt.AddOtherReceiptsActivity"
+            android:exported="false" />
         <activity
             android:name=".ToDoList.AddToDoActivity"
             android:exported="false" />
@@ -50,10 +66,10 @@
             android:name=".Receipts.ReceiptsParentActivity"
             android:exported="false" />
         <activity
-            android:name=".Property.PropertyFetch.PropertyFetchParentActivity"
+            android:name=".Property.ListProperties.PropertyFetchParentActivity"
             android:exported="false" />
         <activity
-            android:name=".Property.PropertyParentActivity"
+            android:name=".Property.AddProperty.AddPropertyActivity"
             android:exported="false" />
         <activity
             android:name=".Activities.MainActivity"

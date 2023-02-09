@@ -20,8 +20,6 @@ object Constants {
     const val REQUEST_IMAGE = 100
     var expenseImageList = mutableListOf<Uri>()
     var expenseImageUploadList = listOf<String>()
-    lateinit var viewmodel : MyViewModel
-
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAGINATION START
@@ -39,7 +37,6 @@ object Constants {
     //var baseurl = "http://192.168.50.69:8090"
     var baseurl = "http://192.168.100.4:8000"
 //    var baseurl = "http://192.168.215.132:8000"
-
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

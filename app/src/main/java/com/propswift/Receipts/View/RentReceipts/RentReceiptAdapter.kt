@@ -1,4 +1,4 @@
-package com.propswift.Receipts
+package com.propswift.Receipts.View.RentReceipts
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +7,9 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
-import com.propswift.Shared.FetchExpenseObject_Detail
 import com.propswift.Shared.RentDetail
 
-class RentalsAdapter(var activity: FragmentActivity, var rentalsList: MutableList<RentDetail>?) : RecyclerView.Adapter<RentalsAdapter.ViewHolder>() {
+class RentReceiptAdapter(var activity: FragmentActivity, var rentalsList: MutableList<RentDetail>?) : RecyclerView.Adapter<RentReceiptAdapter.ViewHolder>() {
 
     lateinit var view: View
 

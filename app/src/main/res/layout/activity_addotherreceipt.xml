@@ -7,22 +7,20 @@
     android:orientation="vertical"
     android:paddingHorizontal="5dp">
 
-
-
     <androidx.appcompat.widget.AppCompatEditText
-        android:id="@+id/expense_type"
+        android:id="@+id/receipt"
         android:background="@drawable/rectanglebutton"
         android:layout_marginTop="20dp"
         android:paddingHorizontal="2dp"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:textSize="16dp"
         android:padding="10dp"
+        android:textSize="16dp"
         android:textColor="@color/black"
         android:editable="false"
-        android:hint="General or incurred"
-        android:inputType="text"
-        android:singleLine="true" />
+        android:hint="Receipt Number"
+        android:inputType="text" />
+
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/amount"
@@ -35,7 +33,7 @@
         android:textSize="16dp"
         android:textColor="@color/black"
         android:editable="false"
-        android:hint="Amount of expense"
+        android:hint="Amount Incurred"
         android:inputType="phone"
         android:singleLine="true" />
 

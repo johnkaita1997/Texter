@@ -15,9 +15,12 @@ import android.widget.*
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.propswift.Activities.WelcomeOneActivity
+import com.propswift.Expenses.ViewExpensesActivity
 import com.propswift.Managers.ManagersActivity
-import com.propswift.Property.PropertyFetch.PropertyFetchParentActivity
-import com.propswift.Property.PropertyParentActivity
+import com.propswift.Property.ListProperties.PropertyFetchParentActivity
+import com.propswift.Property.AddProperty.AddPropertyActivity
+import com.propswift.Property.ListProperties.AddExpensesActivity
+import com.propswift.Receipts.Add.OtherReceipt.AddOtherReceiptsActivity
 import com.propswift.R
 import com.propswift.Receipts.ReceiptsParentActivity
 import com.propswift.Shared.Constants.datemap
@@ -25,7 +28,9 @@ import com.propswift.Shared.Constants.isDialogShown
 import com.propswift.Shared.Constants.isprogressInitialized
 import com.propswift.Shared.Constants.progress
 import com.propswift.ToDoList.ToDoListActivity
+import com.propswift.databinding.BottomExpensesBinding
 import com.propswift.databinding.BottomPropertyBinding
+import com.propswift.databinding.BottomReceiptsBinding
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import java.text.SimpleDateFormat
@@ -243,29 +248,55 @@ fun Context.settingsClick(settingsImageview: View) {
         popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
             override fun onMenuItemClick(menuitem: MenuItem): Boolean {
                 return when (menuitem.getItemId()) {
-                    R.id.receipts -> {
-                        goToActivity_Unfinished(this@settingsClick as Activity, ReceiptsParentActivity::class.java)
-                        true
-                    }
-                    R.id.property -> {
 
+
+                    R.id.property -> {
                         val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
                         val binding = BottomPropertyBinding.inflate(LayoutInflater.from(this@settingsClick))
                         bottomSheetDialog.setContentView(binding.root)
 
                         binding.createnewproperty.setOnClickListener {
-                            goToactivityIntent_Unfinished(this@settingsClick as Activity, PropertyParentActivity::class.java, mapOf("operation" to "createproperty"))
-                        }
-                        binding.createExpense.setOnClickListener {
-                            goToactivityIntent_Unfinished(this@settingsClick as Activity, PropertyParentActivity::class.java, mapOf("operation" to "createexpense"))
+                            goToactivityIntent_Unfinished(this@settingsClick as Activity, AddPropertyActivity::class.java, mapOf("operation" to "createproperty"))
                         }
                         binding.viewProperties.setOnClickListener {
                             goToActivity_Unfinished(this@settingsClick as Activity, PropertyFetchParentActivity::class.java)
                         }
-
                         bottomSheetDialog.show()
                         true
                     }
+
+
+                    R.id.receipts -> {
+                        val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
+                        val binding = BottomReceiptsBinding.inflate(LayoutInflater.from(this@settingsClick))
+                        bottomSheetDialog.setContentView(binding.root)
+                        binding.createreceipt.setOnClickListener {
+                            goToactivityIntent_Unfinished(this@settingsClick as Activity, AddOtherReceiptsActivity::class.java, mapOf("operation" to "createproperty"))
+                        }
+                        binding.viewreceipts.setOnClickListener {
+                            goToActivity_Unfinished(this@settingsClick as Activity, ReceiptsParentActivity::class.java)
+                        }
+                        bottomSheetDialog.show()
+                        true
+                    }
+
+
+                    R.id.expenses -> {
+                        val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
+                        val binding = BottomExpensesBinding.inflate(LayoutInflater.from(this@settingsClick))
+                        bottomSheetDialog.setContentView(binding.root)
+
+                        binding.createexpense.setOnClickListener {
+                            goToactivityIntent_Unfinished(this@settingsClick as Activity, AddExpensesActivity::class.java, mapOf("operation" to "createexpense"))
+                        }
+                        binding.viewexpenses.setOnClickListener {
+                            goToActivity_Unfinished(this@settingsClick as Activity, ViewExpensesActivity::class.java)
+                        }
+                        bottomSheetDialog.show()
+                        true
+                    }
+
+
                     R.id.managers -> {
                         goToActivity_Unfinished(this@settingsClick as Activity, ManagersActivity::class.java)
                         true

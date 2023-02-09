@@ -188,6 +188,7 @@
                 android:textColor="@color/white" />
 
             <Button
+                android:id="@+id/rent"
                 android:layout_width="100dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="10dp"
@@ -195,7 +196,7 @@
                 android:layout_toLeftOf="@+id/removeBtn"
                 android:background="@drawable/rectanglebutton"
                 android:backgroundTint="@color/propdarkblue"
-                android:text="Register"
+                android:text="Rent"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 

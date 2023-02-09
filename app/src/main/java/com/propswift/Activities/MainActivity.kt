@@ -41,9 +41,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun initall() {
 
-
         viewmodel.bothNames.observe(this, Observer {
-            makeLongToast("Here")
             binding.helloThere.setText(it)
         })
         viewmodel.totalAmount.observe(

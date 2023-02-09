@@ -1,4 +1,4 @@
-package com.propswift.Receipts
+package com.propswift.Receipts.View.OtherReceipts
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +7,9 @@ import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
-import com.propswift.Shared.FetchExpenseObject_Detail
-import com.propswift.Shared.GetToDoListTasks_Details
+import com.propswift.Shared.OtherReceiptCallbackDetails
 
-class ExpensesAdapter(var activity: FragmentActivity, var expenseList: MutableList<FetchExpenseObject_Detail>?) : RecyclerView.Adapter<ExpensesAdapter.ViewHolder>() {
+class OtherReceiptsAdapter(var activity: FragmentActivity, var expenseList: MutableList<OtherReceiptCallbackDetails>?) : RecyclerView.Adapter<OtherReceiptsAdapter.ViewHolder>() {
 
     lateinit var view: View
 
@@ -29,13 +28,11 @@ class ExpensesAdapter(var activity: FragmentActivity, var expenseList: MutableLi
         val expenseObject = expenseList!!.get(position);
         val expenseDate = expenseObject.date_incurred
         val expenseAmount = expenseObject.amount
-        val receiptNumber = expenseObject.receipt
-        val propertyName = expenseObject.property.name
+//        val propertyName = expenseObject.property.name
 
         holder.itemView.findViewById<TextView>(R.id.display_receipt_amount).setText("KES : ${expenseAmount}")
         holder.itemView.findViewById<TextView>(R.id.display_receipt_valutiondate).setText(expenseDate)
-        holder.itemView.findViewById<TextView>(R.id.display_receipt_propertyName).setText(propertyName)
-        holder.itemView.findViewById<TextView>(R.id.display_receipt_receiptnumber).setText(receiptNumber)
+        holder.itemView.findViewById<TextView>(R.id.display_receipt_propertyName).setText("")
 
         /*holder.itemView.findViewById<Button>(R.id.customwatchvideo).setOnClickListener {
             val videoid = expenseObject.videos.get(0).videoid
@@ -46,7 +43,7 @@ class ExpensesAdapter(var activity: FragmentActivity, var expenseList: MutableLi
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
-    fun updateExpenseAdapter(newexpenseList: MutableList<FetchExpenseObject_Detail>?) {
+    fun updateExpenseAdapter(newexpenseList: MutableList<OtherReceiptCallbackDetails>?) {
         expenseList?.clear()
         expenseList = newexpenseList
         notifyDataSetChanged()

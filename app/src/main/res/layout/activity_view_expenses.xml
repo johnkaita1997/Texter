@@ -12,6 +12,13 @@
     tools:context=".Activities.WelcomeOneActivity">
 
 
+    <include
+        android:id="@+id/include"
+        layout="@layout/actionbarcustom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
     <RelativeLayout
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
@@ -19,13 +26,26 @@
 
         <Button
             android:id="@+id/month_picker_button"
-            android:layout_width="match_parent"
+            android:layout_width="140dp"
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/rectanglebutton"
             android:backgroundTint="@color/propdarkblue"
             android:text="Period"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+
+        <Button
+            android:id="@+id/general_incurred_btn"
+            android:layout_width="140dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="20dp"
+            android:layout_toLeftOf="@+id/month_picker_button"
+            android:background="@drawable/rectanglebutton"
+            android:backgroundTint="@color/propdarkblue"
+            android:text="General"
             android:textAllCaps="false"
             android:textColor="@color/white" />
 

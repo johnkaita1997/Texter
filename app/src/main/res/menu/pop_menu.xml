@@ -3,16 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/property"
+        android:title="Property"
+        app:showAsAction="never" />
+
+
+    <item
         android:id="@+id/receipts"
         android:title="Receipts"
         android:visible="true"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/property"
-        android:title="Property"
-        app:showAsAction="never" />
 
+    <item
+        android:id="@+id/expenses"
+        android:title="Expenses"
+        android:visible="true"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/managers"
@@ -23,16 +30,13 @@
         android:id="@+id/todoList"
         android:orderInCategory="100"
         android:title="To-do List"
-        app:showAsAction="never"
-        >
-    </item>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/logout"
         android:orderInCategory="100"
         android:title="Logout"
-        app:showAsAction="never"
-        >
+        app:showAsAction="never">
 
     </item>
 
