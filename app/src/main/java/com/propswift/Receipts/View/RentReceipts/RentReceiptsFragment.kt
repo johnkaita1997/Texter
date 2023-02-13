@@ -89,7 +89,8 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
         }
 
         binding.monthPickerButton.setOnClickListener {
-            DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved().titleTextColor(Color.WHITE)
+            DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved()
+                .titleTextColor(Color.BLACK)
                 .title("Pick Start And End Period")
                 .setTab0DisplayMinutes(false)
                 .setTab0DisplayHours(false)
@@ -99,8 +100,8 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
                 .setTab1DisplayDays(false)
                 .tab0Text("Start")
                 .tab1Text("End")
-                .backgroundColor(Color.WHITE)
-                .mainColor (activity?.resources!!.getColor(R.color.propdarkblue))
+                .mainColor(Color.YELLOW)
+                .backgroundColor(Color.BLACK)
                 .listener {
 
                     var startDate = ""
@@ -183,9 +184,9 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
 
                     CoroutineScope(Dispatchers.IO).launch() {
                         if (::propertyid.isInitialized) {
-                            viewmodel.getRentals(RentFilter(propertyid, "paid", null, null))
+                            viewmodel.getRentals(RentFilter(propertyid, "paid", startDate, endDate))
                         } else {
-                            viewmodel.getRentals(RentFilter(null, "paid", null, null))
+                            viewmodel.getRentals(RentFilter(null, "paid", startDate, endDate))
                         }
                     }
 

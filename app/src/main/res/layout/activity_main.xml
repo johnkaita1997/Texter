@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollIndicators="top"
+    android:background="@color/white"
     android:scrollbars="none"
     android:paddingHorizontal="20dp">
 

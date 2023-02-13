@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".Activities.WelcomeOneActivity">
+    android:background="@color/white"
+    android:orientation="vertical">
 
 
     <LinearLayout
@@ -22,7 +22,7 @@
         <Button
             android:id="@+id/chooseproperty"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:background="@drawable/rectanglebutton"

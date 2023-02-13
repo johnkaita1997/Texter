@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:paddingHorizontal="5dp">
 
     <androidx.appcompat.widget.AppCompatEditText
@@ -59,7 +61,7 @@
     <Button
         android:id="@+id/selectProperty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
         android:background="@drawable/rectanglebutton"
@@ -71,7 +73,7 @@
     <Button
         android:id="@+id/date_incurred"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
         android:background="@drawable/rectanglebutton"
@@ -83,12 +85,12 @@
     <Button
         android:id="@+id/saveExpense"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
         android:background="@drawable/rectanglebutton"
         android:backgroundTint="@color/propdarkblue"
-        android:text="Save Expense"
+        android:text="Save Other Receipt"
         android:textAllCaps="false"
         android:textColor="@color/white" />
 

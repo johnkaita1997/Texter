@@ -54,7 +54,6 @@ class AddOtherReceiptsActivity : AppCompatActivity(), LifecycleOwner {
 
         var themap = mutableListOf<MultipartBody.Part>()
         val layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.include.header.setText("Add Expense")
         binding.include.mainTabs.visibility = View.GONE
         binding.imagesRecyclerView.setLayoutManager(layoutManager);
 
@@ -100,7 +99,6 @@ class AddOtherReceiptsActivity : AppCompatActivity(), LifecycleOwner {
         binding.epoxyRecyclerview.buildModelsWith(object : EpoxyRecyclerView.ModelBuilderCallback {
             override fun buildModels(controller: EpoxyController) {
                 controller.apply {
-                    binding.include.header.setText("Add Expense")
                     AddOtherReceiptsModalClass_(this@AddOtherReceiptsActivity, launcher, viewmodel).id(0).addTo(this)
                 }
 

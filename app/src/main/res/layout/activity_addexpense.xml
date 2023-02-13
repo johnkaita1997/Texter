@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
+    android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:backgroundTint="@color/white"
     android:paddingHorizontal="5dp">
-
-
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/expense_type"
@@ -61,7 +61,7 @@
     <Button
         android:id="@+id/selectProperty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
         android:background="@drawable/rectanglebutton"
@@ -73,7 +73,7 @@
     <Button
         android:id="@+id/date_incurred"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
         android:background="@drawable/rectanglebutton"
@@ -85,7 +85,7 @@
     <Button
         android:id="@+id/saveExpense"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="40dp"
         android:background="@drawable/rectanglebutton"

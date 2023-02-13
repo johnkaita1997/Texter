@@ -5,11 +5,9 @@
     android:paddingTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:backgroundTint="@color/transparent"
-    android:orientation="vertical"
-    android:padding="10dp"
-    tools:context=".Activities.WelcomeOneActivity">
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical">
 
 
     <include
@@ -87,6 +85,8 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
+        android:background="@color/grey_40"
+        android:padding="10dp"
         android:id="@+id/expensesRecyclerView"
         android:layout_marginTop="20dp"
         android:orientation="vertical"

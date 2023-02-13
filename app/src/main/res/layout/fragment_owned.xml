@@ -6,11 +6,8 @@
     android:paddingTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:backgroundTint="@color/transparent"
     android:orientation="vertical"
-    android:padding="10dp"
-    tools:context=".Activities.WelcomeOneActivity">
+    android:padding="10dp">
 
 
     <com.google.android.material.textfield.TextInputLayout
@@ -41,6 +38,8 @@
 
 
     <com.airbnb.epoxy.EpoxyRecyclerView
+        android:backgroundTint="@color/white"
+        android:background="@color/white"
         android:id="@+id/epoxyRecyclerview"
         android:layout_marginTop="10dp"
         android:orientation="vertical"

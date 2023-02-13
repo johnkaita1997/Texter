@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@color/propdarkblue"
+    android:backgroundTint="@color/propdarkblue"
     android:fillViewport="true"
     android:focusableInTouchMode="true"
     android:gravity="center">

@@ -89,11 +89,18 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner, MyViewModel.ActivityCa
         binding.monthPickerButton.setOnClickListener {
             val dateFormat = SimpleDateFormat("yyyy MMM dd");
             DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved().titleTextColor(Color.RED)
+                .titleTextColor(Color.BLACK)
                 .title("Pick Start And End Period")
+                .setTab0DisplayMinutes(false)
+                .setTab0DisplayHours(false)
+                .setTab0DisplayDays(false)
+                .setTab1DisplayMinutes(false)
+                .setTab1DisplayHours(false)
+                .setTab1DisplayDays(false)
                 .tab0Text("Start")
                 .tab1Text("End")
-                .mainColor(activity?.resources!!.getColor(R.color.propdarkblue))
-                .backgroundColor(Color.WHITE)
+                .mainColor(Color.YELLOW)
+                .backgroundColor(Color.BLACK)
                 .listener {
 
                     var startDate = ""

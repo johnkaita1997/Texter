@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
+    android:backgroundTint="@color/white"
     android:orientation="vertical"
-    android:paddingHorizontal="5dp"
-    tools:context=".Property.PropertyParentActivity">
+    android:paddingHorizontal="5dp">
 
     <androidx.appcompat.widget.AppCompatEditText
         android:layout_height="40dp"
@@ -146,7 +147,7 @@
         <Button
             android:id="@+id/createproperty"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
             android:background="@drawable/rectanglebutton"
@@ -158,10 +159,6 @@
             android:textSize="16dp" />
 
     </RelativeLayout>
-
-
-
-
 
 
 

@@ -1,6 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools"
+<resources xmlns:android="http://schemas.android.com/apk/res/android"
 
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <style name="yourstyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">20sp</item>
@@ -9,66 +9,19 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">@android:color/white</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">@color/black</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-  <!--  <style name="CustomActivityAnimation" parent="@android:style/Animation.Activity">
-        <item name="android:activityOpenEnterAnimation">@anim/fadein</item>
-        <item name="android:activityOpenExitAnimation">@anim/fadeout</item>
-    </style>-->
 
-    <style name="CustomDialog" parent="@android:style/Theme.Dialog">
-<!--        <item name="android:windowAnimationStyle">@style/CustomDialogAnimation</item>-->
-    </style>
-
-   <!-- <style name="CustomDialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/translate_left_side</item>
-        <item name="android:windowExitAnimation">@anim/translate_right_side</item>
-    </style>-->
-
-    <style name="Divider">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">1dp</item>
-        <item name="android:color">@color/black</item>
-        <item name="android:background">?android:attr/listDivider</item>
-    </style>
-
-    <style name="Divide2">
-        <item name="android:layout_width">1dp</item>
-        <item name="android:layout_height">200dp</item>
-        <item name="android:color">@color/black</item>
-        <item name="android:background">?android:attr/listDivider</item>
-    </style>
-
-    <style name="Divide3">
-        <item name="android:layout_width">1dp</item>
-        <item name="android:layout_height">108dp</item>
-        <item name="android:color">@color/black</item>
-        <item name="android:background">?android:attr/listDivider</item>
-    </style>
-
-    <style name="Divider.Horizontal" parent="Divider">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">1dp</item>
-        // You can change thickness here.
-
-    </style>
-
-    <style name="Divider.Vertical" parent="Divider">
-        <item name="android:layout_width">1dp</item>
-        <item name="android:layout_height">match_parent</item>
-    </style>
-
-
-    <style name="AppTheme.FullScreen">co
+    <style name="AppTheme.FullScreen">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
@@ -77,24 +30,6 @@
 
     <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
         <item name="colorControlNormal">@color/white</item>
-    </style>
-
-    <style name="AppTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@color/colorBlue</item>
-        <item name="tabIndicatorHeight">2dp</item>
-        <item name="tabPaddingStart">6dp</item>
-        <item name="tabPaddingEnd">6dp</item>
-        <item name="tabTextAppearance">@style/AppTabTextAppearance</item>
-        <item name="tabSelectedTextColor">@color/white</item>
-        //selected color
-    </style>
-
-    <!-- for text -->
-    <style name="AppTabTextAppearance" parent="TextAppearance.Design.Tab">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/white</item>
-        // default color
-        <item name="textAllCaps">true</item>
     </style>
 
 
@@ -113,6 +48,13 @@
         <item name="android:textColor">@color/darkTextColor</item>
     </style>
 
+    <style name="loginButton" parent="viewParent">
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/mainicolor</item>
+        <item name="android:textColor">@color/whiteTextColor</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
     <style name="parent">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">40dp</item>
@@ -120,74 +62,9 @@
 
     <style name="modifiedEditText" parent="parent">
         <item name="android:textSize">12sp</item>
-        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/primaryTextColor</item>
-    </style>
-
-    <style name="loginButton" parent="viewParent">
-<!--        <item name="android:background">@drawable/button_background_blue</item>-->
-        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/mainicolor</item>
-        <item name="android:textColor">@color/whiteTextColor</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="spinnerHintText" parent="parent">
-        <item name="android:textSize">12sp</item>
-        <item name="android:textColor">@color/colorAccent</item>
-        <item name="android:paddingLeft">5dp</item>
-    </style>
-
-
-    !-- set the rounded drawable as background to your bottom sheet -->
-
-
-    <!-- styles.xml -->
-    <style name="good_mornin">
-        <item name="android:textSize">
-            23sp
-        </item>
-        <item name="android:textColor">
-            #FFFFFF
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/primaryTextColor
         </item>
     </style>
 
-    <!-- styles.xml -->
-    <style name="sj">
-        <item name="android:textSize">
-            40sp
-        </item>
-        <item name="android:textColor">
-            #9E000000
-        </item>
-    </style>
-
-    <!-- styles.xml -->
-    <style name="welcome_to_">
-
-        <item name="android:textSize">
-            18sp
-        </item>
-
-        <item name="android:textColor">
-            #000000
-        </item>
-
-    </style>
-
-    <!--
-    Font family: Inter
-    Line height: 30sp
-    -->
-    <!-- styles.xml -->
-    <style name="form_one">
-
-        <item name="android:textSize">
-            17sp
-        </item>
-
-        <item name="android:textColor">
-            #FFFFFF
-        </item>
-
-    </style>
 
 </resources>

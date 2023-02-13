@@ -9,8 +9,7 @@
     android:backgroundTint="@color/transparent"
     android:orientation="vertical"
     android:padding="10dp"
-    android:paddingTop="10dp"
-    tools:context=".Activities.WelcomeOneActivity">
+    android:paddingTop="10dp">
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/parent"
