@@ -15,8 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
 import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
+import com.propswift.R
 import com.propswift.Shared.*
-import com.propswift.databinding.FragmentExpensesBinding
+import com.propswift.databinding.FragmentOtherreceiptsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,24 +27,28 @@ import java.text.SimpleDateFormat
 
 
 @AndroidEntryPoint
-class OtherReceiptsFragment : Fragment(), LifecycleOwner {
+class OtherReceiptsFragment : Fragment(), LifecycleOwner, MyViewModel.ActivityCallback {
 
     private lateinit var viewy: View
-    private var _binding: FragmentExpensesBinding? = null
+    private var _binding: FragmentOtherreceiptsBinding? = null
     private val binding get() = _binding!!
     lateinit var propertyid: String
 
     private val viewmodel: MyViewModel by viewModels()
+    var otherRecieptsDateMap = mutableMapOf<String, String>()
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentExpensesBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentOtherreceiptsBinding.inflate(layoutInflater, container, false)
         viewy = binding.root
         initiate_Views()
         return viewy
     }
 
     private fun initiate_Views() {
+
+        viewmodel.setActivityCallback(this)
 
         if (requireActivity().intent!!.hasExtra("propertyid")) {
             propertyid = requireActivity().intent.getStringExtra("propertyid").toString()
@@ -52,7 +57,7 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner {
         val layoutManager = LinearLayoutManager(activity)
         lateinit var otherReceiptsAdapter: OtherReceiptsAdapter
         binding.expensesRecyclerView.setLayoutManager(layoutManager)
-        otherReceiptsAdapter = OtherReceiptsAdapter(requireActivity(), mutableListOf())
+        otherReceiptsAdapter = OtherReceiptsAdapter(requireActivity(), mutableListOf(), viewmodel)
         binding.expensesRecyclerView.setAdapter(otherReceiptsAdapter)
 
         viewmodel.getOtherReceipts.observe(viewLifecycleOwner, Observer {
@@ -60,11 +65,23 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner {
 
         })
 
+        binding.showing.setText("Receipts")
         CoroutineScope(Dispatchers.IO).launch() {
             if (::propertyid.isInitialized) {
                 viewmodel.getOtherReceipts(OtherReceiptFilter(propertyid, null, null))
             } else {
                 viewmodel.getOtherReceipts(OtherReceiptFilter(null, null, null))
+            }
+        }
+
+        binding.clear.setOnClickListener {
+            binding.showing.setText("Receipts")
+            CoroutineScope(Dispatchers.IO).launch() {
+                if (::propertyid.isInitialized) {
+                    viewmodel.getOtherReceipts(OtherReceiptFilter(propertyid, null, null))
+                } else {
+                    viewmodel.getOtherReceipts(OtherReceiptFilter(null, null, null))
+                }
             }
         }
 
@@ -75,7 +92,8 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner {
                 .title("Pick Start And End Period")
                 .tab0Text("Start")
                 .tab1Text("End")
-                .mainColor(Color.RED).backgroundColor(Color.WHITE)
+                .mainColor(activity?.resources!!.getColor(R.color.propdarkblue))
+                .backgroundColor(Color.WHITE)
                 .listener {
 
                     var startDate = ""
@@ -110,11 +128,11 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner {
 
                             if (monthNumber < 10) {
                                 val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["startDate"] = combinedStartDate
+                               otherRecieptsDateMap["startDate"] = combinedStartDate
                                 startDate = combinedStartDate
                             } else {
                                 val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["startDate"] = combinedStartDate
+                               otherRecieptsDateMap["startDate"] = combinedStartDate
                                 startDate = combinedStartDate
                             }
 
@@ -146,18 +164,18 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner {
 
                             if (monthNumber < 10) {
                                 val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["endDate"] = combinedStartDate
+                               otherRecieptsDateMap["endDate"] = combinedStartDate
                                 endDate = combinedStartDate
                             } else {
                                 val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["endDate"] = combinedStartDate
+                               otherRecieptsDateMap["endDate"] = combinedStartDate
                                 endDate = combinedStartDate
                             }
 
                         }
                     }
 
-                    binding.monthPickerButton.setText("${startDate} - ${endDate}")
+                    binding.showing.setText("${startDate} - ${endDate}")
 
                     CoroutineScope(Dispatchers.IO).launch() {
                         withContext(Dispatchers.Main) {
@@ -172,6 +190,18 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner {
                 }.display()
         }
 
+    }
+
+    override fun onDataChanged(data: Any) {
+        binding.showing.setText("Receipts")
+        otherRecieptsDateMap.clear()
+        CoroutineScope(Dispatchers.IO).launch() {
+            if (::propertyid.isInitialized) {
+                viewmodel.getOtherReceipts(OtherReceiptFilter(propertyid, null, null))
+            } else {
+                viewmodel.getOtherReceipts(OtherReceiptFilter(null, null, null))
+            }
+        }
     }
 
 }

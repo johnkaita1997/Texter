@@ -12,8 +12,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingHorizontal="10dp">
+        android:orientation="vertical">
 
 
         <TextView
@@ -22,14 +21,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
-            android:text="Prop Swift"
+            android:text="To-Do"
             android:textColor="@color/white"
             android:textSize="25dp" />
 
 
 
         <androidx.cardview.widget.CardView
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="10dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="40dp"
@@ -75,7 +74,7 @@
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textInpdsfutEmail"
                         style="@style/parent"
-                        android:layout_height="70dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:background="@drawable/rectangle"
                         android:paddingHorizontal="10dp"
@@ -84,13 +83,13 @@
                         <EditText
                             android:id="@+id/todotext"
                             style="@style/modifiedEditText"
-                            android:layout_height="50dp"
+                            android:layout_height="40dp"
                             android:background="@null"
                             android:backgroundTint="@color/white"
                             android:hint="Pay taxes"
                             android:inputType="text"
-                            android:maxLines="7"
                             android:lines="7"
+                            android:maxLines="7"
                             android:textColor="@color/black"
                             android:textColorHint="@color/white"
                             android:textCursorDrawable="@null"
@@ -102,7 +101,7 @@
                     <Button
                         android:id="@+id/duedate"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="40dp"
                         android:background="@drawable/rectanglebutton"
@@ -114,7 +113,7 @@
                     <Button
                         android:id="@+id/submitToDo"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="40dp"
                         android:background="@drawable/rectanglebutton"

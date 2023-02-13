@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import com.propswift.Shared.*
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.*
 
 class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyList: MutableList<RentedDetail>?, var viewmodel:MyViewModel) : RecyclerView.Adapter<RentedPropertyAdapter.ViewHolder>() {
@@ -63,6 +65,13 @@ class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyLi
             CoroutineScope(Dispatchers.IO).launch() {
                 viewmodel.removeProperty(propertyId.toString(), "rented")
             }
+        }
+
+        val imageview = holder.itemView.findViewById<ImageView>(R.id.picture)
+        if (rentObject.files.isNotEmpty()) {
+            val image = rentObject.files.get(0)
+            Picasso.get().load(image.toString())
+                .into(imageview)
         }
 
         holder.itemView.findViewById<Button>(R.id.rent).setOnClickListener {

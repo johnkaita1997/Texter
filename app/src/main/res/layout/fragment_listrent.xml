@@ -2,21 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemLayout"
-    android:paddingTop="10dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
     android:backgroundTint="@color/transparent"
     android:orientation="vertical"
     android:padding="10dp"
+    android:paddingTop="10dp"
     tools:context=".Activities.WelcomeOneActivity">
-
-
-    <include
-        android:id="@+id/include"
-        layout="@layout/actionbarcustom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/showing"
@@ -25,23 +18,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="All Expenses"
+        android:text="All Receipts"
         android:textColor="@color/black"
         android:textSize="18dp" />
 
 
     <LinearLayout
-        android:weightSum="3"
         android:orientation="horizontal"
+        android:weightSum="2"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/month_picker_button"
-            android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="10dp"
+            android:id="@+id/month_picker_button"
+            android:layout_width="match_parent"
             android:layout_height="30dp"
             android:layout_alignParentEnd="true"
             android:layout_gravity="center_horizontal"
@@ -52,46 +45,30 @@
             android:textColor="@color/white" />
 
         <Button
-            android:id="@+id/general_incurred_btn"
-            android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_marginHorizontal="10dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_toLeftOf="@+id/month_picker_button"
-            android:background="@drawable/rectanglebutton"
-            android:backgroundTint="@color/propdarkblue"
-            android:text="General"
-            android:textAllCaps="false"
-            android:textColor="@color/white" />
-
-
-        <Button
-            android:id="@+id/clearselections"
+            android:id="@+id/clear"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="10dp"
             android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
             android:layout_gravity="center_horizontal"
-            android:layout_marginRight="20dp"
-            android:layout_toLeftOf="@+id/general_incurred_btn"
             android:background="@drawable/rectanglebutton"
             android:backgroundTint="@color/propdarkblue"
             android:text="Clear"
             android:textAllCaps="false"
             android:textColor="@color/white" />
 
-
     </LinearLayout>
 
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/expensesRecyclerView"
-        android:layout_marginTop="20dp"
-        android:orientation="vertical"
+        android:id="@+id/rentalsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1" />
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical" />
+
 
 </LinearLayout>

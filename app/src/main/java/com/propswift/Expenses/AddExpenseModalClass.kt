@@ -43,14 +43,14 @@ abstract class AddExpenseModalClass(
     override fun bind(holder: ViewHolder) {
 
         CoroutineScope(Dispatchers.IO).launch() {
-            myviewmodel.getOwnedproperties()
+            myviewmodel.getAllProperties()
         }
 
         binding.selectProperty.setOnClickListener {
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val thelist = myviewmodel.listOfOwnedProperties.value
+                val thelist = myviewmodel.listallproperties.value
 
                 val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
@@ -120,9 +120,6 @@ abstract class AddExpenseModalClass(
                                     val expenseObject = ExpenseUploadObject(amount.toInt(), date, description, expenseType, expenseImageUploadList, propertyid)
                                     CoroutineScope(Dispatchers.IO).launch() {
                                         myviewmodel.addExpense(expenseObject, binding.root)
-                                        withContext(Dispatchers.Main) {
-                                            activity.showAlertDialog("Expense was added successfully")
-                                        }
                                     }
 
                                 }

@@ -19,17 +19,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/chooseproperty"
+        <TextView
+            android:id="@+id/username"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Hi John!"
+            android:textColor="@color/black"
+            android:textSize="20dp" />
+
+        <TextView
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/rectanglebutton"
-            android:backgroundTint="@color/propdarkblue"
-            android:text="Select A Property"
-            android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Manager Dashboard"
+            android:textColor="@color/black"
+            android:textSize="19dp" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -41,17 +50,6 @@
             android:orientation="vertical" />
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/addManager"
-        android:src="@drawable/plus"
-        android:layout_marginRight="20dp"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="10dp" />
 
 
 </RelativeLayout>

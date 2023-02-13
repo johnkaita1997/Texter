@@ -37,14 +37,14 @@ abstract class AddOtherReceiptsModalClass(var activity: Activity, var startForPr
     override fun bind(holder: ViewHolder) {
 
         CoroutineScope(Dispatchers.IO).launch() {
-            viewModel.getOwnedproperties()
+            viewModel.getAllProperties()
         }
 
         binding.selectProperty.setOnClickListener {
 
             CoroutineScope(Dispatchers.IO).launch() {
 
-                val thelist = viewModel.listOfOwnedProperties.value
+                val thelist = viewModel.listallproperties.value
 
                 val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
                     .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).

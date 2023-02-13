@@ -54,7 +54,6 @@ interface MyApi {
     ): Response<OwnedProperties>
 
 
-
     @GET("api/v1/property/list-rentals")
     suspend fun getRentals(
         @Query("filter") filter: String?,
@@ -82,7 +81,7 @@ interface MyApi {
         @Body property: CreateProperty?,
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
-    ): Response<CreateProperty?>
+    ): Response<success?>
 
 
     @GET("api/v1/users/user-details")
@@ -98,12 +97,6 @@ interface MyApi {
         @Header("JWTAUTH") jwtauth: String?,
         @Query("user_id") user_id: String?,
     ): Response<UserDetails?>
-
-
-
-
-
-
 
 
     @GET("api/v1/owners/list-managers")
@@ -183,6 +176,13 @@ interface MyApi {
         @Header("JWTAUTH") jwtauth: String?
     ): Response<Total>
 
+    @GET("api/v1/property/get-total-expenses")
+    suspend fun getTotalExpensesOnProperty(
+        @Query("property_id") property_id: String?,
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?
+    ): Response<Total>
+
     @GET("api/v1/property/item-counter?filter=expense")
     suspend fun getTotalNumberofReceipts(
         @Header("Authorization") authorization: String?,
@@ -196,7 +196,6 @@ interface MyApi {
         @Header("JWTAUTH") jwtauth: String?,
         @Body propoertyid: StringBody,
     ): Response<success>
-
 
 
     @POST("api/v1/property/add-other-receipt")
@@ -223,6 +222,45 @@ interface MyApi {
         @Header("JWTAUTH") jwtauth: String?,
         @Body rentpaymentbody: RentPaymentModel,
     ): Response<RentPaidCallback>
+
+
+    @GET("api/v1/property/list-managed-properties")
+    suspend fun getManagedProperties(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+    ): Response<ListManagedProperties?>
+
+
+    @GET("api/v1/property/item-counter?filter=expense")
+    suspend fun getNumberofReceiptsForHouse(
+        @Query("property_id") property_id: String?,
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?
+    ): Response<Total>
+
+
+    @GET("api/v1/property/list-my-properties")
+    suspend fun getAllProperties(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+    ): Response<ListManagedProperties?>
+
+
+
+    @POST("api/v1/property/delete-expense")
+    suspend fun deleteExpense(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+        @Body request_id: ExpenseDeleteBody,
+    ): Response<ExpenseDeletedCallback>
+
+
+    @POST("api/v1/property/delete-other-receipt")
+    suspend fun deleteOtherReceipt(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?,
+        @Query("request_id") request_id: String,
+    ): Response<ExpenseDeletedCallback>
 
 
 

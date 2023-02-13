@@ -4,9 +4,8 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
+import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.databinding.ActivityAddToDoBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,10 +42,8 @@ class AddToDoActivity : AppCompatActivity() {
                 makeLongToast("Enter a due date first")
             } else {
                 CoroutineScope(Dispatchers.IO).launch() {
-                    viewModel.addToDoList(
-                        ToDoListTask(
-                            duedate, binding.todotext.text.toString().trim()
-                        ), viewModel
+                    viewModel.addToDoList(ToDoListTask(duedate, binding.todotext.text.toString().trim()),
+                        binding.root
                     )
                 }
             }
@@ -56,7 +53,12 @@ class AddToDoActivity : AppCompatActivity() {
 
         binding.duedate.setOnClickListener {
             SingleDateAndTimePickerDialog.Builder(this).bottomSheet().curved().titleTextColor(Color.RED).displayMinutes(false).displayHours(false).displayDays(false).displayMonth(true)
-                .title("Pick A Date Below").mainColor(Color.RED).backgroundColor(Color.WHITE).displayYears(true).displayDaysOfMonth(true).listener {
+                .title("Pick A Date Below")
+                .mainColor(resources!!.getColor(R.color.propdarkblue))
+                .backgroundColor(Color.WHITE)
+                .displayYears(true)
+                .displayDaysOfMonth(true)
+                .listener {
                     val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
                     val thisday = (if (it.date < 10) "0" else "") + it.date
                     val thismonth = monthNames.get(it.month)

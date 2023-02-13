@@ -2,25 +2,21 @@ package com.propswift.Expenses
 
 import android.graphics.Color
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
 import com.propswift.R
-import com.propswift.Receipts.View.OtherReceipts.OtherReceiptsAdapter
-import com.propswift.Shared.Constants
 import com.propswift.Shared.ExpenseFilter
 import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.makeLongToast
 import com.propswift.databinding.ActivityViewExpensesBinding
-import com.propswift.databinding.FragmentExpensesBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
@@ -29,19 +25,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.security.AccessController.getContext
 import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
-class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
+ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner, MyViewModel.ActivityCallback  {
 
     private lateinit var binding: ActivityViewExpensesBinding
     private lateinit var viewy: View
-    private var _binding: FragmentExpensesBinding? = null
     private var filter = "general"
     private var date = "paid"
-    lateinit var propertyid: String
 
     private val viewmodel: MyViewModel by viewModels()
+
+    var expenseDateMap = mutableMapOf<String, String>()
+    var viewexpensesPropertyId: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,27 +50,44 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
 
     private fun initall() {
 
+        viewmodel.setActivityCallback(this)
+
         binding.include.header.setText("Expenses")
-        if (intent!!.hasExtra("propertyid")) {
-            propertyid = intent.getStringExtra("propertyid").toString()
+        if (intent!!.hasExtra("viewexpensesPropertyId")) {
+            viewexpensesPropertyId = intent.getStringExtra("viewexpensesPropertyId").toString()
         }
+        binding.showing.setText("${filter.capitalize()}")
 
         val layoutManager = LinearLayoutManager(this)
         lateinit var expensesAdapter: ViewExpensesAdapter
         binding.expensesRecyclerView.setLayoutManager(layoutManager)
-        expensesAdapter = ViewExpensesAdapter(this@ViewExpensesActivity, mutableListOf())
+        expensesAdapter = ViewExpensesAdapter(this@ViewExpensesActivity, mutableListOf(), viewmodel)
         binding.expensesRecyclerView.setAdapter(expensesAdapter)
 
         viewmodel.getExpenses.observe(this, Observer {
-            expensesAdapter.updateExpenseAdapter(it)
+            expensesAdapter.updateExpenseAdapter(it, expenseDateMap, filter)
 
         })
 
         CoroutineScope(Dispatchers.IO).launch() {
-            if (::propertyid.isInitialized) {
-                viewmodel.getExpenses(ExpenseFilter(propertyid, null, null, null))
+            if (viewexpensesPropertyId != "") {
+                viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, null, null, null))
             } else {
                 viewmodel.getExpenses(ExpenseFilter(null, null, null, null))
+            }
+        }
+
+        binding.clearselections.setOnClickListener {
+            expenseDateMap.clear()
+            binding.showing.setText("${filter.capitalize()}")
+            CoroutineScope(Dispatchers.IO).launch() {
+                withContext(Dispatchers.Main) {
+                    if (viewexpensesPropertyId != "") {
+                        viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), null, null))
+                    } else {
+                        viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), null, null))
+                    }
+                }
             }
         }
 
@@ -89,15 +104,16 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
                 .setOnMenuItemClickListener { position, item ->
                     filter = item?.title.toString().lowercase()
 
-                    if (Constants.expenseDateMap.isNotEmpty()) {
-                        Log.d("-------", "initall: It is not empty")
-                        val startDate = Constants.expenseDateMap.get("startDate")
-                        val endDate = Constants.expenseDateMap.get("endDate")
+                    if (expenseDateMap.isNotEmpty()) {
+
+                        val startDate = expenseDateMap.get("startDate")
+                        val endDate = expenseDateMap.get("endDate")
 
                         CoroutineScope(Dispatchers.IO).launch() {
+                            binding.showing.setText("${filter.capitalize()} - ${startDate to endDate}")
                             withContext(Dispatchers.Main) {
-                                if (::propertyid.isInitialized) {
-                                    viewmodel.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
+                                if (viewexpensesPropertyId != "") {
+                                    viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), startDate, endDate))
                                 } else {
                                     viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
                                 }
@@ -105,7 +121,16 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
                         }
 
                     } else {
-                       makeLongToast("You did not select a period")
+                        binding.showing.setText("${filter.capitalize()}")
+                        CoroutineScope(Dispatchers.IO).launch() {
+                            withContext(Dispatchers.Main) {
+                                if (viewexpensesPropertyId != "") {
+                                    viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), null, null))
+                                } else {
+                                    viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), null, null))
+                                }
+                            }
+                        }
                     }
 
                 }.build()
@@ -114,11 +139,18 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
 
         binding.monthPickerButton.setOnClickListener {
             val dateFormat = SimpleDateFormat("yyyy MMM dd");
-            DoubleDateAndTimePickerDialog.Builder(this).bottomSheet().curved().titleTextColor(Color.RED)
+            DoubleDateAndTimePickerDialog.Builder(this).bottomSheet().curved().titleTextColor(Color.WHITE)
                 .title("Pick Start And End Period")
                 .tab0Text("Start")
+                .setTab0DisplayMinutes(false)
+                .setTab0DisplayHours(false)
+                .setTab0DisplayDays(false)
+                .setTab1DisplayMinutes(false)
+                .setTab1DisplayHours(false)
+                .setTab1DisplayDays(false)
                 .tab1Text("End")
-                .mainColor(Color.RED).backgroundColor(Color.WHITE)
+                .mainColor(resources!!.getColor(R.color.propdarkblue))
+                .backgroundColor(Color.WHITE)
                 .listener {
 
                     var startDate = ""
@@ -153,11 +185,11 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
 
                             if (monthNumber < 10) {
                                 val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["startDate"] = combinedStartDate
+                                expenseDateMap["startDate"] = combinedStartDate
                                 startDate = combinedStartDate
                             } else {
                                 val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["startDate"] = combinedStartDate
+                                expenseDateMap["startDate"] = combinedStartDate
                                 startDate = combinedStartDate
                             }
 
@@ -189,23 +221,22 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
 
                             if (monthNumber < 10) {
                                 val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["endDate"] = combinedStartDate
+                                expenseDateMap["endDate"] = combinedStartDate
                                 endDate = combinedStartDate
                             } else {
                                 val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["endDate"] = combinedStartDate
+                                expenseDateMap["endDate"] = combinedStartDate
                                 endDate = combinedStartDate
                             }
 
                         }
                     }
 
-                    binding.monthPickerButton.setText("${startDate} - ${endDate}")
-
+                    binding.showing.setText("${filter.capitalize()} - ${startDate to endDate}")
                     CoroutineScope(Dispatchers.IO).launch() {
                         withContext(Dispatchers.Main) {
-                            if (::propertyid.isInitialized) {
-                                viewmodel.getExpenses(ExpenseFilter(propertyid, filter.toLowerCase(), startDate, endDate))
+                            if (viewexpensesPropertyId != "") {
+                                viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), startDate, endDate))
                             } else {
                                 viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
                             }
@@ -214,6 +245,39 @@ class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner{
 
                 }.display()
         }
+    }
 
+    fun fullCheck() {
+        if (expenseDateMap.isEmpty()) {
+            CoroutineScope(Dispatchers.IO).launch() {
+                if (viewexpensesPropertyId != "") {
+                    viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, null, null, null))
+                } else {
+                    viewmodel.getExpenses(ExpenseFilter(null, null, null, null))
+                }
+            }
+        } else {
+            val startDate = expenseDateMap.get("startDate")
+            val endDate = expenseDateMap.get("endDate")
+            CoroutineScope(Dispatchers.IO).launch() {
+                withContext(Dispatchers.Main) {
+                    if (viewexpensesPropertyId != "") {
+                        viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), startDate, endDate))
+                    } else {
+                        viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fullCheck()
+    }
+
+    override fun onDataChanged(data: Any) {
+        fullCheck()
+        makeLongToast("called")
     }
 }

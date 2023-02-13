@@ -12,17 +12,19 @@ import android.text.TextUtils
 import android.text.format.DateFormat
 import android.view.*
 import android.widget.*
+import androidx.lifecycle.ViewModelProvider
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.propswift.Activities.WelcomeOneActivity
 import com.propswift.Expenses.ViewExpensesActivity
-import com.propswift.Managers.ManagersActivity
+import com.propswift.Managers.View.ManagersActivity
 import com.propswift.Property.ListProperties.PropertyFetchParentActivity
 import com.propswift.Property.AddProperty.AddPropertyActivity
 import com.propswift.Property.ListProperties.AddExpensesActivity
 import com.propswift.Receipts.Add.OtherReceipt.AddOtherReceiptsActivity
 import com.propswift.R
 import com.propswift.Receipts.ReceiptsParentActivity
+import com.propswift.Retrofit.MyApi
 import com.propswift.Shared.Constants.datemap
 import com.propswift.Shared.Constants.isDialogShown
 import com.propswift.Shared.Constants.isprogressInitialized
@@ -31,8 +33,13 @@ import com.propswift.ToDoList.ToDoListActivity
 import com.propswift.databinding.BottomExpensesBinding
 import com.propswift.databinding.BottomPropertyBinding
 import com.propswift.databinding.BottomReceiptsBinding
+import dagger.hilt.android.AndroidEntryPoint
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -89,7 +96,7 @@ fun Context.dismissredirect() {
 }
 
 fun Context.showAlertDialog(message: String) {
-    val alert = AlertDialog.Builder(this).setTitle("Tafa").setCancelable(false).setMessage(message).setIcon(R.drawable.logo_small).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
+    val alert = AlertDialog.Builder(this).setTitle("PropSwift").setCancelable(false).setMessage(message).setIcon(R.drawable.logo_small).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
         isDialogShown = false
         dialog.dismiss()
     }).setNegativeButton("OKAY", DialogInterface.OnClickListener { dialog, _ ->
@@ -149,13 +156,15 @@ fun openYoutubeLink(youtubeID: String) {
 }*/
 
 
-/*class MyViewModelFactory(private val activity: Activity) : ViewModelProvider.Factory {
+/*
+class MyViewModelFactory(private val activity: Activity) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return MyViewModel(activity.application, activity) as T
     }
 }
+*/
 
-fun Context.myViewModel(activity: Activity): MyViewModel {
+/*fun Context.myViewModel(activity: Activity): MyViewModel {
     return MyViewModel(activity.application, activity)
 }*/
 
@@ -174,13 +183,6 @@ fun Context.activityisrunning(): Boolean {
 fun Context.myDialog(): SpotsDialog {
     val progressDialog = SpotsDialog.Builder().setContext(this).build() as SpotsDialog
     return progressDialog
-}
-
-fun Context.myProgress(): ProgressDialog {
-    val theProgressDialog = ProgressDialog(this)
-    theProgressDialog.setTitle("Tafa Checkout")
-    theProgressDialog.setMessage("Processing Payment...")
-    return theProgressDialog
 }
 
 
@@ -238,27 +240,68 @@ fun Context.showDialog(mydialog: SpotsDialog, message: String) {
     mydialog.show()
 }
 
+
 fun Context.settingsClick(settingsImageview: View) {
+
+    val popup = PopupMenu(this, settingsImageview)
+    popup.inflate(R.menu.pop_menu)
+
+    CoroutineScope(Dispatchers.IO).launch() {
+        runCatching {
+            val response = MyApi().getUserProfileDetails(getAuthDetails().authToken, getAuthDetails().jwttoken)
+            if (!response.isSuccessful) {
+                return@runCatching
+            } else {
+                val getUserProfileDetails = response.body()!!.details
+
+                val myis_manager = getUserProfileDetails!!.is_manager
+                if (myis_manager) {
+                    popup.menu.findItem(R.id.managers).setEnabled(false)
+                    popup.menu.findItem(R.id.property).setEnabled(false)
+                }
+            }
+        }
+    }
 
     settingsImageview.setOnClickListener {
 
-        val popup = PopupMenu(this, it)
-        popup.inflate(R.menu.pop_menu)
-
         popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
-            override fun onMenuItemClick(menuitem: MenuItem): Boolean {
-                return when (menuitem.getItemId()) {
 
+            val expensesbinding = BottomExpensesBinding.inflate(LayoutInflater.from(this@settingsClick))
+            val receiptbinding = BottomReceiptsBinding.inflate(LayoutInflater.from(this@settingsClick))
+            val propertybinding = BottomPropertyBinding.inflate(LayoutInflater.from(this@settingsClick))
+
+            init {
+                CoroutineScope(Dispatchers.IO).launch() {
+                    runCatching {
+                        val response = MyApi().getUserProfileDetails(getAuthDetails().authToken, getAuthDetails().jwttoken)
+                        if (!response.isSuccessful) {
+                            return@runCatching
+                        } else {
+                            val getUserProfileDetails = response.body()!!.details
+
+                            val myis_manager = getUserProfileDetails!!.is_manager
+                            if (myis_manager) {
+                                receiptbinding.viewreceipts.visibility = View.GONE
+                                expensesbinding.viewexpenses.visibility = View.GONE
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun onMenuItemClick(menuitem: MenuItem): Boolean {
+
+                return when (menuitem.getItemId()) {
 
                     R.id.property -> {
                         val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
-                        val binding = BottomPropertyBinding.inflate(LayoutInflater.from(this@settingsClick))
-                        bottomSheetDialog.setContentView(binding.root)
+                        bottomSheetDialog.setContentView(propertybinding.root)
 
-                        binding.createnewproperty.setOnClickListener {
+                        propertybinding.createnewproperty.setOnClickListener {
                             goToactivityIntent_Unfinished(this@settingsClick as Activity, AddPropertyActivity::class.java, mapOf("operation" to "createproperty"))
                         }
-                        binding.viewProperties.setOnClickListener {
+                        propertybinding.viewProperties.setOnClickListener {
                             goToActivity_Unfinished(this@settingsClick as Activity, PropertyFetchParentActivity::class.java)
                         }
                         bottomSheetDialog.show()
@@ -268,12 +311,12 @@ fun Context.settingsClick(settingsImageview: View) {
 
                     R.id.receipts -> {
                         val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
-                        val binding = BottomReceiptsBinding.inflate(LayoutInflater.from(this@settingsClick))
-                        bottomSheetDialog.setContentView(binding.root)
-                        binding.createreceipt.setOnClickListener {
+                        bottomSheetDialog.setContentView(receiptbinding.root)
+
+                        receiptbinding.createreceipt.setOnClickListener {
                             goToactivityIntent_Unfinished(this@settingsClick as Activity, AddOtherReceiptsActivity::class.java, mapOf("operation" to "createproperty"))
                         }
-                        binding.viewreceipts.setOnClickListener {
+                        receiptbinding.viewreceipts.setOnClickListener {
                             goToActivity_Unfinished(this@settingsClick as Activity, ReceiptsParentActivity::class.java)
                         }
                         bottomSheetDialog.show()
@@ -283,13 +326,12 @@ fun Context.settingsClick(settingsImageview: View) {
 
                     R.id.expenses -> {
                         val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
-                        val binding = BottomExpensesBinding.inflate(LayoutInflater.from(this@settingsClick))
-                        bottomSheetDialog.setContentView(binding.root)
+                        bottomSheetDialog.setContentView(expensesbinding.root)
 
-                        binding.createexpense.setOnClickListener {
+                        expensesbinding.createexpense.setOnClickListener {
                             goToactivityIntent_Unfinished(this@settingsClick as Activity, AddExpensesActivity::class.java, mapOf("operation" to "createexpense"))
                         }
-                        binding.viewexpenses.setOnClickListener {
+                        expensesbinding.viewexpenses.setOnClickListener {
                             goToActivity_Unfinished(this@settingsClick as Activity, ViewExpensesActivity::class.java)
                         }
                         bottomSheetDialog.show()
@@ -363,7 +405,12 @@ fun Context.dismissProgress() {
 
 fun Context.datePicker(button: Button) {
     SingleDateAndTimePickerDialog.Builder(this).bottomSheet().curved().titleTextColor(Color.RED).displayMinutes(false).displayHours(false).displayDays(false).displayMonth(true)
-        .title("Pick A Date Below").mainColor(Color.RED).backgroundColor(Color.WHITE).displayYears(true).displayDaysOfMonth(true).listener {
+        .title("Pick A Date Below")
+        .mainColor(resources!!.getColor(R.color.propdarkblue))
+        .backgroundColor(Color.WHITE)
+        .displayYears(true)
+        .displayDaysOfMonth(true)
+        .listener {
             val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
             val thisday = (if (it.date < 10) "0" else "") + it.date
             val thismonth = monthNames.get(it.month)

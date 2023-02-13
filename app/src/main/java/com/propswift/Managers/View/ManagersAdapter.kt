@@ -1,4 +1,4 @@
-package com.propswift.Managers
+package com.propswift.Managers.View
 
 import android.view.LayoutInflater
 import android.view.View

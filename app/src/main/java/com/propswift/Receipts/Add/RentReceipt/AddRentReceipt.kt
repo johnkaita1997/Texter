@@ -101,7 +101,6 @@ class AddRentReceipt : AppCompatActivity(), LifecycleOwner {
         binding.epoxyRecyclerview.buildModelsWith(object : EpoxyRecyclerView.ModelBuilderCallback {
             override fun buildModels(controller: EpoxyController) {
                 controller.apply {
-                    binding.include.header.setText("Add Expense")
                     AddRentReceiptModalClass_(this@AddRentReceipt, launcher, viewmodel).id(0).addTo(this)
                 }
 

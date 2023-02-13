@@ -75,6 +75,7 @@ data class RentDetail(
     val id: String?,
     val `property`: Property,
     val rent_status: String?,
+    val payment_files: MutableList<String>,
     val start_date: String?
 )
 
@@ -311,6 +312,7 @@ data class StringBody(
 data class OtherReceiptCallback(
     val details: MutableList<OtherReceiptCallbackDetails>
 )
+
 data class OtherReceiptCallbackDetails(
     val amount: String,
     val created_at: String,
@@ -341,5 +343,31 @@ data class RentPaymentModel(
 )
 
 data class RentPaidCallback(
+    val details: String
+)
+
+
+data class ListManagedProperties(
+    val details: List<ListManagedPropertiesDetail>
+)
+
+data class ListManagedPropertiesDetail(
+    val area: Double,
+    val area_unit: String,
+    val created_at: String,
+    val deleted_at: Any,
+    val files: List<Any>,
+    val id: String,
+    val location: String,
+    val managers: List<String>,
+    val name: String,
+    val rent_amount: Any,
+    val updated_at: String
+)
+
+data class ExpenseDeleteBody(
+    val request_id: String
+)
+data class ExpenseDeletedCallback(
     val details: String
 )

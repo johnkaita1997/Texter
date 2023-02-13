@@ -1,4 +1,4 @@
-package com.propswift.Property.ListProperties.Owned
+package com.propswift.Managers.ManagedProperties
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -12,14 +12,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
+import com.propswift.Expenses.ViewExpensesActivity
 import com.propswift.R
 import com.propswift.Receipts.Add.RentReceipt.ListPendingRent
 import com.propswift.Receipts.ReceiptsParentActivity
+import com.propswift.Shared.ListManagedPropertiesDetail
 import com.propswift.Shared.MyViewModel
-import com.propswift.Shared.OwnedDetail
 import com.propswift.Shared.goToactivityIntent_Unfinished
+import com.propswift.Shared.showAlertDialog
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
@@ -28,38 +29,56 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesList: MutableList<OwnedDetail>, var viewmodel: MyViewModel) : RecyclerView.Adapter<OwnedPropertyAdapter.ViewHolder>() {
+class ManagedPropertiesAdapter(var activity: FragmentActivity, var managedPropertyList: MutableList<ListManagedPropertiesDetail>, var viewmodel: MyViewModel) :
+    RecyclerView.Adapter<ManagedPropertiesAdapter.ViewHolder>() {
 
     lateinit var view: View
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        view = layoutInflater.inflate(R.layout.view_fragmentowned, parent, false)
+        view = layoutInflater.inflate(R.layout.view_fragmentmanagedproperties, parent, false)
         return ViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        return ownedPropertiesList.size
+        return managedPropertyList.size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        val rentObject = ownedPropertiesList.get(position);
+        val rentObject = managedPropertyList.get(position);
 
         holder.itemView.findViewById<TextView>(R.id.propertyname).setText("${rentObject.name}")
         holder.itemView.findViewById<TextView>(R.id.propertylocation).setText("${rentObject.location}")
         holder.itemView.findViewById<TextView>(R.id.areaTv).setText("${rentObject.area} + ${rentObject.area_unit}")
-        holder.itemView.findViewById<TextView>(R.id.rentTv).setText("KES ${rentObject.rent_amount.toString()}")
 
-        /*holder.itemView.findViewById<Button>(R.id.customwatchvideo).setOnClickListener {
-            val videoid = rentObject.videos.get(0).videoid
-            activity.playVideos(videoid, topicName)
-        }*/
+        holder.itemView.findViewById<TextView>(R.id.totalexpenses)
+        holder.itemView.findViewById<TextView>(R.id.numberofreceipts)
+
+        val imageview = holder.itemView.findViewById<ImageView>(R.id.picture)
+        if (rentObject.files.isNotEmpty()) {
+            val image = rentObject.files.get(0)
+            Picasso.get().load(image.toString())
+                .fit()
+                .into(imageview)
+
+            activity.showAlertDialog(image.toString())
+        }
+
+        CoroutineScope(Dispatchers.IO).launch() {
+            viewmodel.getTotalExpenseOnProperty(rentObject.id, holder.itemView.findViewById<TextView>(R.id.totalexpenses))
+        }
+
+        CoroutineScope(Dispatchers.IO).launch() {
+            viewmodel.getTotalNumberofReceiptsPerHouse(rentObject.id, holder.itemView.findViewById<TextView>(R.id.numberofreceipts))
+        }
+
+        holder.itemView.findViewById<TextView>(R.id.rentTv).setText("KES ${rentObject.rent_amount.toString()}")
 
         val propertyId = rentObject.id
 
         holder.itemView.findViewById<CardView>(R.id.expensescard).setOnClickListener {
-            activity.goToactivityIntent_Unfinished(activity, ReceiptsParentActivity::class.java, mutableMapOf("propertyid" to propertyId.toString()))
+            activity.goToactivityIntent_Unfinished(activity, ViewExpensesActivity::class.java, mutableMapOf("propertyid" to propertyId.toString()))
         }
 
         holder.itemView.findViewById<CardView>(R.id.receiptcard).setOnClickListener {
@@ -72,14 +91,7 @@ class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesLi
             }
         }
 
-        val imageview = holder.itemView.findViewById<ImageView>(R.id.picture)
-        if (rentObject.files.isNotEmpty()) {
-            val image = rentObject.files.get(0)
-            Picasso.get().load(image.toString()).into(imageview)
-        }
-
         holder.itemView.findViewById<Button>(R.id.rent).setOnClickListener {
-
             val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
                 .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
                 .addItem(PowerMenuItem("View Rent"))
@@ -101,7 +113,6 @@ class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesLi
                     }
                 }
             powerMenu?.build()?.showAsDropDown(holder.itemView.findViewById<Button>(R.id.rent))
-
         }
 
     }
@@ -109,25 +120,24 @@ class OwnedPropertyAdapter(var activity: FragmentActivity, var ownedPropertiesLi
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
-    fun updateOwnedProperties(newOwnedPropertyList: MutableList<OwnedDetail>?) {
-        ownedPropertiesList.clear()
-        ownedPropertiesList = newOwnedPropertyList!!
+    fun updateManagedProperties(newOwnedPropertyList: MutableList<ListManagedPropertiesDetail>?) {
+        managedPropertyList.clear()
+        managedPropertyList = newOwnedPropertyList!!
         notifyDataSetChanged()
     }
 
-    fun filterOwnedProperties(stringObject : String) {
-        val newlist = mutableListOf<OwnedDetail>()
+    fun filterOwnedProperties(stringObject: String) {
+        val newlist = mutableListOf<ListManagedPropertiesDetail>()
         newlist.clear()
-        ownedPropertiesList.forEach {
+        managedPropertyList.forEach {
             if (it.name?.lowercase()?.contains(stringObject.lowercase()) == true) {
                 newlist.add(it)
             }
         }
-        ownedPropertiesList.clear()
-        ownedPropertiesList = newlist
+        managedPropertyList.clear()
+        managedPropertyList = newlist
         notifyDataSetChanged()
     }
-
 
 
 }

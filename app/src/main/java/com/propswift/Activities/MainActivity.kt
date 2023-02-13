@@ -59,12 +59,10 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             viewmodel.getTotalNumberofReceipts()
         }
 
-
         settingsClick(binding.menuicon)
         colorChanger(binding.cardone, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardtwo, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardthree, R.color.propbrownligt, R.color.proplightgreen)
-
     }
 
     override fun onBackPressed() {

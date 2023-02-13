@@ -36,6 +36,12 @@
         tools:replace="android:allowBackup">
 
         <activity
+            android:name=".ImageViewer.ImageViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Managers.ManagedProperties.ManagersPropertiesList"
+            android:exported="false" />
+        <activity
             android:name=".Receipts.Add.RentReceipt.AddRentReceipt"
             android:exported="false" />
         <activity
@@ -57,10 +63,10 @@
             android:name=".ToDoList.ToDoListActivity"
             android:exported="false" />
         <activity
-            android:name=".Managers.AddManagerActivity"
+            android:name=".Managers.Add.AddManagerActivity"
             android:exported="false" />
         <activity
-            android:name=".Managers.ManagersActivity"
+            android:name=".Managers.View.ManagersActivity"
             android:exported="false" />
         <activity
             android:name=".Receipts.ReceiptsParentActivity"

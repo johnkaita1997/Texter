@@ -14,12 +14,12 @@ object Constants {
     lateinit var progress: ProgressDialog
     val isprogressInitialized get() = this::progress.isInitialized
     var datemap = mutableMapOf<String, String>()
-    var expenseDateMap = mutableMapOf<String, String>()
     var rentalDateMap = mutableMapOf<String, String>()
     private val TAG = MainActivity::class.java.simpleName
     const val REQUEST_IMAGE = 100
     var expenseImageList = mutableListOf<Uri>()
     var expenseImageUploadList = listOf<String>()
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAGINATION START
@@ -32,11 +32,9 @@ object Constants {
     var alist = mutableListOf<String>()
     public lateinit var progressDialog: SpotsDialog
 
-    //var baseurl = "https://rickandmortyapi.com"
-    //var baseurl = "https://tafa.co.ke"
     //var baseurl = "http://192.168.50.69:8090"
     var baseurl = "http://192.168.100.4:8000"
-//    var baseurl = "http://192.168.215.132:8000"
+//    var baseurl = "http://192.168.215.226:8000"
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

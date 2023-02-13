@@ -30,7 +30,6 @@ class ToDoListActivity : AppCompatActivity(), LifecycleOwner {
 
     private val viewmodel: MyViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityToDoListBinding.inflate(layoutInflater)

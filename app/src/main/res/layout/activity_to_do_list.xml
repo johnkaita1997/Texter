@@ -29,15 +29,16 @@
 
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageView
+        android:src="@drawable/plus"
+        android:layout_marginRight="20dp"
         android:id="@+id/addToDoListObject"
-        android:layout_alignParentBottom="true"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+        android:layout_marginBottom="10dp" />
 
 
 </RelativeLayout>

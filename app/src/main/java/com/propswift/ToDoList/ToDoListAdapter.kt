@@ -39,7 +39,6 @@ class ToDoListAdapter(var activity: FragmentActivity, var todolistList: MutableL
             CoroutineScope(Dispatchers.IO).launch() {
                 viewModel.removeToDoList(todolistid.toString())
                 withContext(Dispatchers.Main) {
-                    activity.makeLongToast("To do list item was removed successfully")
                     viewModel.getToDoList()
                 }
             }

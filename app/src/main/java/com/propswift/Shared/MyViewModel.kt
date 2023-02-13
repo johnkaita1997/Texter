@@ -2,14 +2,16 @@ package com.propswift.Shared
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.util.Log
 import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.propswift.Activities.MainActivity
 import com.propswift.Dagger.MyApplication
+import com.propswift.Managers.ManagedProperties.ManagersPropertiesList
 import com.propswift.Retrofit.MyApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,6 +24,7 @@ import javax.inject.Named
 import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
 
+
 @HiltViewModel
 class MyViewModel
 @Inject constructor(
@@ -32,6 +35,15 @@ class MyViewModel
 
     init {
         activity = (appcontext as MyApplication).currentActivity!!
+    }
+
+
+    interface ActivityCallback {
+        fun onDataChanged(data: Any)
+    }
+    private var activityCallback: ActivityCallback? = null
+    fun setActivityCallback(callback: ActivityCallback) {
+        activityCallback = callback
     }
 
 
@@ -64,6 +76,12 @@ class MyViewModel
 
     val _getOtherReceipts = MutableLiveData<MutableList<OtherReceiptCallbackDetails>>()
     val getOtherReceipts: LiveData<MutableList<OtherReceiptCallbackDetails>> get() = _getOtherReceipts
+
+    val _listManagedProperties = MutableLiveData<MutableList<ListManagedPropertiesDetail>?>()
+    val listManagedProperties: LiveData<MutableList<ListManagedPropertiesDetail>?> get() = _listManagedProperties
+
+    val _listallproperties = MutableLiveData<MutableList<ListManagedPropertiesDetail>?>()
+    val listallproperties: LiveData<MutableList<ListManagedPropertiesDetail>?> get() = _listallproperties
 
     fun Context.coroutineexception(activity: Activity): CoroutineContext {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -144,12 +162,8 @@ class MyViewModel
                 Log.d("-------", "initall: $email,  $password")
 
                 withContext(Dispatchers.Main) {
-
                     activity.makeLongToast("Login was successful")
-                    val intent = Intent(activity, MainActivity::class.java)
-                    activity.startActivity(intent)
-                    activity.finish()
-
+                    managerCheck()
                 }
 
             }
@@ -187,15 +201,7 @@ class MyViewModel
                     authtoken.toString(), refreshtoken.toString(), jwttoken.toString()
                 )
                 SessionManager(activity).saveUp(email, password)
-
-                withContext(Dispatchers.Main) {
-                    val intent = Intent(activity, MainActivity::class.java)
-                    intent.putExtra("mobile", mobile)
-                    activity.startActivity(intent)
-                    activity.finish()
-                }
-
-
+                managerCheck()
             }
 
         }.onFailure {
@@ -207,8 +213,8 @@ class MyViewModel
         email: String, first_name: String, last_name: String, middle_name: String, username: String, password: String, confirm_password: String, mydialog: SpotsDialog
     ) {
         val user = User(email, first_name, last_name, middle_name, username, password, confirm_password)
+        val response = api.register(user)
         runCatching {
-            val response = api.register(user)
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
                 handleResponse(jsonObj, response.toString(), mydialog)
@@ -311,26 +317,6 @@ class MyViewModel
     }
 
 
-    suspend fun getunpaidrentAll(): RentalObject {
-        var rentedList = RentalObject(null)
-        runCatching {
-            val response = api.getRentals(
-                "unpaid", null, null, null, activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
-            )
-            if (!response.isSuccessful) {
-                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
-                handleResponse(jsonObj, response.toString(), null)
-                return@runCatching
-            } else {
-                rentedList = response.body()!!
-            }
-        }.onFailure {
-            networkResponseFailure(it, null)
-        }
-        return rentedList
-    }
-
-
     //comment
     suspend fun getExpenses(expenseFilter: ExpenseFilter) {
         runCatching {
@@ -362,7 +348,7 @@ class MyViewModel
             } else {
                 withContext(Dispatchers.Main) {
                     activity.dismissProgress()
-                    activity.showAlertDialog(response.message().toString())
+                    activity.showAlertDialog(response.body()?.details.toString())
                     clearAllEditTexts(root)
                 }
             }
@@ -424,7 +410,7 @@ class MyViewModel
                 return
             } else {
                 withContext(Dispatchers.Main) {
-                    activity.showAlertDialog("Manager was added successfully")
+                    activity.showAlertDialog(response.body()!!.details.toString())
                 }
             }
         }.onFailure {
@@ -471,7 +457,7 @@ class MyViewModel
     }
 
 
-    suspend fun addToDoList(toDoList: ToDoListTask, viewModel: MyViewModel) {
+    suspend fun addToDoList(toDoList: ToDoListTask, root: ScrollView) {
         runCatching {
             val response = api.addToDoList(
                 activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, toDoList
@@ -482,7 +468,8 @@ class MyViewModel
                 return
             } else {
                 withContext(Dispatchers.Main) {
-                    activity.showAlertDialog("Manager was added successfully")
+                    clearAllEditTexts(root)
+                    activity.showAlertDialog(response.body()!!.details.toString())
                 }
             }
         }.onFailure {
@@ -502,7 +489,7 @@ class MyViewModel
                 return
             } else {
                 withContext(Dispatchers.Main) {
-                    activity.showAlertDialog("Todo List was removed successfully")
+                    activity.showAlertDialog(response.body()!!.details.toString())
                 }
             }
         }.onFailure {
@@ -529,7 +516,7 @@ class MyViewModel
                 val myis_manager = getUserProfileDetails.is_manager
 
                 if (myis_manager) {
-                    _bothNames.postValue("$myfirstname ${mylast_name} - Manager")
+                    _bothNames.postValue("$myfirstname ${mylast_name}")
                 } else {
                     _bothNames.postValue("$myfirstname ${mylast_name} - Admin")
                 }
@@ -555,8 +542,8 @@ class MyViewModel
                 return@runCatching
             } else {
                 withContext(Dispatchers.Main) {
-                    activity.makeLongToast("Image Upload Was SuccessFul")
                     imagelist = response.body()!!.details
+                    activity.makeLongToast("Image upload was successful")
                 }
             }
         }.onFailure {
@@ -577,6 +564,9 @@ class MyViewModel
                 return
             } else {
                 clearAllEditTexts(root)
+                withContext(Dispatchers.Main) {
+                    activity.showAlertDialog(response.body()?.details.toString())
+                }
             }
         }.onFailure {
             networkResponseFailure(it, null)
@@ -719,6 +709,144 @@ class MyViewModel
                     clearAllEditTexts(root)
                     activity.showAlertDialog(response.body()?.details.toString())
                 }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun getManagedProperties() {
+        runCatching {
+            val response = api.getManagedProperties(activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken)
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                val managedPropertylist = response.body()!!.details
+                _listManagedProperties.postValue(managedPropertylist as MutableList<ListManagedPropertiesDetail>?)
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun managerCheck() = runBlocking {
+        runCatching {
+            val response = api.getUserProfileDetails(activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken)
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                val getUserProfileDetails = response.body()!!.details
+                val myis_manager = getUserProfileDetails?.is_manager
+                if (myis_manager!!) {
+                    activity.goToActivity(activity, ManagersPropertiesList::class.java)
+                } else {
+                    activity.goToActivity(activity, MainActivity::class.java)
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun getTotalExpenseOnProperty(propertyId: String, textView: TextView) {
+        runCatching {
+            val response = api.getTotalExpensesOnProperty(
+                propertyId,
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                val total = response.body()!!.details
+                textView.setText("KES ${total}")
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun getTotalNumberofReceiptsPerHouse(propertyId: String, textView: TextView) {
+        runCatching {
+            val response = api.getNumberofReceiptsForHouse(
+                propertyId,
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                val total = response.body()!!.details
+                textView.setText(total.toString())
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun getAllProperties() {
+        runCatching {
+            val response = api.getAllProperties(activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken)
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                val allproperty = response.body()!!.details
+                _listallproperties.postValue(allproperty as MutableList<ListManagedPropertiesDetail>?)
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun removeExpense(request_id: String) {
+        runCatching {
+            val response = api.deleteExpense(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, ExpenseDeleteBody(request_id)
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return
+            } else {
+                withContext(Dispatchers.Main) {
+                    activity.showAlertDialog(response.body()?.details.toString())
+                }
+                activityCallback?.onDataChanged("sdfgsdf")
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+    suspend fun deleteOtherReceipt(request_id: String) {
+        runCatching {
+            val response = api.deleteOtherReceipt(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, request_id
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return
+            } else {
+                withContext(Dispatchers.Main) {
+                    activity.showAlertDialog(response.body()?.details.toString())
+                }
+                activityCallback?.onDataChanged("")
             }
         }.onFailure {
             networkResponseFailure(it, null)

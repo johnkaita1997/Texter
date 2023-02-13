@@ -1,4 +1,4 @@
-package com.propswift.Managers
+package com.propswift.Managers.View
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -10,6 +10,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.propswift.Managers.Add.AddManagerActivity
 import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.databinding.ActivityManagersBinding
@@ -50,12 +51,16 @@ class ManagersActivity : AppCompatActivity() {
             goToActivity_Unfinished(this@ManagersActivity, AddManagerActivity::class.java)
         }
 
+        CoroutineScope(Dispatchers.IO).launch() {
+            viewmodel.getAllProperties()
+        }
+
         binding.chooseproperty.setOnClickListener {
 
             CoroutineScope(Dispatchers.IO).launch() {
 
                 val listOfOwnedProperties = async { viewmodel.getOwnedproperties() }
-                val thelist = viewmodel.listOfOwnedProperties.value
+                val thelist = viewmodel.listallproperties.value
 
                 Log.d("-------", "initall: FOUND THE LIST TO BE ${thelist.toString()}")
 

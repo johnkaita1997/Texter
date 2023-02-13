@@ -1,11 +1,14 @@
 package com.propswift.Receipts.View.RentReceipts
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.propswift.ImageViewer.ImageViewActivity
 import com.propswift.R
 import com.propswift.Shared.RentDetail
 
@@ -15,7 +18,7 @@ class RentReceiptAdapter(var activity: FragmentActivity, var rentalsList: Mutabl
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        view = layoutInflater.inflate(R.layout.display_rentals, parent, false)
+        view = layoutInflater.inflate(R.layout.display_rentreceipts, parent, false)
         return ViewHolder(view)
     }
 
@@ -35,7 +38,14 @@ class RentReceiptAdapter(var activity: FragmentActivity, var rentalsList: Mutabl
         holder.itemView.findViewById<TextView>(R.id.display_rental_amount).setText("KES : ${rentAmount}")
         holder.itemView.findViewById<TextView>(R.id.display_rrental_datePaid).setText(rentDate)
         holder.itemView.findViewById<TextView>(R.id.display_rental_propertyName).setText(propertyName)
-        holder.itemView.findViewById<TextView>(R.id.display_rental_receiptnumber).setText(rentStatus)
+        holder.itemView.findViewById<TextView>(R.id.display_rental_status).setText(rentStatus)
+
+        holder.itemView.findViewById<Button>(R.id.images).setOnClickListener {
+            val imagesList = rentObject.payment_files
+            val intent = Intent(activity, ImageViewActivity::class.java)
+            intent.putStringArrayListExtra("imageslist", imagesList as ArrayList<String?>?)
+            activity.startActivity(intent)
+        }
 
         /*holder.itemView.findViewById<Button>(R.id.customwatchvideo).setOnClickListener {
             val videoid = rentObject.videos.get(0).videoid

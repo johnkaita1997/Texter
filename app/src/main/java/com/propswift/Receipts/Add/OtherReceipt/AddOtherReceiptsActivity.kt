@@ -49,7 +49,7 @@ class AddOtherReceiptsActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun initall() {
 
-        binding.include.header.setText("Add Receipt")
+        binding.include.header.setText("Add Other Receipt")
         settingsClick(binding.include.menuicon)
 
         var themap = mutableListOf<MultipartBody.Part>()

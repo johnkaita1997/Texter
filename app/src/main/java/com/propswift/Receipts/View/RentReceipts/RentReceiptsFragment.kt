@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
@@ -18,7 +19,7 @@ import com.airbnb.epoxy.*
 import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
 import com.propswift.R
 import com.propswift.Shared.*
-import com.propswift.databinding.FragmentRentedBinding
+import com.propswift.databinding.FragmentListrentBinding
 import com.propswift.databinding.ReceiptRentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -29,12 +30,12 @@ import kotlinx.coroutines.launch
 class RentReceiptsFragment : Fragment(), LifecycleOwner {
 
     private lateinit var viewy: View
-    private var _binding: FragmentRentedBinding? = null
+    private var _binding: FragmentListrentBinding? = null
     private val binding get() = _binding!!
     private var date = "paid"
     lateinit var propertyid: String
-
     private val viewmodel: MyViewModel by viewModels()
+    var rentReceiptsDateMap = mutableMapOf<String, String>()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -43,7 +44,7 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentRentedBinding.inflate(layoutInflater, container, false)
+        _binding = FragmentListrentBinding.inflate(layoutInflater, container, false)
         viewy = binding.root
         initiate_Views()
         return viewy
@@ -55,6 +56,7 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
             propertyid = requireActivity().intent.getStringExtra("propertyid").toString()
         }
 
+        binding.showing.setText("Rents")
         val layoutManager = LinearLayoutManager(activity)
         lateinit var rentalsAdapter: RentReceiptAdapter
         binding.rentalsRecyclerView.setLayoutManager(layoutManager)
@@ -65,6 +67,19 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
             rentalsAdapter.updateRentalsAdapter(it)
         })
 
+
+        binding.clear.setOnClickListener {
+            binding.showing.setText("Rent")
+            CoroutineScope(Dispatchers.IO).launch() {
+                if (::propertyid.isInitialized) {
+                    viewmodel.getOtherReceipts(OtherReceiptFilter(propertyid, null, null))
+                } else {
+                    viewmodel.getOtherReceipts(OtherReceiptFilter(null, null, null))
+                }
+            }
+        }
+
+
         CoroutineScope(Dispatchers.IO).launch() {
             if (::propertyid.isInitialized) {
                 viewmodel.getRentals(RentFilter(propertyid, "paid", null, null))
@@ -73,13 +88,19 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
             }
         }
 
-        binding.datePickerButton.setOnClickListener {
-            DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved().titleTextColor(Color.RED)
+        binding.monthPickerButton.setOnClickListener {
+            DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved().titleTextColor(Color.WHITE)
                 .title("Pick Start And End Period")
+                .setTab0DisplayMinutes(false)
+                .setTab0DisplayHours(false)
+                .setTab0DisplayDays(false)
+                .setTab1DisplayMinutes(false)
+                .setTab1DisplayHours(false)
+                .setTab1DisplayDays(false)
                 .tab0Text("Start")
                 .tab1Text("End")
-                .mainColor(Color.RED)
                 .backgroundColor(Color.WHITE)
+                .mainColor (activity?.resources!!.getColor(R.color.propdarkblue))
                 .listener {
 
                     var startDate = ""
@@ -112,11 +133,11 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
 
                             if (monthNumber < 10) {
                                 val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["startDate"] = combinedStartDate
+                                rentReceiptsDateMap["startDate"] = combinedStartDate
                                 startDate = combinedStartDate
                             } else {
                                 val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["startDate"] = combinedStartDate
+                                rentReceiptsDateMap["startDate"] = combinedStartDate
                                 startDate = combinedStartDate
                             }
 
@@ -145,12 +166,12 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
                             else if (thismonth == "Dec") monthNumber = 12
 
                             if (monthNumber < 10) {
-                                var combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["endDate"] = combinedStartDate
+                                val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
+                                rentReceiptsDateMap["endDate"] = combinedStartDate
                                 endDate = combinedStartDate
                             } else {
                                 val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                Constants.expenseDateMap["endDate"] = combinedStartDate
+                                rentReceiptsDateMap["endDate"] = combinedStartDate
                                 endDate = combinedStartDate
                             }
 
@@ -158,7 +179,7 @@ class RentReceiptsFragment : Fragment(), LifecycleOwner {
 
                     }
 
-                    binding.datePickerButton.setText("${startDate} - ${endDate}")
+                    binding.showing.setText("${startDate} - ${endDate}")
 
                     CoroutineScope(Dispatchers.IO).launch() {
                         if (::propertyid.isInitialized) {
