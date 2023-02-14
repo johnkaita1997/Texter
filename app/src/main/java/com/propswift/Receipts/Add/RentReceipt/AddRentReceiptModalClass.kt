@@ -43,6 +43,10 @@ abstract class AddRentReceiptModalClass(var activity: Activity, var startForProf
                         activity.makeLongToast("You have to enter receipt number or mpesa number")
                     } else {
 
+                        if (expenseImageUploadList.isEmpty()) {
+                            activity.makeLongToast("Please reselect your images")
+                        }
+
                         val combined = datemap.getValue("combined")
 
                         val date = combined

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/itemLayout"
     android:paddingTop="10dp"
@@ -8,7 +8,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="10dp">
-
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/parent"
@@ -38,8 +37,6 @@
 
 
     <com.airbnb.epoxy.EpoxyRecyclerView
-        android:backgroundTint="@color/white"
-        android:background="@color/white"
         android:id="@+id/epoxyRecyclerview"
         android:layout_marginTop="10dp"
         android:orientation="vertical"

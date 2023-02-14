@@ -3,6 +3,7 @@ package com.propswift.Property.ListProperties
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -59,31 +60,35 @@ class AddExpensesActivity : AppCompatActivity() {
 
         val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == Activity.RESULT_OK) {
+
                 expenseImageList.clear()
                 val myuri = it.data?.extras
-                if (myuri?.keySet()!!.contains("extra.file_path")) {
-                    val image = myuri.get("extra.file_path") as Uri
-                    expenseImageList.add(image)
-                    makeLongToast("It is a single image")
-                } else {
 
-                    expenseImageList = myuri.get("extra.multiple_file_path") as MutableList<Uri>
+                if (myuri?.keySet()!!.contains("extra.file_path")) {
+                    expenseImageList.add(it.data!!.data!!)
                     imagesAdapter = ImagesAdapter(this, expenseImageList)
                     binding.imagesRecyclerView.setAdapter(imagesAdapter)
-
                     imagesAdapter.notifyDataSetChanged()
-
                     expenseImageList.forEach {
                         var file = File(it.path!!)
                         val filePart: MultipartBody.Part = MultipartBody.Part.createFormData("file[]", file.getName(), RequestBody.create(MediaType.parse("image/*"), file))
                         themap.add(filePart)
                     }
-
+                } else {
+                    expenseImageList = myuri.get("extra.multiple_file_path") as MutableList<Uri>
+                    imagesAdapter = ImagesAdapter(this, expenseImageList)
+                    binding.imagesRecyclerView.setAdapter(imagesAdapter)
+                    imagesAdapter.notifyDataSetChanged()
+                    expenseImageList.forEach {
+                        var file = File(it.path!!)
+                        val filePart: MultipartBody.Part = MultipartBody.Part.createFormData("file[]", file.getName(), RequestBody.create(MediaType.parse("image/*"), file))
+                        themap.add(filePart)
+                    }
                 }
 
                 CoroutineScope(Dispatchers.IO).launch() {
                     val imagelist = viewmodel.uploadFile(themap)
-                    expenseImageUploadList = imagelist
+                    expenseImageUploadList = imagelist as MutableList<String>
                 }
 
             }
@@ -106,7 +111,12 @@ class AddExpensesActivity : AppCompatActivity() {
             }
         })
 
+    }
 
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        expenseImageUploadList.clear()
     }
 
 }

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/itemLayout"
     android:paddingTop="10dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@color/white"
     android:backgroundTint="@color/white"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
 
@@ -85,7 +84,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:background="@color/grey_40"
+        android:background="#E1D9D1"
         android:padding="10dp"
         android:id="@+id/expensesRecyclerView"
         android:layout_marginTop="20dp"

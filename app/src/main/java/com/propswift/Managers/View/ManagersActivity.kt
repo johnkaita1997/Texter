@@ -12,7 +12,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.propswift.Managers.Add.AddManagerActivity
 import com.propswift.R
-import com.propswift.Shared.*
+import com.propswift.Shared.MyViewModel
+import com.propswift.Shared.dismissProgress
+import com.propswift.Shared.goToActivity_Unfinished
+import com.propswift.Shared.settingsClick
 import com.propswift.databinding.ActivityManagersBinding
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu

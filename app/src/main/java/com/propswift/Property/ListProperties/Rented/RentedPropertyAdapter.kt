@@ -16,12 +16,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Receipts.Add.RentReceipt.ListPendingRent
 import com.propswift.Receipts.ReceiptsParentActivity
-import com.propswift.Shared.*
+import com.propswift.Shared.MyViewModel
+import com.propswift.Shared.RentedDetail
+import com.propswift.Shared.goToactivityIntent_Unfinished
 import com.skydoves.powermenu.MenuAnimation
 import com.skydoves.powermenu.PowerMenu
 import com.skydoves.powermenu.PowerMenuItem
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class RentedPropertyAdapter(var activity: FragmentActivity, var rentedPropertyList: MutableList<RentedDetail>?, var viewmodel:MyViewModel) : RecyclerView.Adapter<RentedPropertyAdapter.ViewHolder>() {
 

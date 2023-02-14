@@ -35,6 +35,7 @@ abstract class AddPropertyModalClass(var activity: Activity, var viewModel: MyVi
                         it
                     )
                 }
+
                 val radioId = binding.radioGroup.checkedRadioButtonId
                 if (radioId == -1) {
                     activity.makeLongToast("You have to make a selection")

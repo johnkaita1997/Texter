@@ -41,6 +41,7 @@ class MyViewModel
     interface ActivityCallback {
         fun onDataChanged(data: Any)
     }
+
     private var activityCallback: ActivityCallback? = null
     fun setActivityCallback(callback: ActivityCallback) {
         activityCallback = callback
@@ -826,6 +827,8 @@ class MyViewModel
                     activity.showAlertDialog(response.body()?.details.toString())
                 }
                 activityCallback?.onDataChanged("sdfgsdf")
+                getTotal()
+                getTotalNumberofReceipts()
             }
         }.onFailure {
             networkResponseFailure(it, null)

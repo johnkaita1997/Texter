@@ -75,6 +75,7 @@ data class RentDetail(
     val id: String?,
     val `property`: Property,
     val rent_status: String?,
+    val receipt: String?,
     val payment_files: MutableList<String>,
     val start_date: String?
 )
@@ -317,6 +318,7 @@ data class OtherReceiptCallbackDetails(
     val amount: String,
     val created_at: String,
     val date_incurred: String,
+    val property_name: String,
     val deleted_at: Any,
     val description: String,
     val files: List<String>,

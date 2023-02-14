@@ -1,14 +1,11 @@
 package com.propswift.Shared
 
-import android.app.Activity
 import android.content.Context
 import com.propswift.Retrofit.MyApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ActivityContext
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton

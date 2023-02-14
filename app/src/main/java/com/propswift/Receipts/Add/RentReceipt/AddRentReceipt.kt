@@ -64,9 +64,15 @@ class AddRentReceipt : AppCompatActivity(), LifecycleOwner {
                 expenseImageList.clear()
                 val myuri = it.data?.extras
                 if (myuri?.keySet()!!.contains("extra.file_path")) {
-                    val image = myuri.get("extra.file_path") as Uri
-                    expenseImageList.add(image)
-                    makeLongToast("It is a single image")
+                    expenseImageList.add(it.data!!.data!!)
+                    imagesAdapter = ImagesAdapter(this, expenseImageList)
+                    binding.imagesRecyclerView.setAdapter(imagesAdapter)
+                    imagesAdapter.notifyDataSetChanged()
+                    expenseImageList.forEach {
+                        var file = File(it.path!!)
+                        val filePart: MultipartBody.Part = MultipartBody.Part.createFormData("file[]", file.getName(), RequestBody.create(MediaType.parse("image/*"), file))
+                        themap.add(filePart)
+                    }
                 } else {
 
                     expenseImageList = myuri.get("extra.multiple_file_path") as MutableList<Uri>
@@ -85,7 +91,7 @@ class AddRentReceipt : AppCompatActivity(), LifecycleOwner {
 
                 CoroutineScope(Dispatchers.IO).launch() {
                     val imagelist = viewmodel.uploadFile(themap)
-                    expenseImageUploadList = imagelist
+                    expenseImageUploadList = imagelist as MutableList<String>
                 }
 
             }
@@ -107,7 +113,12 @@ class AddRentReceipt : AppCompatActivity(), LifecycleOwner {
             }
         })
 
+    }
 
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        expenseImageUploadList.clear()
     }
 
 }

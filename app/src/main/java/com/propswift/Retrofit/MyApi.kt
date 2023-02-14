@@ -2,7 +2,6 @@ package com.propswift.Retrofit
 
 import com.google.gson.GsonBuilder
 import com.propswift.Shared.*
-import dagger.Provides
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

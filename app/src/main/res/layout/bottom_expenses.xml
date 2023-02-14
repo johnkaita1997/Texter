@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/house"
+            android:src="@drawable/expense"
             android:layout_margin="8dp"/>
 
         <TextView

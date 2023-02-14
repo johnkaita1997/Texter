@@ -8,10 +8,9 @@ import android.graphics.Typeface
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.RadioButton
 import androidx.activity.result.ActivityResultLauncher
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import com.airbnb.epoxy.EpoxyHolder
 import com.airbnb.epoxy.EpoxyModelClass
 import com.airbnb.epoxy.EpoxyModelWithHolder
@@ -30,11 +29,8 @@ import kotlinx.coroutines.*
 @SuppressLint("NonConstantResourceId")
 @EpoxyModelClass(layout = R.layout.activity_addexpense)
 abstract class AddExpenseModalClass(
-    var activity: Activity,
-    var startForProfileImageResult: ActivityResultLauncher<Intent>,
-    var myviewmodel: MyViewModel
-) :
-    EpoxyModelWithHolder<AddExpenseModalClass.ViewHolder>() {
+    var activity: Activity, var startForProfileImageResult: ActivityResultLauncher<Intent>, var myviewmodel: MyViewModel
+) : EpoxyModelWithHolder<AddExpenseModalClass.ViewHolder>() {
 
     private lateinit var binding: ActivityAddexpenseBinding
     var propertyid = ""
@@ -52,17 +48,12 @@ abstract class AddExpenseModalClass(
 
                 val thelist = myviewmodel.listallproperties.value
 
-                val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity)
-                    .setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
+                val powerMenu: PowerMenu.Builder? = PowerMenu.Builder(activity).setAnimation(MenuAnimation.SHOWUP_TOP_LEFT) // Animation start point (TOP | LEFT).
                     .setMenuRadius(10f) // sets the corner radius.
                     .setMenuShadow(10f) // sets the shadow.
-                    .setWidth(900).setTextColor(ContextCompat.getColor(activity, R.color.black))
-                    .setTextGravity(Gravity.CENTER)
-                    .setBackgroundColor(ContextCompat.getColor(activity, R.color.white))
-                    .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD))
-                    .setSelectedTextColor(Color.WHITE).setMenuColor(Color.WHITE)
-                    .setSelectedMenuColor(ContextCompat.getColor(activity, R.color.colorPrimary))
-                    .setAutoDismiss(true)
+                    .setWidth(900).setTextColor(ContextCompat.getColor(activity, R.color.black)).setTextGravity(Gravity.CENTER).setBackgroundColor(ContextCompat.getColor(activity, R.color.white))
+                    .setTextTypeface(Typeface.create("sans-serif-medium", Typeface.BOLD)).setSelectedTextColor(Color.WHITE).setMenuColor(Color.WHITE)
+                    .setSelectedMenuColor(ContextCompat.getColor(activity, R.color.colorPrimary)).setAutoDismiss(true)
 
                 withContext(GlobalScope.coroutineContext) {
                     thelist.let {
@@ -99,30 +90,38 @@ abstract class AddExpenseModalClass(
                 if (datemap.isEmpty()) {
                     activity.showAlertDialog("You did not select the date")
                 } else {
-                    if (binding.expenseType.text!!.isBlank()) {
-                        activity.makeLongToast("You did not enter expense type")
+
+                    val radioId = binding.radioGroup.checkedRadioButtonId
+                    if (radioId == -1) {
+                        activity.makeLongToast("You have to make a property type selection")
                     } else {
-                        if (binding.expenseType.text.toString().trim() != "general" && binding.expenseType.text.toString() != "incurred") {
-                            activity.showAlertDialog("Expense Type can only be general or incurred")
+
+                        var expensetype = ""
+                        val ownersip: RadioButton = activity.findViewById(radioId)
+                        val isgeneral = ownersip.text == "   General"
+                        if (isgeneral) {
+                            expensetype = "general"
                         } else {
-                            if (binding.description.text!!.isBlank()) {
-                                activity.makeLongToast("You have to enter a description")
+                            expensetype = "incurred"
+                        }
+
+                        if (binding.description.text!!.isBlank()) {
+                            activity.makeLongToast("You have to enter a description")
+                        } else {
+                            if (binding.amount.text!!.isEmpty()) {
+                                activity.makeLongToast("You have to enter amount")
                             } else {
-                                if (binding.amount.text!!.isEmpty()) {
-                                    activity.makeLongToast("You have to enter amount")
-                                } else {
-                                    val combined = datemap.getValue("combined")
-                                    val date = combined
-                                    val description = binding.description.text.toString().trim()
-                                    val expenseType = binding.expenseType.text.toString().trim()
-                                    val amount = binding.amount.text.toString().trim()
+                                val combined = datemap.getValue("combined")
+                                val date = combined
+                                val description = binding.description.text.toString().trim()
+                                val expenseType = expensetype
+                                val amount = binding.amount.text.toString().trim()
 
-                                    val expenseObject = ExpenseUploadObject(amount.toInt(), date, description, expenseType, expenseImageUploadList, propertyid)
-                                    CoroutineScope(Dispatchers.IO).launch() {
-                                        myviewmodel.addExpense(expenseObject, binding.root)
-                                    }
-
+                                val expenseObject = ExpenseUploadObject(amount.toInt(), date, description, expenseType, expenseImageUploadList, propertyid)
+                                CoroutineScope(Dispatchers.IO).launch() {
+                                    myviewmodel.addExpense(expenseObject, binding.root)
                                 }
+
                             }
                         }
                     }

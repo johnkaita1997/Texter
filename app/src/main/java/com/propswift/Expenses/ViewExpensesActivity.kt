@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.propswift.R
 import com.propswift.Shared.ExpenseFilter
 import com.propswift.Shared.MyViewModel
@@ -25,11 +25,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.security.AccessController.getContext
-import java.text.SimpleDateFormat
 
 @AndroidEntryPoint
- class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner, MyViewModel.ActivityCallback  {
+class ViewExpensesActivity : AppCompatActivity(), LifecycleOwner, MyViewModel.ActivityCallback {
 
     private lateinit var binding: ActivityViewExpensesBinding
     private lateinit var viewy: View
@@ -138,110 +136,104 @@ import java.text.SimpleDateFormat
         }
 
         binding.monthPickerButton.setOnClickListener {
-            val dateFormat = SimpleDateFormat("yyyy MMM dd");
-            DoubleDateAndTimePickerDialog.Builder(this).bottomSheet().curved().titleTextColor(Color.WHITE)
-                .title("Pick Start And End Period")
-                .tab0Text("Start")
-                .setTab0DisplayMinutes(false)
-                .setTab0DisplayHours(false)
-                .setTab0DisplayDays(false)
-                .setTab1DisplayMinutes(false)
-                .setTab1DisplayHours(false)
-                .setTab1DisplayDays(false)
-                .tab1Text("End")
+
+            SingleDateAndTimePickerDialog.Builder(this)
+                .bottomSheet()
+                .curved()
+                .titleTextColor(Color.RED)
+                .displayMinutes(false)
+                .displayHours(false)
+                .displayDays(false)
+                .displayMonth(true)
+                .title("Pick A Start Date")
                 .mainColor(resources!!.getColor(R.color.propdarkblue))
-                .backgroundColor(Color.WHITE)
+                .backgroundColor(Color.DKGRAY)
+                .displayYears(true)
+                .displayDaysOfMonth(true)
                 .listener {
 
-                    var startDate = ""
-                    var endDate = ""
-
-                    it.forEachIndexed { index, date ->
-
-                        if (index == 0) {
-                            val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-                            val thisday = (if (date.date < 10) "0" else "") + date.date
-                            val thismonth = monthNames.get(date.month)
-                            var thisyear = date.year.toString()
-                            if (thisyear.startsWith("1")) {
-                                thisyear = "20${thisyear.takeLast(2)}"
-                            } else {
-                                thisyear = "19${thisyear}"
-                            }
-
-                            var monthNumber = 0
-                            if (thismonth.equals("Jan")) monthNumber = 1
-                            else if (thismonth == "Feb") monthNumber = 2
-                            else if (thismonth == "Mar") monthNumber = 3
-                            else if (thismonth == "Apr") monthNumber = 4
-                            else if (thismonth == "May") monthNumber = 5
-                            else if (thismonth == "Jun") monthNumber = 6
-                            else if (thismonth == "Jul") monthNumber = 7
-                            else if (thismonth == "Aug") monthNumber = 8
-                            else if (thismonth == "Sep") monthNumber = 9
-                            else if (thismonth == "Oct") monthNumber = 10
-                            else if (thismonth == "Nov") monthNumber = 11
-                            else if (thismonth == "Dec") monthNumber = 12
-
-                            if (monthNumber < 10) {
-                                val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                expenseDateMap["startDate"] = combinedStartDate
-                                startDate = combinedStartDate
-                            } else {
-                                val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                expenseDateMap["startDate"] = combinedStartDate
-                                startDate = combinedStartDate
-                            }
-
-                        } else {
-
-                            val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-                            val thisday = (if (date.date < 10) "0" else "") + date.date
-                            val thismonth = monthNames.get(date.month)
-                            var thisyear = date.year.toString()
-                            if (thisyear.startsWith("1")) {
-                                thisyear = "20${thisyear.takeLast(2)}"
-                            } else {
-                                thisyear = "19${thisyear}"
-                            }
-
-                            var monthNumber = 0
-                            if (thismonth.equals("Jan")) monthNumber = 1
-                            else if (thismonth == "Feb") monthNumber = 2
-                            else if (thismonth == "Mar") monthNumber = 3
-                            else if (thismonth == "Apr") monthNumber = 4
-                            else if (thismonth == "May") monthNumber = 5
-                            else if (thismonth == "Jun") monthNumber = 6
-                            else if (thismonth == "Jul") monthNumber = 7
-                            else if (thismonth == "Aug") monthNumber = 8
-                            else if (thismonth == "Sep") monthNumber = 9
-                            else if (thismonth == "Oct") monthNumber = 10
-                            else if (thismonth == "Nov") monthNumber = 11
-                            else if (thismonth == "Dec") monthNumber = 12
-
-                            if (monthNumber < 10) {
-                                val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                                expenseDateMap["endDate"] = combinedStartDate
-                                endDate = combinedStartDate
-                            } else {
-                                val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                                expenseDateMap["endDate"] = combinedStartDate
-                                endDate = combinedStartDate
-                            }
-
-                        }
+                    val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                    val thisday = (if (it.date < 10) "0" else "") + it.date
+                    val thismonth = monthNames.get(it.month)
+                    var thisyear = it.year.toString()
+                    if (thisyear.startsWith("1")) {
+                        thisyear = "20${thisyear.takeLast(2)}"
+                    } else {
+                        thisyear = "19${thisyear}"
                     }
 
-                    binding.showing.setText("${filter.capitalize()} - ${startDate to endDate}")
-                    CoroutineScope(Dispatchers.IO).launch() {
-                        withContext(Dispatchers.Main) {
-                            if (viewexpensesPropertyId != "") {
-                                viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), startDate, endDate))
+                    var monthNumber = ""
+                    if (thismonth.equals("Jan")) monthNumber = "01"
+                    else if (thismonth == "Feb") monthNumber = "02"
+                    else if (thismonth == "Mar") monthNumber = "03"
+                    else if (thismonth == "Apr") monthNumber = "04"
+                    else if (thismonth == "May") monthNumber = "05"
+                    else if (thismonth == "Jun") monthNumber = "06"
+                    else if (thismonth == "Jul") monthNumber = "07"
+                    else if (thismonth == "Aug") monthNumber = "08"
+                    else if (thismonth == "Sep") monthNumber = "09"
+                    else if (thismonth == "Oct") monthNumber = "10"
+                    else if (thismonth == "Nov") monthNumber = "11"
+                    else if (thismonth == "Dec") monthNumber = "12"
+
+                    val startDate = "${thisyear}-${monthNumber}-${thisday}"
+
+
+                    SingleDateAndTimePickerDialog.Builder(this@ViewExpensesActivity)
+                        .bottomSheet()
+                        .curved()
+                        .titleTextColor(Color.RED)
+                        .displayMinutes(false)
+                        .displayHours(false)
+                        .displayDays(false)
+                        .displayMonth(true)
+                        .title("Pick An End Date")
+                        .mainColor(resources!!.getColor(R.color.propdarkblue))
+                        .backgroundColor(Color.DKGRAY)
+                        .displayYears(true)
+                        .displayDaysOfMonth(true)
+                        .listener {
+
+                            val monthNamesEnd = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                            val thisdayEnd = (if (it.date < 10) "0" else "") + it.date
+                            val thismonthEnd = monthNamesEnd.get(it.month)
+                            var thisyearEnd = it.year.toString()
+                            if (thisyearEnd.startsWith("1")) {
+                                thisyearEnd = "20${thisyearEnd.takeLast(2)}"
                             } else {
-                                viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
+                                thisyearEnd = "19${thisyearEnd}"
                             }
-                        }
-                    }
+
+                            var monthNumberEnd = ""
+                            if (thismonthEnd.equals("Jan")) monthNumberEnd = "01"
+                            else if (thismonthEnd == "Feb") monthNumberEnd = "02"
+                            else if (thismonthEnd == "Mar") monthNumberEnd = "03"
+                            else if (thismonthEnd == "Apr") monthNumberEnd = "04"
+                            else if (thismonthEnd == "May") monthNumberEnd = "05"
+                            else if (thismonthEnd == "Jun") monthNumberEnd = "06"
+                            else if (thismonthEnd == "Jul") monthNumberEnd = "07"
+                            else if (thismonthEnd == "Aug") monthNumberEnd = "08"
+                            else if (thismonthEnd == "Sep") monthNumberEnd = "09"
+                            else if (thismonthEnd == "Oct") monthNumberEnd = "10"
+                            else if (thismonthEnd == "Nov") monthNumberEnd = "11"
+                            else if (thismonthEnd == "Dec") monthNumberEnd = "12"
+
+                            val endDate = "${thisyearEnd}-${monthNumberEnd}-${thisdayEnd}"
+                            expenseDateMap["endDate"] = endDate
+                            expenseDateMap["startDate"] = endDate
+                            binding.showing.setText("${filter.capitalize()} - ${startDate to endDate}")
+
+                            CoroutineScope(Dispatchers.IO).launch() {
+                                withContext(Dispatchers.Main) {
+                                    if (viewexpensesPropertyId != "") {
+                                        viewmodel.getExpenses(ExpenseFilter(viewexpensesPropertyId, filter.toLowerCase(), startDate, endDate))
+                                    } else {
+                                        viewmodel.getExpenses(ExpenseFilter(null, filter.toLowerCase(), startDate, endDate))
+                                    }
+                                }
+                            }
+
+                        }.display()
 
                 }.display()
         }

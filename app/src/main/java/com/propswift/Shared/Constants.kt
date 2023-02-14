@@ -18,7 +18,7 @@ object Constants {
     private val TAG = MainActivity::class.java.simpleName
     const val REQUEST_IMAGE = 100
     var expenseImageList = mutableListOf<Uri>()
-    var expenseImageUploadList = listOf<String>()
+    var expenseImageUploadList = mutableListOf<String>()
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

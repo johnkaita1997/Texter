@@ -31,7 +31,7 @@ class RentReceiptAdapter(var activity: FragmentActivity, var rentalsList: Mutabl
         val rentObject = rentalsList!!.get(position);
         val rentDate = rentObject.date_paid
         val rentAmount = rentObject.amount
-//        val receiptNumber = rentObject.
+        val receiptNumber = rentObject.receipt
         val propertyName = rentObject.property.name
         val rentStatus = rentObject.rent_status
 
@@ -39,6 +39,7 @@ class RentReceiptAdapter(var activity: FragmentActivity, var rentalsList: Mutabl
         holder.itemView.findViewById<TextView>(R.id.display_rrental_datePaid).setText(rentDate)
         holder.itemView.findViewById<TextView>(R.id.display_rental_propertyName).setText(propertyName)
         holder.itemView.findViewById<TextView>(R.id.display_rental_status).setText(rentStatus)
+        holder.itemView.findViewById<TextView>(R.id.display_rentReceiptNumber).setText(receiptNumber)
 
         holder.itemView.findViewById<Button>(R.id.images).setOnClickListener {
             val imagesList = rentObject.payment_files

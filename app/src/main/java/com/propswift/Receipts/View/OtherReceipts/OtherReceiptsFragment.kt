@@ -14,7 +14,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.*
-import com.github.florent37.singledateandtimepicker.dialog.DoubleDateAndTimePickerDialog
+import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.propswift.R
 import com.propswift.Shared.*
 import com.propswift.databinding.FragmentOtherreceiptsBinding
@@ -23,7 +23,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 
 
 @AndroidEntryPoint
@@ -87,114 +86,106 @@ class OtherReceiptsFragment : Fragment(), LifecycleOwner, MyViewModel.ActivityCa
 
 
         binding.monthPickerButton.setOnClickListener {
-            val dateFormat = SimpleDateFormat("yyyy MMM dd");
-            DoubleDateAndTimePickerDialog.Builder(activity).bottomSheet().curved().titleTextColor(Color.RED)
-                .titleTextColor(Color.BLACK)
-                .title("Pick Start And End Period")
-                .setTab0DisplayMinutes(false)
-                .setTab0DisplayHours(false)
-                .setTab0DisplayDays(false)
-                .setTab1DisplayMinutes(false)
-                .setTab1DisplayHours(false)
-                .setTab1DisplayDays(false)
-                .tab0Text("Start")
-                .tab1Text("End")
-                .mainColor(Color.YELLOW)
-                .backgroundColor(Color.BLACK)
+
+            SingleDateAndTimePickerDialog.Builder(activity)
+                .bottomSheet()
+                .curved()
+                .titleTextColor(Color.RED)
+                .displayMinutes(false)
+                .displayHours(false)
+                .displayDays(false)
+                .displayMonth(true)
+                .title("Pick A Start Date")
+                .mainColor(resources!!.getColor(R.color.propdarkblue))
+                .backgroundColor(Color.DKGRAY)
+                .displayYears(true)
+                .displayDaysOfMonth(true)
                 .listener {
 
-                    var startDate = ""
-                    var endDate = ""
-
-                    it.forEachIndexed { index, date ->
-
-                        if (index == 0) {
-                            val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-                            val thisday = (if (date.date < 10) "0" else "") + date.date
-                            val thismonth = monthNames.get(date.month)
-                            var thisyear = date.year.toString()
-                            if (thisyear.startsWith("1")) {
-                                thisyear = "20${thisyear.takeLast(2)}"
-                            } else {
-                                thisyear = "19${thisyear}"
-                            }
-
-                            var monthNumber = 0
-                            if (thismonth.equals("Jan")) monthNumber = 1
-                            else if (thismonth == "Feb") monthNumber = 2
-                            else if (thismonth == "Mar") monthNumber = 3
-                            else if (thismonth == "Apr") monthNumber = 4
-                            else if (thismonth == "May") monthNumber = 5
-                            else if (thismonth == "Jun") monthNumber = 6
-                            else if (thismonth == "Jul") monthNumber = 7
-                            else if (thismonth == "Aug") monthNumber = 8
-                            else if (thismonth == "Sep") monthNumber = 9
-                            else if (thismonth == "Oct") monthNumber = 10
-                            else if (thismonth == "Nov") monthNumber = 11
-                            else if (thismonth == "Dec") monthNumber = 12
-
-                            if (monthNumber < 10) {
-                                val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                               otherRecieptsDateMap["startDate"] = combinedStartDate
-                                startDate = combinedStartDate
-                            } else {
-                                val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                               otherRecieptsDateMap["startDate"] = combinedStartDate
-                                startDate = combinedStartDate
-                            }
-
-                        } else {
-
-                            val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-                            val thisday = (if (date.date < 10) "0" else "") + date.date
-                            val thismonth = monthNames.get(date.month)
-                            var thisyear = date.year.toString()
-                            if (thisyear.startsWith("1")) {
-                                thisyear = "20${thisyear.takeLast(2)}"
-                            } else {
-                                thisyear = "19${thisyear}"
-                            }
-
-                            var monthNumber = 0
-                            if (thismonth.equals("Jan")) monthNumber = 1
-                            else if (thismonth == "Feb") monthNumber = 2
-                            else if (thismonth == "Mar") monthNumber = 3
-                            else if (thismonth == "Apr") monthNumber = 4
-                            else if (thismonth == "May") monthNumber = 5
-                            else if (thismonth == "Jun") monthNumber = 6
-                            else if (thismonth == "Jul") monthNumber = 7
-                            else if (thismonth == "Aug") monthNumber = 8
-                            else if (thismonth == "Sep") monthNumber = 9
-                            else if (thismonth == "Oct") monthNumber = 10
-                            else if (thismonth == "Nov") monthNumber = 11
-                            else if (thismonth == "Dec") monthNumber = 12
-
-                            if (monthNumber < 10) {
-                                val combinedStartDate = "${thisyear}-0${monthNumber}-${thisday}"
-                               otherRecieptsDateMap["endDate"] = combinedStartDate
-                                endDate = combinedStartDate
-                            } else {
-                                val combinedStartDate = "${thisyear}-${monthNumber}-${thisday}"
-                               otherRecieptsDateMap["endDate"] = combinedStartDate
-                                endDate = combinedStartDate
-                            }
-
-                        }
+                    val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                    val thisday = (if (it.date < 10) "0" else "") + it.date
+                    val thismonth = monthNames.get(it.month)
+                    var thisyear = it.year.toString()
+                    if (thisyear.startsWith("1")) {
+                        thisyear = "20${thisyear.takeLast(2)}"
+                    } else {
+                        thisyear = "19${thisyear}"
                     }
 
-                    binding.showing.setText("${startDate} - ${endDate}")
+                    var monthNumber = ""
+                    if (thismonth.equals("Jan")) monthNumber = "01"
+                    else if (thismonth == "Feb") monthNumber = "02"
+                    else if (thismonth == "Mar") monthNumber = "03"
+                    else if (thismonth == "Apr") monthNumber = "04"
+                    else if (thismonth == "May") monthNumber = "05"
+                    else if (thismonth == "Jun") monthNumber = "06"
+                    else if (thismonth == "Jul") monthNumber = "07"
+                    else if (thismonth == "Aug") monthNumber = "08"
+                    else if (thismonth == "Sep") monthNumber = "09"
+                    else if (thismonth == "Oct") monthNumber = "10"
+                    else if (thismonth == "Nov") monthNumber = "11"
+                    else if (thismonth == "Dec") monthNumber = "12"
 
-                    CoroutineScope(Dispatchers.IO).launch() {
-                        withContext(Dispatchers.Main) {
-                            if (::propertyid.isInitialized) {
-                                viewmodel.getOtherReceipts(OtherReceiptFilter(propertyid, startDate, endDate))
+                    val startDate = "${thisyear}-${monthNumber}-${thisday}"
+
+                    SingleDateAndTimePickerDialog.Builder(activity)
+                        .bottomSheet()
+                        .curved()
+                        .titleTextColor(Color.RED)
+                        .displayMinutes(false)
+                        .displayHours(false)
+                        .displayDays(false)
+                        .displayMonth(true)
+                        .title("Pick An End Date")
+                        .mainColor(resources.getColor(R.color.propdarkblue))
+                        .backgroundColor(Color.DKGRAY)
+                        .displayYears(true)
+                        .displayDaysOfMonth(true)
+                        .listener {
+
+                            val monthNamesEnd = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                            val thisdayEnd = (if (it.date < 10) "0" else "") + it.date
+                            val thismonthEnd = monthNamesEnd.get(it.month)
+                            var thisyearEnd = it.year.toString()
+                            if (thisyearEnd.startsWith("1")) {
+                                thisyearEnd = "20${thisyearEnd.takeLast(2)}"
                             } else {
-                                viewmodel.getOtherReceipts(OtherReceiptFilter(null, startDate, endDate))
+                                thisyearEnd = "19${thisyearEnd}"
                             }
-                        }
-                    }
+
+                            var monthNumberEnd = ""
+                            if (thismonthEnd.equals("Jan")) monthNumberEnd = "01"
+                            else if (thismonthEnd == "Feb") monthNumberEnd = "02"
+                            else if (thismonthEnd == "Mar") monthNumberEnd = "03"
+                            else if (thismonthEnd == "Apr") monthNumberEnd = "04"
+                            else if (thismonthEnd == "May") monthNumberEnd = "05"
+                            else if (thismonthEnd == "Jun") monthNumberEnd = "06"
+                            else if (thismonthEnd == "Jul") monthNumberEnd = "07"
+                            else if (thismonthEnd == "Aug") monthNumberEnd = "08"
+                            else if (thismonthEnd == "Sep") monthNumberEnd = "09"
+                            else if (thismonthEnd == "Oct") monthNumberEnd = "10"
+                            else if (thismonthEnd == "Nov") monthNumberEnd = "11"
+                            else if (thismonthEnd == "Dec") monthNumberEnd = "12"
+
+                            val endDate = "${thisyearEnd}-${monthNumberEnd}-${thisdayEnd}"
+                            otherRecieptsDateMap["endDate"] = endDate
+                            otherRecieptsDateMap["startDate"] = endDate
+                            binding.showing.setText("${startDate to endDate}")
+
+                            CoroutineScope(Dispatchers.IO).launch() {
+                                withContext(Dispatchers.Main) {
+                                    if (::propertyid.isInitialized) {
+                                        viewmodel.getOtherReceipts(OtherReceiptFilter(propertyid, startDate, endDate))
+                                    } else {
+                                        viewmodel.getOtherReceipts(OtherReceiptFilter(null, startDate, endDate))
+                                    }
+                                }
+                            }
+
+                        }.display()
 
                 }.display()
+
         }
 
     }

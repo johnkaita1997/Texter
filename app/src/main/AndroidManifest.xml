@@ -66,9 +66,11 @@
             android:name=".Managers.Add.AddManagerActivity"
             android:exported="false" />
         <activity
+            android:theme="@style/AppTheme"
             android:name=".Managers.View.ManagersActivity"
             android:exported="false" />
         <activity
+            android:theme="@style/AppTheme"
             android:name=".Receipts.ReceiptsParentActivity"
             android:exported="false" />
         <activity

@@ -29,7 +29,8 @@ class ReceiptsParentActivity : AppCompatActivity() {
         val mtabLayout = binding.include.mainTabs
 
         mViewPager.adapter = mPagerAdapter
-        mViewPager.offscreenPageLimit = 2
+//        mViewPager.offscreenPageLimit = 2
         mtabLayout.setupWithViewPager(mViewPager)
+
     }
 }

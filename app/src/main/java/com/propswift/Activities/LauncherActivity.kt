@@ -6,8 +6,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import com.airbnb.epoxy.EpoxyController
-import com.airbnb.epoxy.EpoxyRecyclerView
 import com.propswift.Shared.*
 import com.propswift.databinding.LauncherActivityBinding
 import dagger.hilt.android.AndroidEntryPoint

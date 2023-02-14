@@ -1,33 +1,15 @@
 package com.propswift.ImageViewer
 
-import android.graphics.Color
-import android.graphics.Typeface
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.propswift.Expenses.ViewExpensesActivity
 import com.propswift.R
-import com.propswift.Receipts.Add.RentReceipt.ListPendingRent
-import com.propswift.Receipts.ReceiptsParentActivity
-import com.propswift.Shared.ListManagedPropertiesDetail
 import com.propswift.Shared.MyViewModel
-import com.propswift.Shared.goToactivityIntent_Unfinished
 import com.propswift.Shared.showAlertDialog
-import com.skydoves.powermenu.MenuAnimation
-import com.skydoves.powermenu.PowerMenu
-import com.skydoves.powermenu.PowerMenuItem
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class ImagesAdapter(var activity: FragmentActivity, var imagesList: MutableList<String>, var viewmodel: MyViewModel) :
     RecyclerView.Adapter<ImagesAdapter.ViewHolder>() {

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Shared.GetToDoListTasks_Details
 import com.propswift.Shared.MyViewModel
-import com.propswift.Shared.makeLongToast
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

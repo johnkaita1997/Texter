@@ -12,17 +12,16 @@ import android.text.TextUtils
 import android.text.format.DateFormat
 import android.view.*
 import android.widget.*
-import androidx.lifecycle.ViewModelProvider
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.propswift.Activities.WelcomeOneActivity
 import com.propswift.Expenses.ViewExpensesActivity
 import com.propswift.Managers.View.ManagersActivity
-import com.propswift.Property.ListProperties.PropertyFetchParentActivity
 import com.propswift.Property.AddProperty.AddPropertyActivity
 import com.propswift.Property.ListProperties.AddExpensesActivity
-import com.propswift.Receipts.Add.OtherReceipt.AddOtherReceiptsActivity
+import com.propswift.Property.ListProperties.PropertyFetchParentActivity
 import com.propswift.R
+import com.propswift.Receipts.Add.OtherReceipt.AddOtherReceiptsActivity
 import com.propswift.Receipts.ReceiptsParentActivity
 import com.propswift.Retrofit.MyApi
 import com.propswift.Shared.Constants.datemap
@@ -33,13 +32,11 @@ import com.propswift.ToDoList.ToDoListActivity
 import com.propswift.databinding.BottomExpensesBinding
 import com.propswift.databinding.BottomPropertyBinding
 import com.propswift.databinding.BottomReceiptsBinding
-import dagger.hilt.android.AndroidEntryPoint
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -404,7 +401,14 @@ fun Context.dismissProgress() {
 
 
 fun Context.datePicker(button: Button) {
-    SingleDateAndTimePickerDialog.Builder(this).bottomSheet().curved().titleTextColor(Color.RED).displayMinutes(false).displayHours(false).displayDays(false).displayMonth(true)
+    SingleDateAndTimePickerDialog.Builder(this)
+        .bottomSheet()
+        .curved()
+        .titleTextColor(Color.RED)
+        .displayMinutes(false)
+        .displayHours(false)
+        .displayDays(false)
+        .displayMonth(true)
         .title("Pick A Date Below")
         .mainColor(resources!!.getColor(R.color.propdarkblue))
         .backgroundColor(Color.WHITE)

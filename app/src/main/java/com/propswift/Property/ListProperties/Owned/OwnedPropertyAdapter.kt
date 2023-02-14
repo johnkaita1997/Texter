@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.propswift.R
 import com.propswift.Receipts.Add.RentReceipt.ListPendingRent

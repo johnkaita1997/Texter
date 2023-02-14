@@ -37,7 +37,7 @@ class OtherReceiptsAdapter(var activity: FragmentActivity, var expenseList: Muta
         val expenseObject = expenseList!!.get(position);
         val expenseDate = expenseObject.date_incurred
         val expenseAmount = expenseObject.amount
-        val propertyName = expenseObject.property
+        val propertyName = expenseObject.property_name
         val description = expenseObject.description
         val files = expenseObject.files
 

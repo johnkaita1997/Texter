@@ -72,8 +72,6 @@
             android:layout_height="30dp"
             android:background="@color/white"
             android:backgroundTint="@color/white"
-            app:tabIndicator="@color/white"
-            app:tabIndicatorColor="@color/proplightblue"
             app:tabIndicatorHeight="2dp"
             app:tabSelectedTextColor="@color/black"
             app:tabTextColor="@color/black" />
