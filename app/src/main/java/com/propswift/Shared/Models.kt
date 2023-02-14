@@ -373,3 +373,7 @@ data class ExpenseDeleteBody(
 data class ExpenseDeletedCallback(
     val details: String
 )
+
+data class DeleteOtherReceiptBody(
+    val request_id: String
+)

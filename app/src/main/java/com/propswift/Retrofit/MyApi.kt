@@ -258,7 +258,7 @@ interface MyApi {
     suspend fun deleteOtherReceipt(
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
-        @Query("request_id") request_id: String,
+        @Body request_id: DeleteOtherReceiptBody
     ): Response<ExpenseDeletedCallback>
 
 

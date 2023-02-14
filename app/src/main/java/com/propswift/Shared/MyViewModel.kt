@@ -839,7 +839,7 @@ class MyViewModel
     suspend fun deleteOtherReceipt(request_id: String) {
         runCatching {
             val response = api.deleteOtherReceipt(
-                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, request_id
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken, DeleteOtherReceiptBody(request_id)
             )
             if (!response.isSuccessful) {
                 val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
