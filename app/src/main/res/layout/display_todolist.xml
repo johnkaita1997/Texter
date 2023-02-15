@@ -13,7 +13,7 @@
         android:layout_centerInParent="true"
         android:layout_gravity="center"
         android:elevation="20dp"
-        app:cardCornerRadius="0dp">
+        app:cardCornerRadius="10dp">
 
         <LinearLayout
             android:padding="10dp"
@@ -23,15 +23,27 @@
             android:paddingHorizontal="0dp">
 
             <TextView
-                android:id="@+id/todolisttext"
+                android:id="@+id/due"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginVertical="2dp"
                 android:gravity="left"
+                android:text="Due : Today"
+                android:textColor="@color/red_300"
+                android:textSize="13dp" />
+
+            <TextView
+                android:id="@+id/todolisttext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:gravity="left"
                 android:text="Eat rice at lunch and play in the morning"
                 android:textColor="@color/black"
                 android:textSize="16dp" />
+
 
             <TextView
                 android:id="@+id/deletetodolistbutton"

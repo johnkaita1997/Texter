@@ -219,20 +219,6 @@ data class ToDoListTask(
 )
 
 
-data class GetToDoListTasks(
-    val details: MutableList<GetToDoListTasks_Details>?
-)
-
-data class GetToDoListTasks_Details(
-    val actor: String?,
-    val created_at: String?,
-    val deleted_at: Any,
-    val due_date: String?,
-    val id: Int,
-    val title: String?,
-    val updated_at: String?
-)
-
 
 data class RemoveToDoId(
     val request_id: String?
@@ -368,12 +354,29 @@ data class ListManagedPropertiesDetail(
 )
 
 data class ExpenseDeleteBody(
-    val request_id: String
+    val request_id: String?
 )
 data class ExpenseDeletedCallback(
-    val details: String
+    val details: String?
 )
 
 data class DeleteOtherReceiptBody(
-    val request_id: String
+    val request_id: String?
+)
+
+
+
+
+data class GetToDoListTasks(
+    val details: MutableList<GetToDoListTasks_Details>?
+)
+
+data class GetToDoListTasks_Details(
+    val actor: String?,
+    val created_at: String?,
+    val deleted_at: Any,
+    val due_date: String?,
+    val id: Int,
+    val title: String?,
+    val updated_at: String?
 )

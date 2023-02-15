@@ -18,6 +18,7 @@ import com.propswift.databinding.ActivityToDoListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -37,7 +38,13 @@ class ToDoListActivity : AppCompatActivity(), LifecycleOwner {
         initall()
     }
 
+
     private fun initall() {
+
+        fetch()
+
+        var isdue = false
+
 
         binding.include.header.setText("To-Do List")
         binding.include.mainTabs.visibility = View.GONE
@@ -47,28 +54,73 @@ class ToDoListActivity : AppCompatActivity(), LifecycleOwner {
 
         findViewById<RecyclerView>(R.id.todoRecyclerView).setLayoutManager(layoutManager)
         val todoList = mutableListOf<GetToDoListTasks_Details>()
-        expensesAdapter = ToDoListAdapter(this@ToDoListActivity, todoList, viewmodel)
+        expensesAdapter = ToDoListAdapter(this@ToDoListActivity, viewmodel)
         findViewById<RecyclerView>(R.id.todoRecyclerView).setAdapter(expensesAdapter)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            viewmodel.getToDoList()
-        }
 
         viewmodel.listOfTodoItems.observe(this, Observer {
             expensesAdapter.updateUserList(it)
+            updateTextView(isdue)
         })
+
+        viewmodel.listOfTodoItemsDueToday.observe(this, Observer {
+            if (isdue) {
+                expensesAdapter.updateUserList(it)
+                updateTextView(isdue)
+            }
+        })
+
 
         binding.addToDoListObject.setOnClickListener {
             goToActivity_Unfinished(this, AddToDoActivity::class.java)
         }
 
+        binding.alltasks.setOnClickListener {
+            isdue = false
+            expensesAdapter.updateUserList(viewmodel.listOfTodoItems.value!!)
+            updateTextView(isdue)
+        }
+
+        binding.duetasks.setOnClickListener {
+            isdue = true
+            expensesAdapter.updateUserList(viewmodel.listOfTodoItemsDueToday.value!!)
+            updateTextView(isdue)
+        }
+
+
     }
+
+    fun fetch() {
+        lifecycleScope.launch {
+            async { viewmodel.getToDoList() }
+            async { viewmodel.getToDoListDueToday() }
+        }
+    }
+
+    fun updateTextView(isdue: Boolean) {
+
+        if (isdue) {
+            binding.tasktype.setText("Due Today")
+        } else {
+            binding.tasktype.setText("All Tasks")
+        }
+
+        viewmodel.listOfTodoItems.let {
+            val numberOfTodoAll = viewmodel.listOfTodoItems.value!!.size
+            binding.alltaskstxt.setText("All Tasks   ${numberOfTodoAll}")
+        }
+
+        viewmodel.listOfTodoItemsDueToday.let {
+            val numberOfTodoDue = viewmodel.listOfTodoItemsDueToday.value!!.size
+            binding.duetaskstxt.setText("Due Today   ${numberOfTodoDue}")
+        }
+
+    }
+
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewmodel.getToDoList()
-        }
+        fetch()
     }
 
 }

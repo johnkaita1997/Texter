@@ -245,7 +245,6 @@ interface MyApi {
     ): Response<ListManagedProperties?>
 
 
-
     @POST("api/v1/property/delete-expense")
     suspend fun deleteExpense(
         @Header("Authorization") authorization: String?,
@@ -261,6 +260,12 @@ interface MyApi {
         @Body request_id: DeleteOtherReceiptBody
     ): Response<ExpenseDeletedCallback>
 
+
+    @GET("api/v1/tasks/list-due-tasks")
+    suspend fun getToDoListDueToday(
+        @Header("Authorization") authorization: String?,
+        @Header("JWTAUTH") jwtauth: String?
+    ): Response<GetToDoListTasks>
 
 
 }

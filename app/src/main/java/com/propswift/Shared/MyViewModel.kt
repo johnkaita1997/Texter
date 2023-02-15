@@ -51,6 +51,9 @@ class MyViewModel
     val _listOfTodoItems = MutableLiveData<MutableList<GetToDoListTasks_Details>>()
     val listOfTodoItems: LiveData<MutableList<GetToDoListTasks_Details>> get() = _listOfTodoItems
 
+    val _listOfTodoItemsDueToday = MutableLiveData<MutableList<GetToDoListTasks_Details>>()
+    val listOfTodoItemsDueToday: LiveData<MutableList<GetToDoListTasks_Details>> get() = _listOfTodoItemsDueToday
+
     val _bothNames = MutableLiveData<String>()
     val bothNames: LiveData<String> get() = _bothNames
 
@@ -611,27 +614,6 @@ class MyViewModel
         }
     }
 
-
-    suspend fun getToDoList() {
-        runCatching {
-            val response = api.getToDoList(
-                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
-            )
-            if (!response.isSuccessful) {
-                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
-                handleResponse(jsonObj, response.toString(), null)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    _listOfTodoItems.value = response.body()!!.details!!
-                }
-            }
-        }.onFailure {
-            networkResponseFailure(it, null)
-        }
-    }
-
-
     suspend fun removeProperty(propertyId: String, rentedorowned: String) {
         runCatching {
             val response = api.deleteProperty(
@@ -855,6 +837,50 @@ class MyViewModel
             networkResponseFailure(it, null)
         }
     }
+
+
+
+    suspend fun getToDoList() {
+        runCatching {
+            val response = api.getToDoList(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                withContext(Dispatchers.Main) {
+                    _listOfTodoItems.postValue(response.body()!!.details!!)
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
+
+    suspend fun getToDoListDueToday() {
+        runCatching {
+            val response = api.getToDoListDueToday(
+                activity.getAuthDetails().authToken, activity.getAuthDetails().jwttoken
+            )
+            if (!response.isSuccessful) {
+                val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                handleResponse(jsonObj, response.toString(), null)
+                return@runCatching
+            } else {
+                withContext(Dispatchers.Main) {
+                    _listOfTodoItemsDueToday.postValue(response.body()!!.details!!)
+                }
+            }
+        }.onFailure {
+            networkResponseFailure(it, null)
+        }
+    }
+
+
 
 
 }

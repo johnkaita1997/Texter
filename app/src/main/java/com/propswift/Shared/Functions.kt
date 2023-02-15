@@ -8,10 +8,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.os.Build
 import android.text.TextUtils
 import android.text.format.DateFormat
 import android.view.*
 import android.widget.*
+import androidx.annotation.RequiresApi
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.propswift.Activities.WelcomeOneActivity
@@ -38,6 +40,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
@@ -488,4 +492,12 @@ fun clearAllEditTexts(parent: ViewGroup) {
             clearAllEditTexts(child)
         }
     }
+}
+
+
+@RequiresApi(Build.VERSION_CODES.O)
+fun dateDifference(date1: String, date2: String): Long {
+    val localDate1 = LocalDate.parse(date1)
+    val localDate2 = LocalDate.parse(date2)
+    return ChronoUnit.DAYS.between(localDate1, localDate2)
 }
