@@ -12,10 +12,7 @@ import com.propswift.R
 import com.propswift.Shared.GetToDoListTasks_Details
 import com.propswift.Shared.MyViewModel
 import com.propswift.Shared.dateDifference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,7 +55,8 @@ class ToDoListAdapter(var activity: FragmentActivity, var viewModel: MyViewModel
             CoroutineScope(Dispatchers.IO).launch() {
                 viewModel.removeToDoList(todolistid.toString())
                 withContext(Dispatchers.Main) {
-                    viewModel.getToDoList()
+                    async { viewModel.getToDoList() }
+                    async { viewModel.getToDoListDueToday() }
                 }
             }
         }

@@ -872,7 +872,7 @@ class MyViewModel
                 return@runCatching
             } else {
                 withContext(Dispatchers.Main) {
-                    _listOfTodoItemsDueToday.postValue(response.body()!!.details!!)
+                    _listOfTodoItemsDueToday.postValue( response.body()!!.details!!)
                 }
             }
         }.onFailure {

@@ -39,14 +39,8 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private fun initall() {
-
-        viewmodel.bothNames.observe(this, Observer {
-            binding.helloThere.setText(it)
-        })
-        viewmodel.totalAmount.observe(
-            this, Observer {
-                binding.amountSpent.setText("Amount Spent : KES ${it}")
-            })
+        viewmodel.bothNames.observe(this, Observer { binding.helloThere.setText(it) })
+        viewmodel.totalAmount.observe(this, Observer { binding.amountSpent.setText("Amount Spent : KES ${it}") })
         viewmodel.getTotalNumberofReceipts.observe(this, Observer {
             binding.numberOfReceipts.setText("Number of receipts : $it")
         })
