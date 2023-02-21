@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
+import com.propswift.Epoxy.ActivityEpoxy
 import com.propswift.Shared.*
 import com.propswift.databinding.LauncherActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,11 +32,13 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private fun initall() {
-        handler = Handler()
+
+        goToActivity(this, ActivityEpoxy::class.java)
+        /*handler = Handler()
         runnable = Runnable {
             takeUserToTheNextPage()
         }
-        gotonextpage()
+        gotonextpage()*/
     }
 
     private fun takeUserToTheNextPage() {

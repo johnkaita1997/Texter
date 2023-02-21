@@ -1,3 +1,4 @@
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
@@ -5,6 +6,7 @@ plugins {
     id 'com.google.firebase.crashlytics'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.jakewharton.butterknife'
 }
 
 
@@ -151,10 +153,10 @@ dependencies {
     implementation "androidx.room:room-ktx:$roomVersion"
     androidTestImplementation "androidx.room:room-testing:$roomVersion"
 
-    def epoxyVersion = "4.6.2"
+    def epoxyVersion = "5.1.0"
     implementation "com.airbnb.android:epoxy:$epoxyVersion"
-    implementation "com.airbnb.android:epoxy-paging:$epoxyVersion"
-    implementation "com.airbnb.android:epoxy-paging3:$epoxyVersion"
+    implementation "com.airbnb.android:epoxy-paging:4.6.2"
+    implementation "com.airbnb.android:epoxy-paging3:5.1.1"
     kapt "com.airbnb.android:epoxy-processor:$epoxyVersion"
     implementation "com.airbnb.android:epoxy-databinding:4.3.1"
 

@@ -219,7 +219,6 @@ data class ToDoListTask(
 )
 
 
-
 data class RemoveToDoId(
     val request_id: String?
 )
@@ -356,6 +355,7 @@ data class ListManagedPropertiesDetail(
 data class ExpenseDeleteBody(
     val request_id: String?
 )
+
 data class ExpenseDeletedCallback(
     val details: String?
 )
@@ -363,8 +363,6 @@ data class ExpenseDeletedCallback(
 data class DeleteOtherReceiptBody(
     val request_id: String?
 )
-
-
 
 
 data class GetToDoListTasks(
@@ -379,4 +377,10 @@ data class GetToDoListTasks_Details(
     val id: Int,
     val title: String?,
     val updated_at: String?
+)
+
+
+data class Photo(
+    val name: String?,
+    val image: String?,
 )

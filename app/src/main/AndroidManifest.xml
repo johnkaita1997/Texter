@@ -34,7 +34,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
-
+        <activity
+            android:name=".Epoxy.ActivityEpoxy"
+            android:exported="false" />
         <activity
             android:name=".ImageViewer.ImageViewActivity"
             android:exported="false" />
