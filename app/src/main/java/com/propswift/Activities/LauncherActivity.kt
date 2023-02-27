@@ -33,12 +33,12 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun initall() {
 
-        goToActivity(this, ActivityEpoxy::class.java)
-        /*handler = Handler()
+//        goToActivity(this, ActivityEpoxy::class.java)
+        handler = Handler()
         runnable = Runnable {
             takeUserToTheNextPage()
         }
-        gotonextpage()*/
+        gotonextpage()
     }
 
     private fun takeUserToTheNextPage() {

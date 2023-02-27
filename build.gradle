@@ -16,14 +16,16 @@ buildscript {
         maven { url "https://maven.google.com" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://github.com/VdoCipher/maven-repo/raw/master/repo" }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.4.0'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.21"
         classpath 'com.google.gms:google-services:4.3.13'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
         classpath 'com.jakewharton:butterknife-gradle-plugin:10.1.0'
         classpath "com.google.dagger:hilt-android-gradle-plugin:$hiltVersion"
+        classpath "com.autonomousapps:dependency-analysis-gradle-plugin:1.19.0"
     }
 }
 
@@ -39,3 +41,6 @@ allprojects {
         maven { url "https://github.com/VdoCipher/maven-repo/raw/master/repo" }
     }
 }
+
+
+apply plugin: "com.autonomousapps.dependency-analysis"

@@ -97,7 +97,7 @@ fun Context.dismissredirect() {
 }
 
 fun Context.showAlertDialog(message: String) {
-    val alert = AlertDialog.Builder(this).setTitle("PropSwift").setCancelable(false).setMessage(message).setIcon(R.drawable.logo_small).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
+    val alert = AlertDialog.Builder(this).setTitle("PropSwift").setCancelable(false).setMessage(message).setIcon(R.drawable.logonormal).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
         isDialogShown = false
         dialog.dismiss()
     }).setNegativeButton("OKAY", DialogInterface.OnClickListener { dialog, _ ->
@@ -113,7 +113,7 @@ fun Context.showAlertDialog(message: String) {
 
 fun Context.showAlertDialog_Special(alertDialog: AlertDialog, title: String, message: String, okaybuttonName: String, bar: () -> Unit) {
     alertDialog.setTitle(title)
-    alertDialog.setIcon(R.drawable.logo_small)
+    alertDialog.setIcon(R.drawable.logonormal)
     alertDialog.setMessage(message)
     alertDialog.setCancelable(false)
     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Dismiss") { dialog, which ->

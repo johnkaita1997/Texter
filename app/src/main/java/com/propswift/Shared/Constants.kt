@@ -32,9 +32,10 @@ object Constants {
     var alist = mutableListOf<String>()
     public lateinit var progressDialog: SpotsDialog
 
+    //var baseurl = "http://192.168.215.226:8000"
     //var baseurl = "http://192.168.50.69:8090"
-    var baseurl = "http://192.168.100.4:8000"
-//    var baseurl = "http://192.168.215.226:8000"
+    //var baseurl = "http://192.168.100.4:8000"
+    var baseurl = "http://192.168.214.53:8000"
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
