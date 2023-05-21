@@ -9,11 +9,14 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
+import java.util.concurrent.TimeUnit
 
 
 interface MyApi {
 
     companion object {
+
+        //https://howtodoinjava.com/retrofit2/query-path-parameters/
 
         operator fun invoke(): MyApi {
             /*progressDialog = SpotsDialog.Builder().setContext(this).build() as SpotsDialog
@@ -22,10 +25,16 @@ interface MyApi {
             val gson = GsonBuilder().serializeNulls().create()
             val loggingInterceptor = HttpLoggingInterceptor()
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-            val okHttpClient =
-                OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build()
-            val retrofit = Retrofit.Builder().baseUrl(Constants.baseurl)
-                .addConverterFactory(GsonConverterFactory.create(gson)).client(okHttpClient).build()
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(loggingInterceptor)
+                .connectTimeout(30, TimeUnit.SECONDS) // set connect timeout to 30 seconds
+                .readTimeout(30, TimeUnit.SECONDS) // set read timeout to 30 seconds
+                .build()
+            val retrofit = Retrofit.Builder()
+                .baseUrl(Constants.baseurl)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(okHttpClient)
+                .build()
             val apiCall = retrofit.create(MyApi::class.java)
 
             return apiCall
@@ -36,8 +45,6 @@ interface MyApi {
     @POST("api/v1/auth/register")
     suspend fun register(@Body user: User): Response<Any>
 
-    @POST("api/v1/auth/login")
-    suspend fun login(@Body loginbody: LoginBody): Response<SuccessLogin>
 
 
     @GET("api/v1/property/list-rented-properties")
@@ -80,7 +87,7 @@ interface MyApi {
         @Body property: CreateProperty?,
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
-    ): Response<success?>
+    ): Response<Success?>
 
 
     @GET("api/v1/users/user-details")
@@ -90,12 +97,6 @@ interface MyApi {
     ): Response<GetProfileDetails?>
 
 
-    @GET("api/v1/users/get-user-details")
-    suspend fun getUserDetails(
-        @Header("Authorization") authorization: String?,
-        @Header("JWTAUTH") jwtauth: String?,
-        @Query("user_id") user_id: String?,
-    ): Response<UserDetails?>
 
 
     @GET("api/v1/owners/list-managers")
@@ -111,7 +112,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body user: Manager
-    ): Response<success>
+    ): Response<Success>
 
 
     @POST("api/v1/owners/remove-manager")
@@ -119,7 +120,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body managerpropertyid: RemoveManager?,
-    ): Response<success>
+    ): Response<Success>
 
 
     @GET("api/v1/property/list-managed-properties")
@@ -134,7 +135,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body toDoListTask: ToDoListTask
-    ): Response<success>
+    ): Response<Success>
 
 
     @GET("api/v1/tasks")
@@ -149,7 +150,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body todolistId: RemoveToDoId,
-    ): Response<success>
+    ): Response<Success>
 
 
     @Multipart
@@ -166,7 +167,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body expensePostObject: ExpenseUploadObject,
-    ): Response<success>
+    ): Response<Success>
 
 
     @GET("api/v1/property/get-total-expenses")
@@ -194,7 +195,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body propoertyid: StringBody,
-    ): Response<success>
+    ): Response<Success>
 
 
     @POST("api/v1/property/add-other-receipt")
@@ -202,7 +203,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
         @Header("JWTAUTH") jwtauth: String?,
         @Body otherReceiptsUploadObject: OtherReceiptsUploadObject,
-    ): Response<success>
+    ): Response<Success>
 
 
     @GET("api/v1/property/list-other-receipts")
@@ -267,6 +268,91 @@ interface MyApi {
         @Header("JWTAUTH") jwtauth: String?
     ): Response<GetToDoListTasks>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @POST("api/v1/users/login")
+    suspend fun login(@Body loginbody: LoginBody): Response<SuccessLogin>
+
+    @GET("api/v1/users/userdetails")
+    suspend fun getuserfinedetails(@Header("Authorization") authorization: String?): Response<UserFineDetails?>
+
+    @GET("api/v1/students/list")
+    suspend fun getstudentlist(
+        @Header("Authorization") authorization: String?,
+        @Query("user") userid: String?,
+    ): Response<GetStudentResult?>
+
+    @POST("api/v1/calls/create")
+    suspend fun createCallLog(
+        @Header("Authorization") authorization: String?,
+        @Body createCallLog: CreateCallLog
+    ): Response<Success?>
+
+
+    @GET("api/v1/constants/list")
+    suspend fun getConstants(
+        @Query("school") school: String
+    ): Response<GetConstantsResult?>
+
+
+    @PATCH("api/v1/students/{id}")
+    suspend fun studentDetail(
+        @Path("id") id: Int,
+        @Body updateTokenBalanceObject: UpdateTokenBalanceObject
+    ): Response<Success?>
+
+
+    @PUT("api/v1/mobiles/{id}")
+    suspend fun getMobiles(
+        @Path("id") id: Int,
+        @Body updateMobileBody: UpdateMobileBody
+    ): Response<Success?>
+
+
+    @GET("api/v1/contacts/list")
+    suspend fun getContactModelofLoggedInUser(
+        @Query("contactuser") contactuser: String
+    ): Response<GetContactModelOfLoggedInUser?>
+
+
+    @POST("api/v1/payments/checkout")
+    suspend fun checkout(
+        @Header("Authorization") authorization: String?,
+        @Body checkoutBody : CheckoutBody
+    ): Response<Success?>
+
+
+    @GET("api/v1/payments/list")
+    suspend fun checkPaymentStatus(
+        @Header("Authorization") authorization: String?,
+        @Query("timestamp") timestamp : String
+    ): Response<GetPaymentStatusResponse?>
+
+
+    @GET("api/v1/users/list")
+    suspend fun getUserWithNumber(
+        @Header("Authorization") authorization: String?,
+        @Query("mobile") mobile : String
+    ): Response<UserFineDetails?>
+
+
+    @GET("api/v1/users/list")
+    suspend fun getUserList(
+        @Header("Authorization") authorization: String?,
+        @Query("mobile") mobile: String
+    ): Response<GetUserListResult?>
 
 }
 

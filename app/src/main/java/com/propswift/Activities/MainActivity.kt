@@ -45,17 +45,16 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             binding.numberOfReceipts.setText("Number of receipts : $it")
         })
 
+//        CoroutineScope(Dispatchers.IO).launch() {
+//            viewmodel.getUserProfileDetails()
+//            viewmodel.getTotal()
+//            viewmodel.getTotalNumberofReceipts()
+//        }
 
-        CoroutineScope(Dispatchers.IO).launch() {
-            viewmodel.getUserProfileDetails()
-            viewmodel.getTotal()
-            viewmodel.getTotalNumberofReceipts()
-        }
-
-        settingsClick(binding.menuicon)
         colorChanger(binding.cardone, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardtwo, R.color.propbrownligt, R.color.proplightgreen)
         colorChanger(binding.cardthree, R.color.propbrownligt, R.color.proplightgreen)
+
     }
 
     override fun onBackPressed() {
@@ -63,7 +62,10 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             .setPositiveButton("Exit", DialogInterface.OnClickListener { dialog, _ ->
                 dialog.dismiss()
                 finish()
-            }).setNegativeButton("Dismis", DialogInterface.OnClickListener { dialog, _ -> dialog.dismiss() }).show()
+            }).setNegativeButton("Dismis", DialogInterface.OnClickListener {
+                    dialog, _ -> dialog.dismiss()
+            })
+            .show()
     }
 
 

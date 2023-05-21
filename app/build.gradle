@@ -80,7 +80,6 @@ android {
         dataBinding true
     }
 
-    //Added for Epoxy
     kapt {
         correctErrorTypes = true
     }
@@ -135,12 +134,6 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
 
-    def epoxyVersion = "5.1.0"
-    implementation "com.airbnb.android:epoxy:$epoxyVersion"
-    implementation "com.airbnb.android:epoxy-paging:4.6.2"
-    implementation "com.airbnb.android:epoxy-paging3:5.1.1"
-    kapt "com.airbnb.android:epoxy-processor:$epoxyVersion"
-    implementation "com.airbnb.android:epoxy-databinding:4.3.1"
 
     implementation 'com.github.florent37:singledateandtimepicker:2.2.8'
 
@@ -160,6 +153,7 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:$hiltVersion"
     implementation "androidx.activity:activity-ktx:1.6.1"
     implementation "androidx.fragment:fragment-ktx:1.5.5"
+
 
 }
 

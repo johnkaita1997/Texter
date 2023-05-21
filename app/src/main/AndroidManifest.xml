@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <supports-screens
         android:anyDensity="true"
@@ -13,6 +12,15 @@
     <uses-permission
         android:name="android.permission.INTERNET"
         android:required="false" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <uses-permission
         android:name="android.permission.ACCESS_NETWORK_STATE"
         android:required="false" />
@@ -34,60 +42,22 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+
+
+        <receiver android:name=".Activities.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+
         <activity
-            android:name=".Epoxy.ActivityEpoxy"
-            android:exported="false" />
-        <activity
-            android:name=".ImageViewer.ImageViewActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Managers.ManagedProperties.ManagersPropertiesList"
-            android:exported="false" />
-        <activity
-            android:name=".Receipts.Add.RentReceipt.AddRentReceipt"
-            android:exported="false" />
-        <activity
-            android:name=".Expenses.ViewExpensesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Receipts.Add.RentReceipt.ListPendingRent"
-            android:exported="false" />
-        <activity
-            android:name=".Property.ListProperties.AddExpensesActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Receipts.Add.OtherReceipt.AddOtherReceiptsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ToDoList.AddToDoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ToDoList.ToDoListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Managers.Add.AddManagerActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Managers.View.ManagersActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Receipts.ReceiptsParentActivity"
-            android:exported="false"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Property.ListProperties.PropertyFetchParentActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Property.AddProperty.AddPropertyActivity"
-            android:exported="false" />
+            android:name=".Activities.TestActivity" />
         <activity
             android:name=".Activities.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustNothing|stateHidden" />
-        <activity
-            android:name=".Activities.WelcomeOneActivity"
-            android:exported="false" />
         <activity
             android:name=".Activities.LauncherActivity"
             android:exported="true">

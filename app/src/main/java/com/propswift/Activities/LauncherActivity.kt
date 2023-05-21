@@ -1,12 +1,13 @@
 package com.propswift.Activities
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.telephony.TelephonyManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import com.propswift.Epoxy.ActivityEpoxy
 import com.propswift.Shared.*
 import com.propswift.databinding.LauncherActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,9 +22,10 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var binding: LauncherActivityBinding
     lateinit var handler: Handler
     lateinit var runnable: Runnable
-
     private val viewmodel: MyViewModel by viewModels()
+    private lateinit var crash: String
 
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = LauncherActivityBinding.inflate(layoutInflater)
@@ -33,26 +35,30 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun initall() {
 
-//        goToActivity(this, ActivityEpoxy::class.java)
-        handler = Handler()
-        runnable = Runnable {
-            takeUserToTheNextPage()
+        if (issignedIn()) {
+            goToActivity(this, TestActivity::class.java)
         }
-        gotonextpage()
-    }
 
-    private fun takeUserToTheNextPage() {
-        if (!isLoggedIn()) {
-            goToActivity(this, WelcomeOneActivity::class.java)
-        } else {
-            CoroutineScope(Dispatchers.IO).launch(coroutineexception(this)) {
-                val e = SessionManager(this@LauncherActivity).fetchu().toString()
-                val p = SessionManager(this@LauncherActivity).fetchp().toString()
-                Log.d("-------", "initall: $e,  $p")
-                viewmodel.refreshtoken(e, p)
-                viewmodel.managerCheck()
+        binding.studentsignin.setOnClickListener {
+            var email = binding.kaemail.text.toString().trim()
+            val password = binding.kapassword.text.toString().trim()
+
+            if (email.length <= 0) {
+                makeLongToast("Enter your email")
+            } else if (password.length <= 0) {
+                makeLongToast("Enter your password")
+            } else {
+                email = email + "@gmail.com"
+                CoroutineScope(Dispatchers.IO).launch() {
+                    viewmodel.loginuser(email, password, null)
+                }
             }
         }
+
+
+    }
+
+    private fun signInStudent() {
     }
 
     fun gotonextpage() {

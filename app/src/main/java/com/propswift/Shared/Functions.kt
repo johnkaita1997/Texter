@@ -15,25 +15,13 @@ import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.propswift.Activities.WelcomeOneActivity
-import com.propswift.Expenses.ViewExpensesActivity
-import com.propswift.Managers.View.ManagersActivity
-import com.propswift.Property.AddProperty.AddPropertyActivity
-import com.propswift.Property.ListProperties.AddExpensesActivity
-import com.propswift.Property.ListProperties.PropertyFetchParentActivity
+import com.propswift.Activities.LauncherActivity
 import com.propswift.R
-import com.propswift.Receipts.Add.OtherReceipt.AddOtherReceiptsActivity
-import com.propswift.Receipts.ReceiptsParentActivity
 import com.propswift.Retrofit.MyApi
 import com.propswift.Shared.Constants.datemap
 import com.propswift.Shared.Constants.isDialogShown
 import com.propswift.Shared.Constants.isprogressInitialized
 import com.propswift.Shared.Constants.progress
-import com.propswift.ToDoList.ToDoListActivity
-import com.propswift.databinding.BottomExpensesBinding
-import com.propswift.databinding.BottomPropertyBinding
-import com.propswift.databinding.BottomReceiptsBinding
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -48,6 +36,26 @@ import kotlin.coroutines.CoroutineContext
 
 private lateinit var redirectingDialog: ProgressDialog
 var alert: AlertDialog? = null
+
+
+fun howtoStartActivityForResult() {
+//    val makeCallLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//        if (result.resultCode == Activity.RESULT_OK) {
+//            // Call completed successfully
+//            fetchCreateCallLog()
+//            showAlertDialog("A call has ended")
+//        } else {
+//            // Call was not completed successfully
+//            showAlertDialog("Call was not completed successfully ${result.data.toString()}")
+//        }
+//    }
+//
+//    binding.call.setOnClickListener {
+//        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "0793013887"))
+//        startActivityForResult(intent, CALL_REQUEST_CODE)
+//    }
+}
+
 
 
 fun Context.makeLongToast(message: String, duration: Int = Toast.LENGTH_LONG) {
@@ -97,7 +105,7 @@ fun Context.dismissredirect() {
 }
 
 fun Context.showAlertDialog(message: String) {
-    val alert = AlertDialog.Builder(this).setTitle("PropSwift").setCancelable(false).setMessage(message).setIcon(R.drawable.logonormal).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
+    val alert = AlertDialog.Builder(this).setTitle("PropSwift").setCancelable(false).setMessage(message).setIcon(R.drawable.startnow).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
         isDialogShown = false
         dialog.dismiss()
     }).setNegativeButton("OKAY", DialogInterface.OnClickListener { dialog, _ ->
@@ -113,7 +121,7 @@ fun Context.showAlertDialog(message: String) {
 
 fun Context.showAlertDialog_Special(alertDialog: AlertDialog, title: String, message: String, okaybuttonName: String, bar: () -> Unit) {
     alertDialog.setTitle(title)
-    alertDialog.setIcon(R.drawable.logonormal)
+    alertDialog.setIcon(R.drawable.startnow)
     alertDialog.setMessage(message)
     alertDialog.setCancelable(false)
     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Dismiss") { dialog, which ->
@@ -169,10 +177,10 @@ class MyViewModelFactory(private val activity: Activity) : ViewModelProvider.Fac
     return MyViewModel(activity.application, activity)
 }*/
 
-fun Context.isLoggedIn(): Boolean {
+fun Context.issignedIn(): Boolean {
     val preferences: SharedPreferences = getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
-    val authtoken = preferences.getString("authtoken", null)
-    return authtoken != null
+    val accesstoken = preferences.getString("access", null)
+    return accesstoken != null
 }
 
 
@@ -242,133 +250,11 @@ fun Context.showDialog(mydialog: SpotsDialog, message: String) {
 }
 
 
-fun Context.settingsClick(settingsImageview: View) {
-
-    val popup = PopupMenu(this, settingsImageview)
-    popup.inflate(R.menu.pop_menu)
-
-    CoroutineScope(Dispatchers.IO).launch() {
-        runCatching {
-            val response = MyApi().getUserProfileDetails(getAuthDetails().authToken, getAuthDetails().jwttoken)
-            if (!response.isSuccessful) {
-                return@runCatching
-            } else {
-                val getUserProfileDetails = response.body()!!.details
-
-                val myis_manager = getUserProfileDetails!!.is_manager
-                if (myis_manager) {
-                    popup.menu.findItem(R.id.managers).setEnabled(false)
-                    popup.menu.findItem(R.id.property).setEnabled(false)
-                }
-            }
-        }
-    }
-
-    settingsImageview.setOnClickListener {
-
-        popup.setOnMenuItemClickListener(object : MenuItem.OnMenuItemClickListener, PopupMenu.OnMenuItemClickListener {
-
-            val expensesbinding = BottomExpensesBinding.inflate(LayoutInflater.from(this@settingsClick))
-            val receiptbinding = BottomReceiptsBinding.inflate(LayoutInflater.from(this@settingsClick))
-            val propertybinding = BottomPropertyBinding.inflate(LayoutInflater.from(this@settingsClick))
-
-            init {
-                CoroutineScope(Dispatchers.IO).launch() {
-                    runCatching {
-                        val response = MyApi().getUserProfileDetails(getAuthDetails().authToken, getAuthDetails().jwttoken)
-                        if (!response.isSuccessful) {
-                            return@runCatching
-                        } else {
-                            val getUserProfileDetails = response.body()!!.details
-
-                            val myis_manager = getUserProfileDetails!!.is_manager
-                            if (myis_manager) {
-                                receiptbinding.viewreceipts.visibility = View.GONE
-                                expensesbinding.viewexpenses.visibility = View.GONE
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun onMenuItemClick(menuitem: MenuItem): Boolean {
-
-                return when (menuitem.getItemId()) {
-
-                    R.id.property -> {
-                        val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
-                        bottomSheetDialog.setContentView(propertybinding.root)
-
-                        propertybinding.createnewproperty.setOnClickListener {
-                            goToactivityIntent_Unfinished(this@settingsClick as Activity, AddPropertyActivity::class.java, mapOf("operation" to "createproperty"))
-                        }
-                        propertybinding.viewProperties.setOnClickListener {
-                            goToActivity_Unfinished(this@settingsClick as Activity, PropertyFetchParentActivity::class.java)
-                        }
-                        bottomSheetDialog.show()
-                        true
-                    }
-
-
-                    R.id.receipts -> {
-                        val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
-                        bottomSheetDialog.setContentView(receiptbinding.root)
-
-                        receiptbinding.createreceipt.setOnClickListener {
-                            goToactivityIntent_Unfinished(this@settingsClick as Activity, AddOtherReceiptsActivity::class.java, mapOf("operation" to "createproperty"))
-                        }
-                        receiptbinding.viewreceipts.setOnClickListener {
-                            goToActivity_Unfinished(this@settingsClick as Activity, ReceiptsParentActivity::class.java)
-                        }
-                        bottomSheetDialog.show()
-                        true
-                    }
-
-
-                    R.id.expenses -> {
-                        val bottomSheetDialog = BottomSheetDialog(this@settingsClick)
-                        bottomSheetDialog.setContentView(expensesbinding.root)
-
-                        expensesbinding.createexpense.setOnClickListener {
-                            goToactivityIntent_Unfinished(this@settingsClick as Activity, AddExpensesActivity::class.java, mapOf("operation" to "createexpense"))
-                        }
-                        expensesbinding.viewexpenses.setOnClickListener {
-                            goToActivity_Unfinished(this@settingsClick as Activity, ViewExpensesActivity::class.java)
-                        }
-                        bottomSheetDialog.show()
-                        true
-                    }
-
-
-                    R.id.managers -> {
-                        goToActivity_Unfinished(this@settingsClick as Activity, ManagersActivity::class.java)
-                        true
-                    }
-
-                    R.id.todoList -> {
-                        goToActivity_Unfinished(this@settingsClick as Activity, ToDoListActivity::class.java)
-                        true
-                    }
-
-                    R.id.logout -> {
-                        logoutUser()
-                        true
-                    }
-
-                    else -> false
-                }
-            }
-        })
-        popup.show()
-
-    }
-}
-
 
 fun Context.getAuthDetails(): MyAuth {
-    val authtoken = "${SessionManager(this).fetchAuthToken()}"
-    val jwttoken = "${SessionManager(this).fetchJwtToken()}"
-    return MyAuth(authtoken, jwttoken)
+    val access = SessionManager(this).fetchAccessToken()
+    val refresh = SessionManager(this).fetchRefreshToken()
+    return MyAuth(access, refresh)
 }
 
 
@@ -477,7 +363,7 @@ fun Context.emptyDateMap() {
 fun Context.logoutUser() {
     if (SessionManager(this).logout()) {
         makeLongToast("You have been logged out successfully")
-        goToActivity(this as Activity, WelcomeOneActivity::class.java)
+        goToActivity(this as Activity, LauncherActivity::class.java)
     }
 
 }
@@ -501,3 +387,5 @@ fun dateDifference(date1: String, date2: String): Long {
     val localDate2 = LocalDate.parse(date2)
     return ChronoUnit.DAYS.between(localDate1, localDate2)
 }
+
+

@@ -46,6 +46,7 @@
 
     <color name="background">#FFFFFFFF</color>
     <color name="backgroundDefault">#fafafa</color>
+    <color name="bongalightgrey">#9DB3E4</color>
 
 
 </resources>

@@ -19,32 +19,22 @@ object Constants {
     const val REQUEST_IMAGE = 100
     var expenseImageList = mutableListOf<Uri>()
     var expenseImageUploadList = mutableListOf<String>()
+    var CALL_REQUEST_CODE = 123
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAGINATION START
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//    var baseurl = "http://192.168.100.4:8000"
+//    var baseurl = "http://192.168.160.1:8000"
 
-    var appVersionLocal = 2.3
-    var loaded = false
-    const val permission_request = 100
-    const val ONESIGNAL_APP_ID = "52a2c790-173c-4606-a0a6-941f3b4d58eb"
-    var alist = mutableListOf<String>()
-    public lateinit var progressDialog: SpotsDialog
+    //School Wifi
+//    var baseurl = "http://192.168.215.28:8000"
 
-    //var baseurl = "http://192.168.215.226:8000"
-    //var baseurl = "http://192.168.50.69:8090"
-    //var baseurl = "http://192.168.100.4:8000"
-    var baseurl = "http://192.168.214.53:8000"
+    //Home Fiber
+//    var baseurl = "http://192.168.100.10:8000"
 
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //              PAYPAL START
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //    val clientKey = "ARx3ElFHpFsAQibnzRpviaL63QZ4pmPzU1bUi3o1L6BvIPwtn0SU-CvtnODTSKWL9ecAVy1HKzJoMdEb"
-    //    var apisecret = "Apisecret MPv32VRtyY5lpuT7VFTWNQxLhstDB7XoA5nEMjB501XpZlSjSFx5iYHiij8bnmOr"
-    var apisecret = "Apisecret NJwFd5PDhAbL7Zfpql3lznfyOTLGdl7ulErPwMtCn3vWqQvGhP90YR0D4IjGskgP"
-
+    var baseurl = "http://192.168.0.109:8000"
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              MPESA START
@@ -59,6 +49,7 @@ object Constants {
     operator fun <T> List<T>.component9() = this[8]
 
     init {
+
     }
 
 

@@ -20,11 +20,18 @@ data class User(
     var confirm_password: String?,
 )
 
-data class LoginBody(var username: String?, var password: String?)
-data class SuccessLogin(val details: Success_Login_Details)
-data class Success_Login_Details(val access_token: String?, val expires_in: Int, val jwt_token: String?, val refresh_token: String?, val token_type: String?)
+data class LoginBody(var email: String?, var password: String?)
+data class SuccessLogin(
+    val access: String?,
+    val refresh: String?
+)
 
-data class MyAuth(var authToken: String?, var jwttoken: String?)
+data class Success_Login_Details(
+    val access: String?,
+    val refresh: String?
+)
+
+data class MyAuth(var access: String?, var refresh: String?)
 
 
 class RentedProperties(
@@ -189,7 +196,7 @@ data class Manager(
     val username: String?
 )
 
-data class success(
+data class Success(
     val details: String?
 )
 
@@ -383,4 +390,297 @@ data class GetToDoListTasks_Details(
 data class Photo(
     val name: String?,
     val image: String?,
+)
+
+
+class UserFineDetails : ArrayList<UserFineDetailsItem?>()
+data class UserFineDetailsItem(
+    val contact: List<Int>,
+    val date_created: String,
+    val date_deleted: Any,
+    val date_joined: Any,
+    val date_updated: String,
+    val email: String,
+    val first_name: Any,
+    val fullname: String,
+    val groups: List<Any>,
+    val id: String,
+    val is_active: Boolean,
+    val is_agent: Boolean,
+    val is_staff: Boolean,
+    val is_superuser: Boolean,
+    val isadmin: Boolean,
+    val isagent: Boolean,
+    val isparent: Boolean,
+    val isstudent: Boolean,
+    val last_login: Any,
+    val last_name: Any,
+    val phone: String,
+    val school: School,
+    val user_permissions: List<Any>,
+    val username: String
+)
+
+
+class GetStudentResult : ArrayList<GetStudentResultItem>()
+
+data class GetStudentResultItem(
+    val active: Boolean,
+    val activefromdate: Any,
+    val calls: MutableList<Mobile>,
+    val confirmpassword: String,
+    val contacts: MutableList<Contact>,
+    val date_created: String,
+    val date_updated: String,
+    val email: Any,
+    val fullname: String,
+    val id: Int,
+    val kcpeindexnumber: Any,
+    val password: String,
+    val phonenumber: Any,
+    val registrationnumber: Any,
+    val school: School,
+    val tokenbalance: Float,
+    val totalnumberofcalls: Double,
+    val user: String,
+    val username: Any
+)
+
+data class Contact(
+    val date_created: String,
+    val date_updated: String,
+    val email: String,
+    val id: Int,
+    val mobile: String,
+    val mobiletwo: Any,
+    val name: String,
+    val relationship: String,
+    val students: List<Student>,
+    val useractive: String
+)
+
+data class School(
+    val agents: List<String>,
+    val date_created: String,
+    val date_updated: String,
+    val email: String,
+    val id: Int,
+    val location: String,
+    val mobile: Mobile,
+    val name: String,
+    val students: List<Int>
+): Serializable
+
+
+
+data class CreateCallLog(
+    val callstamp: String,
+    val duration: String,
+    val minutesused: Float,
+    val mobilecalled: String,
+    val student: Int,
+    val tokensused: Float,
+    val mobileused: String,
+    val username: String
+)
+
+class GetConstantsResult : ArrayList<GetConstantsResultItem>()
+data class GetConstantsResultItem(
+    val activationamount: Int,
+    val date_created: String,
+    val date_updated: String,
+    val id: Int,
+    val minutepershilling: Double,
+    val minutespertokenOrequivalentminutes: Float,
+    val shillingspertokenOrequivalentshillings: Double,
+    val tokennumber: Int
+)
+
+
+data class GetStudentDetailResult(
+    val active: Boolean,
+    val activefromdate: Any,
+    val calls: List<Int>,
+    val confirmpassword: String,
+    val contacts: List<Contact>,
+    val date_created: String,
+    val date_updated: String,
+    val email: Any,
+    val fullname: String,
+    val id: Int,
+    val kcpeindexnumber: Any,
+    val password: String,
+    val phonenumber: Any,
+    val registrationnumber: Any,
+    val school: School,
+    val tokenbalance: Double,
+    val totalnumberofcalls: Double,
+    val user: String,
+    val username: Any
+)
+
+data class UpdateTokenBalanceObject(
+    val tokenbalance: Float
+)
+
+data class UpdateMobileBody(
+    val standingminutes: Float,
+    val standingtoken: Float
+)
+
+
+
+class GetContactModelOfLoggedInUser : ArrayList<GetContactModelOfLoggedInUserItem>()
+
+data class GetContactModelOfLoggedInUserItem(
+    val contactuser: String,
+    val date_created: String,
+    val date_updated: String,
+    val email: String,
+    val id: Int,
+    val mobile: String,
+    val mobiletwo: Any,
+    val name: String,
+    val relationship: String,
+    val students: MutableList<Student>
+)
+
+
+class People : Serializable {
+    // your stuff
+}
+class Student (
+    val active: Boolean,
+    val activefromdate: Any,
+    val calls: MutableList<Call>,
+    val confirmpassword: String,
+    val contacts: List<Int>,
+    val date_created: String,
+    val date_updated: String,
+    val email: Any,
+    val fullname: String,
+    val id: Int,
+    val kcpeindexnumber: Any,
+    val password: String,
+    val phonenumber: Any,
+    val registrationnumber: Any,
+    val school: School,
+    val tokenbalance: Double,
+    val totalnumberofcalls: Double,
+    val user: String,
+    val username: Any
+): Serializable
+
+data class Call(
+    val callstamp: String,
+    val date_created: String,
+    val date_updated: String,
+    val duration: String,
+    val id: Int,
+    val minutesused: Double,
+    val mobilecalled: String,
+    val mobileused: String,
+    val student: Int,
+    val tokensused: Double
+)
+
+
+data class Mobile(
+    val date_created: String,
+    val date_updated: String,
+    val id: Int,
+    val mobile: String,
+    val school: Int,
+    val standingminutes: Double,
+    val standingtoken: Double
+): Serializable
+
+
+data class CheckoutBody(
+    val amount: Int,
+    val mobile: String,
+    val purpose: String,
+    val studentid: String,
+    val timestamp: String,
+)
+
+
+class GetPaymentStatusResponse : ArrayList<GetPaymentStatusResponseItem>()
+
+data class GetPaymentStatusResponseItem(
+    val amount: Double,
+    val checkoutid: String,
+    val date_created: String,
+    val date_updated: String,
+    val description: Any,
+    val id: Int,
+    val mobile: String,
+    val purpose: String,
+    val receiptnumber: Any,
+    val reference: Any,
+    val status: String,
+    val student: Int,
+    val studentid: String,
+    val timestamp: String,
+    val user: String
+)
+
+
+
+class GetUserWithMobileResult : ArrayList<GetUserWithMobileResultItem>()
+
+data class GetUserWithMobileResultItem(
+    val contact: MutableList<Int>,
+    val date_created: String,
+    val date_deleted: Any,
+    val date_joined: Any,
+    val date_updated: String,
+    val email: String,
+    val first_name: Any,
+    val fullname: String,
+    val groups: MutableList<Any>,
+    val id: String,
+    val is_active: Boolean,
+    val is_agent: Boolean,
+    val is_staff: Boolean,
+    val is_superuser: Boolean,
+    val isadmin: Boolean,
+    val isagent: Boolean,
+    val isparent: Boolean,
+    val isstudent: Boolean,
+    val last_login: Any,
+    val last_name: Any,
+    val phone: String,
+    val school: Int,
+    val user_permissions: MutableList<Any>,
+    val username: String
+)
+
+
+class GetUserListResult : ArrayList<GetUserListResultItem>()
+data class GetUserListResultItem(
+    val contact: List<Int>,
+    val date_created: String,
+    val date_deleted: Any,
+    val date_joined: Any,
+    val date_updated: String,
+    val email: String,
+    val first_name: Any,
+    val fullname: String,
+    val groups: List<Any>,
+    val id: String,
+    val is_active: Boolean,
+    val is_agent: Boolean,
+    val is_staff: Boolean,
+    val is_superuser: Boolean,
+    val isadmin: Boolean,
+    val isagent: Boolean,
+    val isparent: Boolean,
+    val isstudent: Boolean,
+    val last_login: Any,
+    val last_name: Any,
+    val phone: String,
+    val school: Int,
+    val user_permissions: List<Any>,
+    val username: String
 )
