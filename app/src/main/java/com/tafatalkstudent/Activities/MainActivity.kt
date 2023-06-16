@@ -1,4 +1,4 @@
-package com.propswift.Activities
+package com.tafatalkstudent.Activities
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -7,14 +7,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import com.propswift.Dagger.TestViewModel
-import com.propswift.R
-import com.propswift.Shared.*
-import com.propswift.databinding.ActivityMainBinding
+import com.tafatalkstudent.Dagger.TestViewModel
+import com.tafatalkstudent.R
+import com.tafatalkstudent.Shared.*
+import com.tafatalkstudent.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -58,7 +55,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     override fun onBackPressed() {
-        val alert = AlertDialog.Builder(this).setTitle("Prop Swift").setCancelable(false).setMessage("Are you sure you want to exit").setIcon(R.drawable.startnow)
+        val alert = AlertDialog.Builder(this).setTitle("Prop Swift").setCancelable(false).setMessage("Are you sure you want to exit").setIcon(R.drawable.logodark)
             .setPositiveButton("Exit", DialogInterface.OnClickListener { dialog, _ ->
                 dialog.dismiss()
                 finish()

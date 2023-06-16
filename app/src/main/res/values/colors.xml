@@ -46,7 +46,15 @@
 
     <color name="background">#FFFFFFFF</color>
     <color name="backgroundDefault">#fafafa</color>
-    <color name="bongalightgrey">#9DB3E4</color>
+
+
+    <color name="defaultColor">#0041C4</color>
+    <color name="defaultOrange">#F15A24</color>
+    <color name="defaultYellowDark">#F9F7C8</color>
+    <color name="defaultYellowLight">#FFFEF1</color>
+    <color name="defaultGeyDark">#D1DAEF</color>
+
+
 
 
 </resources>

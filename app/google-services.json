@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:825332760934:android:03af19c6fe8942423088a7",
         "android_client_info": {
-          "package_name": "com.propswift"
+          "package_name": "com.tafatalkstudent"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "825332760934-u5g6ai7a3qtllj3jrrpc5a6f3e6kv1fq.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "paita.stream_app_final",
+            "package_name": "com.tafatalkstudent",
             "certificate_hash": "fad4e0bf8bf14823d959d158c1a5a1dd214e3066"
           }
         },

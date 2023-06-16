@@ -1,7 +1,7 @@
-package com.propswift.Retrofit
+package com.tafatalkstudent.Retrofit
 
 import android.content.Context
-import com.propswift.Shared.SessionManager
+import com.tafatalkstudent.Shared.SessionManager
 import okhttp3.Interceptor
 import okhttp3.Response
 

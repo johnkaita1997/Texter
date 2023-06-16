@@ -1,4 +1,4 @@
-package com.propswift.Shared
+package com.tafatalkstudent.Shared
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -11,21 +11,21 @@ import android.graphics.Color
 import android.os.Build
 import android.text.TextUtils
 import android.text.format.DateFormat
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
-import com.propswift.Activities.LauncherActivity
-import com.propswift.R
-import com.propswift.Retrofit.MyApi
-import com.propswift.Shared.Constants.datemap
-import com.propswift.Shared.Constants.isDialogShown
-import com.propswift.Shared.Constants.isprogressInitialized
-import com.propswift.Shared.Constants.progress
+import com.tafatalkstudent.Activities.LauncherActivity
+import com.tafatalkstudent.R
+import com.tafatalkstudent.Shared.Constants.datemap
+import com.tafatalkstudent.Shared.Constants.isDialogShown
+import com.tafatalkstudent.Shared.Constants.isprogressInitialized
+import com.tafatalkstudent.Shared.Constants.progress
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.time.LocalDate
@@ -105,7 +105,7 @@ fun Context.dismissredirect() {
 }
 
 fun Context.showAlertDialog(message: String) {
-    val alert = AlertDialog.Builder(this).setTitle("PropSwift").setCancelable(false).setMessage(message).setIcon(R.drawable.startnow).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
+    val alert = AlertDialog.Builder(this).setTitle("Tafa Talk").setCancelable(false).setMessage(message).setIcon(R.drawable.logodark).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
         isDialogShown = false
         dialog.dismiss()
     }).setNegativeButton("OKAY", DialogInterface.OnClickListener { dialog, _ ->
@@ -121,7 +121,7 @@ fun Context.showAlertDialog(message: String) {
 
 fun Context.showAlertDialog_Special(alertDialog: AlertDialog, title: String, message: String, okaybuttonName: String, bar: () -> Unit) {
     alertDialog.setTitle(title)
-    alertDialog.setIcon(R.drawable.startnow)
+    alertDialog.setIcon(R.drawable.logodark)
     alertDialog.setMessage(message)
     alertDialog.setCancelable(false)
     alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Dismiss") { dialog, which ->
@@ -360,9 +360,21 @@ fun Context.emptyDateMap() {
 }
 
 
-fun Context.logoutUser() {
+@OptIn(DelicateCoroutinesApi::class)
+fun Context.logoutUser(studentId: String) {
     if (SessionManager(this).logout()) {
         makeLongToast("You have been logged out successfully")
+        val database = RoomDb(this).loginDao()
+        GlobalScope.launch() {
+            val loggedInUser = database.getAllLogins().findLast { it.studentId == studentId && it.logoutTimestamp == null }
+            if (loggedInUser != null) {
+                loggedInUser.logoutTimestamp = System.currentTimeMillis()
+                database.update(loggedInUser)
+                Log.d("-------", "initall: User is not null")
+            } else {
+                Log.d("-------", "initall: User is null")
+            }
+        }
         goToActivity(this as Activity, LauncherActivity::class.java)
     }
 
@@ -389,3 +401,14 @@ fun dateDifference(date1: String, date2: String): Long {
 }
 
 
+fun makeVisible(view: View) {
+    view.visibility = View.VISIBLE
+}
+
+fun makeInvisible(view: View) {
+    view.visibility = View.INVISIBLE
+}
+
+fun makeGone(view: View) {
+    view.visibility = View.GONE
+}

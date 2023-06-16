@@ -1,4 +1,4 @@
-package com.propswift.Shared
+package com.tafatalkstudent.Shared
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -466,10 +466,31 @@ data class School(
     val email: String,
     val id: Int,
     val location: String,
-    val mobile: Mobile,
     val name: String,
     val students: List<Int>
 ): Serializable
+
+class SchoolTwo(
+    val agents: List<String>,
+    val date_created: String,
+    val date_updated: String,
+    val email: String,
+    val id: Int,
+    val location: String,
+    val name: String,
+    val students: List<Int>
+): Serializable {
+    constructor() : this(
+        agents = emptyList(),
+        date_created = "",
+        date_updated = "",
+        email = "",
+        id = 0,
+        location = "",
+        name = "",
+        students = emptyList()
+    )
+}
 
 
 
@@ -684,3 +705,30 @@ data class GetUserListResultItem(
     val user_permissions: List<Any>,
     val username: String
 )
+
+class GetGlobalSettings : ArrayList<GetGlobalSettingsItem?>()
+data class GetGlobalSettingsItem(
+    val id: Int,
+    val minimum_Device_Token_Balance_To_Allow_Calls: Double,
+    val minimum_Overall_School_Minute_Balance_To_Allow_Calls: Double,
+    val minimum_Student_Token_Balance_To_Make_Calls: Double
+)
+
+data class GetDeviceBalance(
+    val standingminutes: Double?,
+    val standingtoken: Double?
+)
+
+
+data class GetMobile(
+    val active: Boolean?,
+    val id: Int?,
+    val minutesconsumed: Double?,
+    val mobile: String?,
+    val school: Int?,
+    val standingminutes: Double?,
+    val standingtoken: Double?,
+    val tokensconsumed: Double?
+)
+
+

@@ -1,4 +1,4 @@
-package com.propswift.Dagger
+package com.tafatalkstudent.Dagger
 
 import android.app.Activity
 import android.app.Application

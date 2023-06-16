@@ -1,8 +1,8 @@
-package com.propswift.Shared
+package com.tafatalkstudent.Shared
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.propswift.R
+import com.tafatalkstudent.R
 
 
 class SessionManager(context: Context) {

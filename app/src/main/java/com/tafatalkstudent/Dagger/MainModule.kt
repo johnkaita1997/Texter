@@ -1,7 +1,7 @@
-package com.propswift.Shared
+package com.tafatalkstudent.Shared
 
 import android.content.Context
-import com.propswift.R
+import com.tafatalkstudent.R
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

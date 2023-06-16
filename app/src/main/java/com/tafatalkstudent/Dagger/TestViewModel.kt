@@ -1,10 +1,10 @@
-package com.propswift.Dagger
+package com.tafatalkstudent.Dagger
 
 import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.propswift.Retrofit.MyApi
-import com.propswift.Shared.showAlertDialog
+import com.tafatalkstudent.Retrofit.MyApi
+import com.tafatalkstudent.Shared.showAlertDialog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject

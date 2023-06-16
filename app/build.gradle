@@ -28,10 +28,10 @@ android {
 
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.propswift"
+        applicationId "com.tafatalkstudent"
         minSdkVersion 21
-        targetSdkVersion 32
-        versionCode 37
+        targetSdkVersion 31
+        versionCode 1
         versionName "1.0.0"
 
         compileOptions {
@@ -87,7 +87,7 @@ android {
         abortOnError false
         checkReleaseBuilds false
     }
-    namespace 'com.propswift'
+    namespace 'com.tafatalkstudent'
 
 
 }
