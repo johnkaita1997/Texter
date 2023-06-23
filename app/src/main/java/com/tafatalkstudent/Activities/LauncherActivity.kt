@@ -47,20 +47,15 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
         setContentView(binding.root)
 
         ActivityCompat.requestPermissions(this, arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.CALL_PHONE,
             Manifest.permission.KILL_BACKGROUND_PROCESSES,
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_SMS,
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.ANSWER_PHONE_CALLS,
             Manifest.permission.READ_CALL_LOG,
             Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
         ), permission_request)
     }
 

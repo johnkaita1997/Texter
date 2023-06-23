@@ -1,14 +1,18 @@
 package com.tafatalkstudent.Activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.CancellationSignal
 import android.provider.CallLog
 import android.provider.ContactsContract
+import android.provider.Settings
+import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -16,7 +20,9 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
@@ -55,6 +61,8 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
         var mobileactive: Boolean = false
         var isStudentActive: Boolean = false
         var theschoolNumber: String = ""
+        private const val REQUEST_DEFAULT_PHONE_HANDLER = 100
+        private const val PERMISSION_REQUEST_PHONE_STATE = 101
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -63,6 +71,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
         binding = ActivityTestBinding.inflate(layoutInflater)
         setContentView(binding.root)
         activeMobile = getMobileNumberFromSimContact("admin").toString()
+        checkPermissionsAndSetDefaultHandler()
         setGlobalSettings()
         initall()
     }
@@ -84,10 +93,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
     @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("Range")
     private fun initall() {
-
         showProgress(this)
-
-
         binding.logutbutton.setOnClickListener {
             logoutUser(studentid.toString())
         }
@@ -295,15 +301,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun sendCallInfo(
-        mobileCalled: String,
-        callType: Int,
-        duration: String,
-        ringingTime: String,
-        callstamp: String,
-        schoolNumber: String,
-        viewmodel: MyViewModel,
-        iteration: Int,
-        contactName: String
+        mobileCalled: String, callType: Int, duration: String, ringingTime: String, callstamp: String, schoolNumber: String, viewmodel: MyViewModel, iteration: Int, contactName: String
     ) {
 
         CoroutineScope(Dispatchers.IO).launch() {
@@ -318,9 +316,8 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
 
                 if (iteration == 0) {
                     Log.d(
-                        "------", "SAVING  old token is ${oldstudenttokenbalance} " +
-                                " and new token is ${newstudenttokenbalance} " +
-                                "  and minutesconsumed is ${callminutesconsumed}  and tokens used is ${tokensused}"
+                        "------",
+                        "SAVING  old token is ${oldstudenttokenbalance} " + " and new token is ${newstudenttokenbalance} " + "  and minutesconsumed is ${callminutesconsumed}  and tokens used is ${tokensused}"
                     )
                 }
 
@@ -337,15 +334,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
                 } else {
                     val thestudentId = listOfLoginsMatchingDateOfCall.get(0).studentId.toInt()
                     this@TestActivity.viewmodel.createCallLog(
-                        schoolid!!,
-                        callLogbody,
-                        thestudentId,
-                        newstudenttokenbalance,
-                        userid,
-                        mobileid.await().toInt(),
-                        callminutesconsumed,
-                        tokensused,
-                        this@TestActivity
+                        schoolid!!, callLogbody, thestudentId, newstudenttokenbalance, userid, mobileid.await().toInt(), callminutesconsumed, tokensused, this@TestActivity
                     )
                 }
 
@@ -356,7 +345,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
 
 
     @SuppressLint("Range")
-    fun getMobileNumberFromSimContact(contactName: String): String? {
+    fun getMobileNumberFromSimContact(contactName: String): String {
         val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
         val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
         val selection = "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} = ?"
@@ -369,8 +358,9 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
         cursor?.close()
-        return phoneNumber
+        return phoneNumber ?: "25490"
     }
+
 
     override fun onResume() {
         super.onResume()
@@ -381,21 +371,6 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
         }
     }
 
-    @SuppressLint("SoonBlockedPrivateApi")
-    private fun hangUpCall() {
-        try {
-            val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            val method = telephonyManager.javaClass.getDeclaredMethod("getITelephony")
-            method.isAccessible = true
-            val telephonyService = method.invoke(telephonyManager)
-
-            val telephonyInterface = Class.forName("com.android.internal.telephony.ITelephony")
-            val endCallMethod = telephonyInterface.getDeclaredMethod("endCall")
-            endCallMethod.invoke(telephonyService)
-        } catch (e: Exception) {
-            Log.d("-------hangUpCall", "hangUpCall: FATAL ERROR: could not connect to telephony subsystem ${e}")
-        }
-    }
 
     override fun onBackPressed() {
         val alert = android.app.AlertDialog.Builder(this).setTitle("Tafa Talk").setCancelable(false).setMessage("Are you sure you want to exit").setIcon(R.drawable.logodark)
@@ -403,8 +378,81 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
                 dialog.dismiss()
                 finish()
             }).setNegativeButton("Dismis", { dialog, _ -> dialog.dismiss() }).show()
-
     }
+
+    private fun checkPermissionsAndSetDefaultHandler() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), PERMISSION_REQUEST_PHONE_STATE)
+        } else {
+            setDefaultPhoneHandler()
+        }
+    }
+
+
+    private fun setDefaultPhoneHandler() {
+        val telecomManager = getSystemService(TELECOM_SERVICE) as TelecomManager
+        if (packageName != telecomManager.defaultDialerPackage) {
+            val intent = Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
+                .putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
+            startActivityForResult(intent, REQUEST_DEFAULT_PHONE_HANDLER)
+        } else {
+            //  handleIncomingCall()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_PHONE_STATE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                setDefaultPhoneHandler()
+            } else {
+                finish()
+            }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_DEFAULT_PHONE_HANDLER) {
+            if (isDefaultPhoneHandler()) {
+//                handleIncomingCall()
+            } else {
+                showDefaultPhoneHandlerPrompt()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun isDefaultPhoneHandler(): Boolean {
+        val telecomManager = getSystemService(TELECOM_SERVICE) as TelecomManager
+        return packageName == telecomManager.defaultDialerPackage
+    }
+
+
+    private fun showDefaultPhoneHandlerPrompt() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Set as Default Phone Handler")
+            .setMessage("In order for this app to work correctly, please set this app as your default phone handler.")
+            .setPositiveButton("Go to Settings") { dialog, which ->
+                openDefaultPhoneHandlerSettings()
+            }
+            .setNegativeButton("Cancel") { dialog, which ->
+                dialog.dismiss()
+                finish()
+            }
+            .setCancelable(false)
+        builder.create()
+        builder.show()
+    }
+
+
+    private fun openDefaultPhoneHandlerSettings() {
+        val intent = Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)
+        startActivity(intent)
+    }
+
 
 }
 
