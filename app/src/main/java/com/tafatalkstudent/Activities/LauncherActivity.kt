@@ -46,42 +46,35 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
         binding = LauncherActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ActivityCompat.requestPermissions(this, arrayOf(
-            Manifest.permission.CALL_PHONE,
-            Manifest.permission.KILL_BACKGROUND_PROCESSES,
-            Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.ANSWER_PHONE_CALLS,
-            Manifest.permission.READ_CALL_LOG,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-        ), permission_request)
+        ActivityCompat.requestPermissions(
+            this, arrayOf(
+                Manifest.permission.CALL_PHONE,
+                Manifest.permission.KILL_BACKGROUND_PROCESSES,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.ANSWER_PHONE_CALLS,
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.READ_SMS,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.ACCESS_WIFI_STATE,
+            ), permission_request
+        )
     }
 
     private fun initall() {
-        if (issignedIn()) {
-            CoroutineScope(Dispatchers.IO).launch() {
-                delay(2000)
-                mainScope.launch {
-                    goToActivity(this@LauncherActivity, TestActivity::class.java)
-                }
-            }
-        } else {
 
-            CoroutineScope(Dispatchers.IO).launch() {
-                delay(2000)
-                mainScope.launch {
-                    makeGone(binding.loadinglayout)
-                    makeVisible(binding.loginlayout)
-                }
+        CoroutineScope(Dispatchers.IO).launch() {
+            delay(100)
+            mainScope.launch {
+                goToActivity(this@LauncherActivity, SmsActivity::class.java)
             }
         }
 
         binding.studentsignin.setOnClickListener {
 
-
-            var email = binding.kaemail.text.toString().trim()
+            val email = binding.kaemail.text.toString().trim()
             val password = binding.kapassword.text.toString().trim()
 
             if (email.length <= 0) {
@@ -111,15 +104,17 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private fun internet_connection_error_Dilog() {
-        val alertDialog: android.app.AlertDialog? = android.app.AlertDialog.Builder(this).setTitle("Network Error").setMessage("This application requires an active internet connection.").setIcon(R.drawable.logodark).setPositiveButton("Fix", DialogInterface.OnClickListener { _, _ -> /*  Intent callGPSSettingIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+        val alertDialog: android.app.AlertDialog? =
+            android.app.AlertDialog.Builder(this).setTitle("Network Error").setMessage("This application requires an active internet connection.").setIcon(R.drawable.logodark)
+                .setPositiveButton("Fix", DialogInterface.OnClickListener { _, _ -> /*  Intent callGPSSettingIntent = new Intent(android.provider.Settings.ACTION_SETTINGS);
         startActivityForResult(callGPSSettingIntent, 0);*/
-            val intent = Intent(Settings.ACTION_SETTINGS)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }).setNegativeButton("Dismiss", DialogInterface.OnClickListener { _, _ ->
-            finish()
-            System.exit(0)
-        }).show()
+                    val intent = Intent(Settings.ACTION_SETTINGS)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                }).setNegativeButton("Dismiss", DialogInterface.OnClickListener { _, _ ->
+                finish()
+                System.exit(0)
+            }).show()
         val btnPositive: Button? = alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
         val btnNegative: Button? = alertDialog?.getButton(AlertDialog.BUTTON_NEGATIVE)
         val layoutParams = btnPositive?.layoutParams as LinearLayout.LayoutParams
@@ -138,16 +133,19 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
                     internet_connection_error_Dilog()
                 }
             }
+
             else -> permissionError_Dialog()
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun permissionError_Dialog() {
-        val alertDialog: android.app.AlertDialog? = android.app.AlertDialog.Builder(this).setMessage("This app might malfunction if all the permissions aren't granted.").setCancelable(false).setIcon(R.drawable.logodark).setTitle("Warning").setPositiveButton("Dismiss", DialogInterface.OnClickListener { _, _ -> System.exit(0) }).setNegativeButton("", DialogInterface.OnClickListener { _, _ ->
-            finish()
-            System.exit(0)
-        }).show()
+        val alertDialog: android.app.AlertDialog? =
+            android.app.AlertDialog.Builder(this).setMessage("This app might malfunction if all the permissions aren't granted.").setCancelable(false).setIcon(R.drawable.logodark).setTitle("Warning")
+                .setPositiveButton("Dismiss", DialogInterface.OnClickListener { _, _ -> System.exit(0) }).setNegativeButton("", DialogInterface.OnClickListener { _, _ ->
+                finish()
+                System.exit(0)
+            }).show()
         val btnPositive = alertDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
         val layoutParams = btnPositive?.layoutParams as LinearLayout.LayoutParams
         layoutParams.weight = 10f

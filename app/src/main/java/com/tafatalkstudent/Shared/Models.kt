@@ -732,3 +732,31 @@ data class GetMobile(
 )
 
 
+
+@Entity(primaryKeys = ["timestamp"])
+data class SmsDetail(
+    val body: String?,
+    val phoneNumber: String?,
+    val timestamp: Long?,
+    val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
+    val type: Int?,  // Message type: 1 for received, 2 for sent
+    val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
+    val status: String?,  // Indicates whether the message has been read
+)
+
+
+
+@Entity(primaryKeys = ["timestamp"])
+data class NewSmsDetail(
+    val body: String?,
+    val phoneNumber: String?,
+    val timestamp: Long?,
+    val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
+    val type: Int?,  // Message type: 1 for received, 2 for sent
+    val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
+    val status: String?,  // Indicates whether the message has been read
+)
+
+
+
+

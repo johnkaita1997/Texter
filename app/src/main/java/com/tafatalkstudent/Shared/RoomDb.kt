@@ -1,29 +1,24 @@
 package com.tafatalkstudent.Shared;
 
 import android.content.Context
-import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
-import androidx.room.Entity
 import androidx.room.Insert
-import androidx.room.PrimaryKey
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.Update
 
-@Database(entities = [Gender::class, Login::class], version = 1)
+@Database(entities = [SmsDetail::class, NewSmsDetail::class], version = 1)
 abstract class RoomDb : RoomDatabase() {
 
-    abstract fun getRoomDAO(): RoomDAO
-    abstract fun loginDao(): LoginDao
+    abstract fun getSmsDao(): SmsDao
 
     companion object {
 
         @Volatile
         private var instance: RoomDb? = null
         private val LOCK = Any()
-//        private val LOCK = Any()
 
         operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
             instance ?: buildDatabase(context).also {
@@ -37,30 +32,63 @@ abstract class RoomDb : RoomDatabase() {
 }
 
 
-@Dao
-interface RoomDAO {
-}
 
-@Entity(tableName = "login")
-data class Login(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    @ColumnInfo(name = "student_id") val studentId: String,
-    @ColumnInfo(name = "login_timestamp") val loginTimestamp: Long,
-    @ColumnInfo(name = "logout_timestamp") var logoutTimestamp: Long?
-)
 
 @Dao
-interface LoginDao {
-    @Insert
-    suspend fun insert(login: Login)
-    @Update
-    suspend fun update(login: Login)
+interface SmsDao {
 
-    @Query("SELECT * FROM login")
-    suspend fun getAllLogins(): List<Login>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSmsDetail(smsDetail: SmsDetail): Long
 
-    @Query("SELECT * FROM login WHERE login_timestamp <= :targetTimestamp AND (logout_timestamp IS NULL OR logout_timestamp >= :targetTimestamp)")
-    suspend fun findLoginForTimestamp(targetTimestamp: Long): List<Login>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNewSmsDetail(newSmsDetail: NewSmsDetail): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBatch(objects: List<SmsDetail>)
+
+
+
+    @Query("SELECT * FROM smsdetail")
+    suspend fun getAllSmsDetails(): List<SmsDetail>
+
+    @Query("SELECT * FROM smsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM smsdetail GROUP BY phoneNumber) AS latestSms ON smsdetail.phoneNumber = latestSms.phoneNumber AND smsdetail.timestamp = latestSms.maxTimestamp")
+    suspend fun getLatestSmsList(): List<SmsDetail>
+
+
+    @Query("SELECT * FROM newsmsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM newsmsdetail GROUP BY phoneNumber) AS latestSms ON newsmsdetail.phoneNumber = latestSms.phoneNumber AND newsmsdetail.timestamp = latestSms.maxTimestamp")
+    suspend fun getNewLatestSmsList(): List<SmsDetail>
+
+
+
+    @Query("SELECT * FROM smsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
+    suspend fun getMessagesByPhoneNumber(phoneNumber: String): List<SmsDetail>
+
+    @Query("SELECT * FROM newsmsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
+    suspend fun getNewMessagesByPhoneNumber(phoneNumber: String): List<SmsDetail>
+
+
+
+
+    @Query("SELECT COUNT(*) FROM smsdetail WHERE timestamp = :timestamp")
+    suspend fun doesMessageExist(timestamp: Long): Int
+
+    @Query("SELECT COUNT(*) FROM newsmsdetail WHERE timestamp = :timestamp")
+    suspend fun doesNewMessageExist(timestamp: Long): Int
+
+    @Query("SELECT COUNT(*) FROM newsmsdetail WHERE body = :body AND state = :state")
+    suspend fun doesBodyStateMessageExistInNewDB(body: String, state: String): Int
+
+
+
+    // Delete a message by timestamp
+    @Query("DELETE FROM smsdetail WHERE timestamp = :timestamp")
+    suspend fun deleteMessageByTimestamp(timestamp: Long)
+
+    @Query("UPDATE smsdetail SET status = :newStatus WHERE timestamp = :targetTimestamp")
+    suspend fun updateStatusByTimestamp(targetTimestamp: Long, newStatus: String)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertSmsDetailIgnore(smsDetail: SmsDetail): Long
 
 }
 

@@ -215,11 +215,11 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
                                     binding.activationtext.visibility = View.GONE
                                     binding.layoutcontrol.visibility = View.VISIBLE
 
-                                    val layoutManager = LinearLayoutManager(this@TestActivity)
+                                    /*val layoutManager = LinearLayoutManager(this@TestActivity)
                                     val contactsadapter = ContactsAdapter(this@TestActivity, mutableListOf(), viewmodel, phoneStateReceiver, tokenbalance, equivalentminutes)
                                     binding.contactsyoucancallrecyclerview.setLayoutManager(layoutManager)
                                     binding.contactsyoucancallrecyclerview.adapter = contactsadapter
-                                    contactsadapter.updateContactsAdapter(contactlist)
+                                    contactsadapter.updateContactsAdapter(contactlist)*/
 
                                 }
                             }
@@ -327,7 +327,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
 
                 val mobileid = async { viewmodel.getMobileId(activeMobile.toString(), this@TestActivity) }
 
-                val database = RoomDb(this@TestActivity).loginDao()
+                /*val database = RoomDb(this@TestActivity).loginDao()
                 val listOfLoginsMatchingDateOfCall = database.findLoginForTimestamp(callstamp.toLong())
                 if (listOfLoginsMatchingDateOfCall.isEmpty()) {
                     Log.d("-------", "initall: No user logged found for call Time: ${callstamp} - Duration: $duration -Mobile Called: $mobileCalled - Mins: $callminutesconsumed")
@@ -336,7 +336,7 @@ class TestActivity : AppCompatActivity(), LifecycleOwner {
                     this@TestActivity.viewmodel.createCallLog(
                         schoolid!!, callLogbody, thestudentId, newstudenttokenbalance, userid, mobileid.await().toInt(), callminutesconsumed, tokensused, this@TestActivity
                     )
-                }
+                }*/
 
             }
         }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="5dp"
+    tools:context=".Activities.SmsDetailActivity">
+
+    <TextView
+        android:id="@+id/textViewNameOfPerson"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:drawableLeft="@drawable/person"
+        android:drawablePadding="5dp"
+        android:drawableTint="@color/black"
+        android:text="Mr. Both Names"
+        android:textColor="@color/black"
+        android:textSize="18dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:paddingTop="10dp"
+        android:id="@+id/recyclerViewMessageDetails"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/bottonlayout"
+        android:layout_marginBottom="20dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="25dp" />
+
+    <LinearLayout
+        android:id="@+id/bottonlayout"
+        android:layout_marginBottom="5dp"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/etMessage"
+            android:background="@drawable/rounded_edittext_background"
+            style="@style/modifiedEditText"
+            android:layout_weight="0.5"
+            android:paddingHorizontal="2dp"
+            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:editable="false"
+            android:hint="Mobile Number"
+            android:maxLines="5"
+            android:layout_height="wrap_content"
+            android:textSize="13dp"
+            android:inputType="textMultiLine"/>
+
+        <Button
+            android:id="@+id/submitSMS"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1.5"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/send"
+            android:textAllCaps="false"
+            android:layout_marginBottom="4dp"
+            android:textColor="@color/white" />
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

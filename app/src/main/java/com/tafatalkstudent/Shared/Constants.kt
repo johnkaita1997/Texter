@@ -22,6 +22,7 @@ object Constants {
     var expenseImageUploadList = mutableListOf<String>()
     var CALL_REQUEST_CODE = 123
     val mainScope = CoroutineScope(Dispatchers.Main) // Create your own CoroutineScope
+    val threadScope = CoroutineScope(Dispatchers.IO) // Create your own CoroutineScope
     const val permission_request = 100
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -362,7 +362,7 @@ fun Context.emptyDateMap() {
 
 @OptIn(DelicateCoroutinesApi::class)
 fun Context.logoutUser(studentId: String) {
-    if (SessionManager(this).logout()) {
+    /*if (SessionManager(this).logout()) {
         makeLongToast("You have been logged out successfully")
         val database = RoomDb(this).loginDao()
         GlobalScope.launch() {
@@ -376,8 +376,7 @@ fun Context.logoutUser(studentId: String) {
             }
         }
         goToActivity(this as Activity, LauncherActivity::class.java)
-    }
-
+    }*/
 }
 
 

@@ -56,6 +56,27 @@
 
 
 
+    <color name="ardhisasacolorPrimary">#5E3817</color>
+    <color name="ardhisasacolorPrimaryDark">#472A11</color>
+    <color name="ardhisasacolorAccent">#76461D</color>
+    <color name="colorBackground">#F8F6F3</color>
+    <color name="colorBackground1">#9AFFFFFF</color>
+    <color name="ardhisasaColorLight1">#BAA28E</color>
+    <color name="ardhisasaColorLight2">#BAA28E</color>
+    <color name="colorSave">#5A670D</color>
+    <color name="ardhisasaColorLightest">#DDD1C6</color>
+    <color name="colorBlue">#3700B3</color>
+    <color name="colorTransparent">#BFD3C5C3</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="colorTransparent1">#0DBA5B09</color>
+    <color name="colorTransparent2">#0ABA5B09</color>
+    <color name="colorWhite1">#00FFFFFF</color>
+    <color name="colorNewPrimary">#F3EFEC</color>
+    <color name="colorNewPrimaryDark">#DBCFC5</color>
+
+
 
 </resources>
 

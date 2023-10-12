@@ -61,7 +61,7 @@
 
     <style name="modifiedEditText" parent="parent">
         <item name="android:textSize">12sp</item>
-        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/primaryTextColor
+        <item name="android:backgroundTint" tools:targetApi="lollipop">@color/black
         </item>
     </style>
 

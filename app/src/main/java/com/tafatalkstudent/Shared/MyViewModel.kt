@@ -170,7 +170,17 @@ class MyViewModel
     }
 
 
-    suspend fun createCallLog(school : String, createCallLog: CreateCallLog, studentid: Int, newstudenttokenbalance: Float?, userid: String, mobileid: Int?, callminutesconsumed: Float, tokensused: Float, activity: Activity) {
+    suspend fun createCallLog(
+        school: String,
+        createCallLog: CreateCallLog,
+        studentid: Int,
+        newstudenttokenbalance: Float?,
+        userid: String,
+        mobileid: Int?,
+        callminutesconsumed: Float,
+        tokensused: Float,
+        activity: Activity
+    ) {
         runCatching {
             val response = api.createCallLog(activity.getAuthDetails().access, createCallLog)
             if (!response.isSuccessful) {
@@ -394,11 +404,11 @@ class MyViewModel
     }
 
 
-    private fun saveLoginSessionToStudentId(studentid: Int, activity:Activity) {
-        val login = Login(studentId = studentid.toString(), loginTimestamp = System.currentTimeMillis(), logoutTimestamp = null)
+    private fun saveLoginSessionToStudentId(studentid: Int, activity: Activity) {
+        /*val login = Login(studentId = studentid.toString(), loginTimestamp = System.currentTimeMillis(), logoutTimestamp = null)
         CoroutineScope(Dispatchers.IO).launch() {
             val database = RoomDb(activity).loginDao().insert(login)
-        }
+        }*/
     }
 
 
@@ -409,13 +419,13 @@ class MyViewModel
             val response = api.login(LoginBody(email, password))
 
             if (!response.isSuccessful) {
-                mainScope.launch { activity.dismissProgress()}
+                mainScope.launch { activity.dismissProgress() }
                 val errorBody = response.errorBody()?.string()
                 handleResponse(errorBody, null, activity)
                 return@runCatching
             } else {
 
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
 
                     val access = response.body()?.access.toString()
                     val refresh = response.body()?.refresh.toString()
@@ -445,10 +455,160 @@ class MyViewModel
             }
 
         }.onFailure {
-            mainScope.launch { activity.dismissProgress()}
+            mainScope.launch { activity.dismissProgress() }
             networkResponseFailure(it, mydialog, "loginuser()", activity)
         }
 
+    }
+
+
+    suspend fun insertSmsDetail(smsDetail: SmsDetail, activity: Activity, oldOrNew: String): UserFineDetails {
+        val theresponse = UserFineDetails()
+        runCatching {
+            if (oldOrNew.equals("new")) {
+                val database = RoomDb(activity).getSmsDao()
+                smsDetail.apply {
+                    database.insertNewSmsDetail(NewSmsDetail(body, phoneNumber, timestamp, state, type, formattedTimestamp, status))
+                    Log.d("insertSmsDetail-------", "initall: ${smsDetail}")
+                }
+            } else {
+                val database = RoomDb(activity).getSmsDao()
+                database.insertSmsDetail(smsDetail)
+                Log.d("insertSmsDetail-------", "initall: ${smsDetail}")
+            }
+        }.onFailure {
+            //networkResponseFailure(it, null, "insertSmsDetail()", activity)
+        }
+        return theresponse
+    }
+
+    suspend fun insertBatch(listOfSmsDetail: List<SmsDetail>, activity: Activity): UserFineDetails {
+        val theresponse = UserFineDetails()
+        runCatching {
+            val database = RoomDb(activity).getSmsDao()
+            database.insertBatch(listOfSmsDetail)
+        }.onFailure {
+            //networkResponseFailure(it, null, "insertSmsDetail()", activity)
+        }
+        return theresponse
+    }
+
+
+    suspend fun insertSmsDetailIgnore(smsDetail: SmsDetail, activity: Activity): UserFineDetails {
+        var theresponse = UserFineDetails()
+        runCatching {
+            val database = RoomDb(activity).getSmsDao()
+            database.insertSmsDetailIgnore(smsDetail)
+            Log.d("insertSmsDetail-------", "initall: ${smsDetail}")
+        }.onFailure {
+            //networkResponseFailure(it, null, "insertSmsDetail()", activity)
+        }
+        return theresponse
+    }
+
+
+    suspend fun getLatestSmsList(activity: Activity): List<SmsDetail> {
+
+
+        val database = RoomDb(activity).getSmsDao()
+        val smslist = database.getLatestSmsList()
+
+        // Remove country code for phone numbers starting with "+254"
+        val modifiedSmsList = smslist.map { smsDetail ->
+            smsDetail.copy(
+                phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
+            )
+        }
+
+        val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
+        modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
+            val phoneNumber = smsDetail.phoneNumber.orEmpty()
+            if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
+                uniqueModifiedSmsMap[phoneNumber] = smsDetail
+            }
+        }
+
+        val thelist = uniqueModifiedSmsMap.values.toList()
+        return thelist
+
+    }
+
+
+    /*suspend fun getMessagesByPhoneNumber(phoneNumber: String, activity: Activity): List<SmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val smslist = database.getMessagesByPhoneNumber(phoneNumber)
+        return smslist
+    }*/
+
+
+    suspend fun getMessagesByPhoneNumber(phoneNumber: String, activity: Activity, oldOrNew: String): List<SmsDetail> {
+        val normalizedPhoneNumber = normalizePhoneNumber(phoneNumber) // Normalize the phone number
+        val database = RoomDb(activity).getSmsDao()
+
+        var fullList: List<SmsDetail> = listOf()
+
+        if (oldOrNew.equals("new")) {
+            // Retrieve messages for both formats
+            val smsListOne = database.getNewMessagesByPhoneNumber(phoneNumber)
+            val smsListTwo = database.getNewMessagesByPhoneNumber(normalizedPhoneNumber)
+            Log.d("phonenumber-------", "initall: normalizedphonenumber ---- $normalizedPhoneNumber, phone number ----- ${phoneNumber}")
+            fullList = (smsListOne + smsListTwo).sortedBy { it.timestamp }
+
+        } else {
+            // Retrieve messages for both formats
+            val smsListOne = database.getMessagesByPhoneNumber(phoneNumber)
+            val smsListTwo = database.getMessagesByPhoneNumber(normalizedPhoneNumber)
+            Log.d("phonenumber-------", "initall: normalizedphonenumber ---- $normalizedPhoneNumber, phone number ----- ${phoneNumber}")
+            fullList = (smsListOne + smsListTwo).sortedBy { it.timestamp } as MutableList<SmsDetail>
+        }
+
+        return fullList
+    }
+
+
+    private fun normalizePhoneNumber(phoneNumber: String): String {
+        // If the phone number starts with "07", add "+254" and remove the leading "0"
+        if (phoneNumber.startsWith("07")) {
+            return "+254" + phoneNumber.substring(1)
+        }
+
+        // If the phone number starts with "+254", remove it and add "0"
+        if (phoneNumber.startsWith("+254")) {
+            return "0" + phoneNumber.substring(4)
+        }
+
+        // For any other cases, return the original number
+        return phoneNumber
+    }
+
+
+    suspend fun doesMessageExist(timestamp: Long, activity: Activity, oldOrNew: String): Boolean {
+        val database = RoomDb(activity).getSmsDao()
+        var count = 0
+        if (oldOrNew.equals("new")) {
+            count = database.doesNewMessageExist(timestamp)
+        } else {
+            count = database.doesMessageExist(timestamp)
+        }
+        return count > 0
+    }
+
+
+    suspend fun doesBodyStateMessageExistInNewDB(body: String, state: String, activity: Activity): Boolean {
+        val database = RoomDb(activity).getSmsDao()
+        val count = database.doesBodyStateMessageExistInNewDB(body, state)
+        return count > 0
+    }
+
+
+    suspend fun deleteMessageByTimestamp(timestamp: Long, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.deleteMessageByTimestamp(timestamp)
+    }
+
+    suspend fun updateStatusByTimestamp(timestamp: Long, status: String, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.updateStatusByTimestamp(timestamp, status)
     }
 
 
