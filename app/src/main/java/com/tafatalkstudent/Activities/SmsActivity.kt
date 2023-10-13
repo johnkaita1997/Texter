@@ -22,8 +22,6 @@ import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.RoomDb
 import com.tafatalkstudent.Shared.SmsDetail
-import com.tafatalkstudent.Shared.makeLongToast
-import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
@@ -119,48 +117,20 @@ class SmsActivity : AppCompatActivity() {
                 val smsManager = SmsManager.getDefault()
                 smsManager.sendTextMessage(mobile, null, message, sentPI, deliveredPI)*/
 
+
         cdd = CustomLoadDialogClass(this@SmsActivity)
         cdd.setCanceledOnTouchOutside(false)
         cdd.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        adapter = ContactsAdapter(viewmodel, this@SmsActivity, mutableListOf(), mutableListOf())
+        val recyclerView: RecyclerView = binding.recyclerviewContacts
+        recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
+        recyclerView.adapter = adapter
 
         threadScope.launch {
             saveMessages(this@SmsActivity)
         }
 
-
-    }
-
-
-    private fun fetchSMS() {
-
-        threadScope.launch {
-
-            val database = RoomDb(this@SmsActivity).getSmsDao()
-            val newSmsList = database.getNewLatestSmsList()
-            val modifiedSmsList = newSmsList.map { smsDetail ->
-                smsDetail.copy(
-                    phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
-                )
-            }
-            val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
-            modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
-                val phoneNumber = smsDetail.phoneNumber.orEmpty()
-                if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
-                    uniqueModifiedSmsMap[phoneNumber] = smsDetail
-                }
-            }
-            val thenewlist = uniqueModifiedSmsMap.values.toList()
-
-            val recyclerView: RecyclerView = binding.recyclerviewContacts
-            mainScope.launch {
-                adapter = ContactsAdapter(viewmodel, this@SmsActivity, mutableListOf(), thenewlist)
-                recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
-                recyclerView.adapter = adapter
-            }
-
-            updateSmsList()
-
-        }
 
     }
 
@@ -191,7 +161,7 @@ class SmsActivity : AppCompatActivity() {
     }
 
 
-    fun saveMessages(context: Context): List<SmsMessage> {
+    fun saveMessages(context: Context) {
 
 
         val PREFS_NAME = "MyPrefsFile"
@@ -205,7 +175,7 @@ class SmsActivity : AppCompatActivity() {
                 cdd.show()
             }
         } else {
-            fetchSMS()
+            updateSmsList()
         }
 
         val smsList = mutableListOf<SmsMessage>()
@@ -229,6 +199,7 @@ class SmsActivity : AppCompatActivity() {
                         Telephony.Sms.STATUS_FAILED -> "Failed"
                         else -> "Unknown"
                     }
+
                     val state = when (type) {
                         1 -> "Received"  // Inbox
                         2 -> "Sent"      // Sent messages
@@ -241,7 +212,7 @@ class SmsActivity : AppCompatActivity() {
                     threadScope.launch {
                         val doesBodyStateMessageExistInNewDB = viewmodel.doesBodyStateMessageExistInNewDB(body, state, this@SmsActivity)
                         val exists = doesBodyStateMessageExistInNewDB
-                        if (!exists) {
+                        if (!exists || exists) {
                             val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus)
                             batchList.add(smsDetail)
                             /*viewmodel.insertSmsDetail(smsDetail, this@SmsActivity, "old")*/
@@ -273,17 +244,24 @@ class SmsActivity : AppCompatActivity() {
             delay(3000)
         }
 
+        threadScope.launch {
+            while (smsListNumber().isEmpty()) {
+                Log.d("Empty-------", "initall: Still empty")
+            }
+        }
+
+        cursor?.close()
+
         mainScope.launch {
             cdd.dismiss()
             // Update the shared preferences to indicate that the app has been launched
             val editor: SharedPreferences.Editor = sharedPrefs.edit()
             editor.putBoolean(PREF_FIRST_TIME, false)
             editor.apply()
-            updateSmsList()
+
+            recreate()
         }
 
-        cursor?.close()
-        return smsList
     }
 
 
@@ -306,9 +284,11 @@ class SmsActivity : AppCompatActivity() {
                 }
             }
             val thenewlist = uniqueModifiedSmsMap.values.toList()
-            Log.d("-------", "initall: ${thenewlist.toString()}")
+            Log.d("-------", "initall: $thenewlist")
             if (::adapter.isInitialized) {
-                adapter.setData(thenewlist)
+                mainScope.launch {
+                    adapter.setData(thenewlist)
+                }
             }
 
 
@@ -317,8 +297,24 @@ class SmsActivity : AppCompatActivity() {
 
 
             val joinedSmsList = thenewlist + smslist
+
+
+            val uniqueSmsMap = mutableMapOf<String, SmsDetail>()
+
+            // Iterate through joinedSmsList and keep only the latest SMS for each unique phone number
+            for (smsDetail in joinedSmsList) {
+                val phoneNumber = smsDetail.phoneNumber.orEmpty()
+                if (!uniqueSmsMap.containsKey(phoneNumber) || smsDetail.timestamp!! > (uniqueSmsMap[phoneNumber]?.timestamp ?: 0)) {
+                    uniqueSmsMap[phoneNumber] = smsDetail
+                }
+            }
+
+            val filteredSmsList = uniqueSmsMap.values.toList()
+
             if (::adapter.isInitialized) {
-                adapter.setData(joinedSmsList)
+                mainScope.launch {
+                    adapter.setData(filteredSmsList)
+                }
             }
 
 
@@ -331,5 +327,39 @@ class SmsActivity : AppCompatActivity() {
         super.onResume()
         updateSmsList()
     }
+
+
+    suspend fun smsListNumber(): List<SmsDetail> {
+
+        var thelist: List<SmsDetail> = listOf()
+
+        val database = RoomDb(this@SmsActivity).getSmsDao()
+        val newSmsList = database.getNewLatestSmsList()
+        val modifiedSmsList = newSmsList.map { smsDetail ->
+            smsDetail.copy(
+                phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
+            )
+        }
+        val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
+        modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
+            val phoneNumber = smsDetail.phoneNumber.orEmpty()
+            if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
+                uniqueModifiedSmsMap[phoneNumber] = smsDetail
+            }
+        }
+        val thenewlist = uniqueModifiedSmsMap.values.toList()
+        Log.d("-------", "initall: $thenewlist")
+        if (::adapter.isInitialized) {
+            adapter.setData(thenewlist)
+        }
+
+        val smslist = viewmodel.getLatestSmsList(this@SmsActivity)
+        val joinedSmsList = thenewlist + smslist
+
+        thelist = joinedSmsList
+
+        return thelist
+    }
+
 
 }

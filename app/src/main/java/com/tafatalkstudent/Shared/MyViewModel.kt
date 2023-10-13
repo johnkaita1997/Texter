@@ -462,25 +462,19 @@ class MyViewModel
     }
 
 
-    suspend fun insertSmsDetail(smsDetail: SmsDetail, activity: Activity, oldOrNew: String): UserFineDetails {
-        val theresponse = UserFineDetails()
-        runCatching {
-            if (oldOrNew.equals("new")) {
-                val database = RoomDb(activity).getSmsDao()
-                smsDetail.apply {
-                    database.insertNewSmsDetail(NewSmsDetail(body, phoneNumber, timestamp, state, type, formattedTimestamp, status))
-                    Log.d("insertSmsDetail-------", "initall: ${smsDetail}")
-                }
-            } else {
-                val database = RoomDb(activity).getSmsDao()
-                database.insertSmsDetail(smsDetail)
-                Log.d("insertSmsDetail-------", "initall: ${smsDetail}")
-            }
-        }.onFailure {
-            //networkResponseFailure(it, null, "insertSmsDetail()", activity)
+    suspend fun insertSmsDetail(smsDetail: SmsDetail, activity: Activity, oldOrNew: String): SmsDetail {
+        val database = RoomDb(activity).getSmsDao()
+        var insertedId = ""
+        if (oldOrNew.equals("new")) {
+            insertedId = database.insertNewSmsDetail(NewSmsDetail(smsDetail.body,smsDetail.phoneNumber, smsDetail.timestamp, smsDetail.state, smsDetail.type, smsDetail.formattedTimestamp, smsDetail.status)).toString()
+            Log.d("Mychek-------", "initall: checking for ${insertedId}")
+        } else {
+            insertedId = database.insertSmsDetail(smsDetail).toString()
+            Log.d("Mychek-------", "initall: checking for ${insertedId}")
         }
-        return theresponse
+        return database.getSmsDetailByTimestamp(insertedId.toLong()) // Assuming you have a function to retrieve SmsDetail by ID
     }
+
 
     suspend fun insertBatch(listOfSmsDetail: List<SmsDetail>, activity: Activity): UserFineDetails {
         val theresponse = UserFineDetails()

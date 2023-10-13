@@ -33,6 +33,8 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var s
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val sms = smsMessages[position]
 
+        Log.d("checking-------", "initall: ${sms.state} - ${sms.body} - ${sms.timestamp} - ${position}")
+
         val phoneNumber = sms.phoneNumber
 
         if (sms.state == "Received") {
@@ -47,28 +49,56 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var s
             holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
         }
 
+        if (sms.state == "Delivered") {
+            val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
+            theView.setText(sms.body)
+            holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
+        }
+
+
         if (sms.state == "Draft") {
             etMessage.setText(sms.body)
             sms.timestamp?.let {
                 SmsDetailActivity.timestamp = it
             }
+            Log.d("Draft-------", "initall: Found a draft")
         }
 
         Log.d("messageDetail-------", "initall: $ - ${sms.state}")
 
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        init {
-            setIsRecyclable(false)
-        }
+    override fun getItemViewType(position: Int): Int {
+        val sms = smsMessages[position]
+        return sms.timestamp!!.toInt()
     }
+
+    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
 
     fun setData(newSmsMessages: List<SmsDetail>) {
         smsMessages = newSmsMessages.toMutableList()
         mainScope.launch {
             notifyDataSetChanged()
+        }
+    }
+
+
+    fun updateItem(updatedSmsDetail: SmsDetail) {
+        val position = smsMessages.indexOfFirst { it.timestamp == updatedSmsDetail.timestamp }
+
+        if (position != -1) {
+            // If item exists, update it
+            smsMessages = smsMessages.toMutableList().apply {
+                this[position] = updatedSmsDetail
+            }
+            notifyItemChanged(position)
+        } else {
+            // If item does not exist, add it at the bottom of the list
+            smsMessages = smsMessages.toMutableList().apply {
+                add(updatedSmsDetail)
+            }
+            notifyItemInserted(smsMessages.size - 1)
         }
     }
 

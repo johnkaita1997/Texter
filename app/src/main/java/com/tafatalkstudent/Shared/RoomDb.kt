@@ -66,6 +66,8 @@ interface SmsDao {
     @Query("SELECT * FROM newsmsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
     suspend fun getNewMessagesByPhoneNumber(phoneNumber: String): List<SmsDetail>
 
+    @Query("SELECT * FROM newsmsdetail WHERE timestamp = :timestamp")
+    suspend fun getSmsDetailByTimestamp(timestamp: Long): SmsDetail
 
 
 
