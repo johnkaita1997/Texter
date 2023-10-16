@@ -22,6 +22,7 @@ import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.RoomDb
 import com.tafatalkstudent.Shared.SmsDetail
+import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.async
@@ -178,131 +179,126 @@ class SmsActivity : AppCompatActivity() {
             updateSmsList()
         }
 
-        val smsList = mutableListOf<SmsMessage>()
         val uri = Uri.parse("content://sms")
         val cursor = context.contentResolver.query(uri, null, null, null, null)
+        val numberofItems = cursor!!.count
+        cursor.close()
 
-        val batchList = mutableListOf<SmsDetail>()
-
-        cursor?.use {
-            if (it.moveToFirst()) {
-                do {
-
-                    val body = it.getString(it.getColumnIndexOrThrow("body"))
-                    val phoneNumber = it.getString(it.getColumnIndexOrThrow("address"))
-                    val timestamp = it.getLong(it.getColumnIndexOrThrow("date"))
-                    val type = it.getInt(it.getColumnIndexOrThrow("type"))
-                    val status = it.getInt(it.getColumnIndexOrThrow("status"))
-                    val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
-                    val deliveryStatus = when (status) {
-                        Telephony.Sms.STATUS_COMPLETE -> "Delivered"
-                        Telephony.Sms.STATUS_FAILED -> "Failed"
-                        else -> "Unknown"
-                    }
-
-                    val state = when (type) {
-                        1 -> "Received"  // Inbox
-                        2 -> "Sent"      // Sent messages
-                        3 -> "Draft"     // Draft messages
-                        4 -> "Failed"    // Failed to send messages
-                        5 -> "Queued"    // Queued to send messages
-                        else -> "Unknown"
-                    }
-
-                    threadScope.launch {
-                        val doesBodyStateMessageExistInNewDB = viewmodel.doesBodyStateMessageExistInNewDB(body, state, this@SmsActivity)
-                        val exists = doesBodyStateMessageExistInNewDB
-                        if (!exists || exists) {
-                            val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus)
-                            batchList.add(smsDetail)
-                            /*viewmodel.insertSmsDetail(smsDetail, this@SmsActivity, "old")*/
-                            Log.d("herere-------", "initall: Here........................................")
-                        }
-                    }
-
-
-                } while (it.moveToNext())
-            }
-        }
-
-
-        val batchSize = 500
-        val batches = mutableListOf<List<SmsDetail>>()
-
-        for (i in 0 until batchList.size step batchSize) {
-            val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
-            batches.add(batch)
-        }
-
-        batches.forEach {
-            threadScope.launch {
-                viewmodel.insertBatch(it, this@SmsActivity)
-            }
-        }
-
-        mainScope.launch {
-            delay(3000)
-        }
-
+        var standingSmsCount = 0
         threadScope.launch {
-            while (smsListNumber().isEmpty()) {
-                Log.d("Empty-------", "initall: Still empty")
+            val totalSmsDetailCount = viewmodel.getTotalSmsDetailCount(this@SmsActivity)
+            val numberOfDraftItems = viewmodel.getDraftSmsCount(this@SmsActivity)
+            standingSmsCount = totalSmsDetailCount - numberOfDraftItems
+        }
+
+
+        val difference = numberofItems - standingSmsCount
+        if (difference > 0) {
+
+            val batchList = mutableListOf<SmsDetail>()
+
+            val latestCursor = context.contentResolver.query(uri, null, null, null, "date DESC LIMIT ${difference}")
+
+            latestCursor.use {
+                if (it != null) {
+                    if (it.moveToFirst()) {
+                        do {
+
+                            val body = it.getString(it.getColumnIndexOrThrow("body"))
+                            val phoneNumber = it.getString(it.getColumnIndexOrThrow("address"))
+                            val timestamp = it.getLong(it.getColumnIndexOrThrow("date"))
+                            val type = it.getInt(it.getColumnIndexOrThrow("type"))
+                            val status = it.getInt(it.getColumnIndexOrThrow("status"))
+                            val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
+                            val deliveryStatus = when (status) {
+                                Telephony.Sms.STATUS_COMPLETE -> "Delivered"
+                                Telephony.Sms.STATUS_FAILED -> "Failed"
+                                else -> "Unknown"
+                            }
+
+                            val state = when (type) {
+                                1 -> "Received"  // Inbox
+                                2 -> "Sent"      // Sent messages
+                                3 -> "Draft"     // Draft messages
+                                4 -> "Failed"    // Failed to send messages
+                                5 -> "Queued"    // Queued to send messages
+                                else -> "Unknown"
+                            }
+
+                            threadScope.launch {
+                                val doesBodyStateMessageExistInNewDB = viewmodel.doesMessageExist(timestamp, this@SmsActivity)
+                                val exists = doesBodyStateMessageExistInNewDB
+                                if (!exists) {
+                                    val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus)
+                                    batchList.add(smsDetail)
+                                    Log.d("herere-------", "initall: Here........................................")
+                                }
+                            }
+
+
+                        } while (it.moveToNext())
+                    } else {
+                    }
+                } else {
+                    mainScope.launch {
+                        showAlertDialog("Curosor is null")
+                    }
+                }
+            }
+
+
+            val batchSize = 500
+            val batches = mutableListOf<List<SmsDetail>>()
+
+            for (i in 0 until batchList.size step batchSize) {
+                val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
+                batches.add(batch)
+            }
+
+            threadScope.launch {
+                val _waiter = async {
+                    batches.forEach {
+                        viewmodel.insertBatch(it, this@SmsActivity)
+                    }
+                }
+                _waiter.await()
+            }
+
+
+            mainScope.launch {
+                cdd.dismiss()
+                // Update the shared preferences to indicate that the app has been launched
+                val editor: SharedPreferences.Editor = sharedPrefs.edit()
+                editor.putBoolean(PREF_FIRST_TIME, false)
+                editor.apply()
+                recreate()
+            }
+
+        } else {
+            mainScope.launch {
+                cdd.dismiss()
+                val editor: SharedPreferences.Editor = sharedPrefs.edit()
+                editor.putBoolean(PREF_FIRST_TIME, false)
+                editor.apply()
+                //recreate()
             }
         }
 
-        cursor?.close()
-
-        mainScope.launch {
-            cdd.dismiss()
-            // Update the shared preferences to indicate that the app has been launched
-            val editor: SharedPreferences.Editor = sharedPrefs.edit()
-            editor.putBoolean(PREF_FIRST_TIME, false)
-            editor.apply()
-
-            recreate()
-        }
 
     }
 
 
     fun updateSmsList() {
 
-        threadScope.launch {
-
-            val database = RoomDb(this@SmsActivity).getSmsDao()
-            val newSmsList = database.getNewLatestSmsList()
-            val modifiedSmsList = newSmsList.map { smsDetail ->
-                smsDetail.copy(
-                    phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
-                )
-            }
-            val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
-            modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
-                val phoneNumber = smsDetail.phoneNumber.orEmpty()
-                if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
-                    uniqueModifiedSmsMap[phoneNumber] = smsDetail
-                }
-            }
-            val thenewlist = uniqueModifiedSmsMap.values.toList()
-            Log.d("-------", "initall: $thenewlist")
-            if (::adapter.isInitialized) {
-                mainScope.launch {
-                    adapter.setData(thenewlist)
-                }
-            }
-
+        mainScope.launch {
 
             val _smslist = async { viewmodel.getLatestSmsList(this@SmsActivity) }
             val smslist = _smslist.await()
 
-
-            val joinedSmsList = thenewlist + smslist
-
-
             val uniqueSmsMap = mutableMapOf<String, SmsDetail>()
 
             // Iterate through joinedSmsList and keep only the latest SMS for each unique phone number
-            for (smsDetail in joinedSmsList) {
+            for (smsDetail in smslist) {
                 val phoneNumber = smsDetail.phoneNumber.orEmpty()
                 if (!uniqueSmsMap.containsKey(phoneNumber) || smsDetail.timestamp!! > (uniqueSmsMap[phoneNumber]?.timestamp ?: 0)) {
                     uniqueSmsMap[phoneNumber] = smsDetail
@@ -312,9 +308,7 @@ class SmsActivity : AppCompatActivity() {
             val filteredSmsList = uniqueSmsMap.values.toList()
 
             if (::adapter.isInitialized) {
-                mainScope.launch {
-                    adapter.setData(filteredSmsList)
-                }
+                adapter.setData(filteredSmsList)
             }
 
 
@@ -326,39 +320,6 @@ class SmsActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         updateSmsList()
-    }
-
-
-    suspend fun smsListNumber(): List<SmsDetail> {
-
-        var thelist: List<SmsDetail> = listOf()
-
-        val database = RoomDb(this@SmsActivity).getSmsDao()
-        val newSmsList = database.getNewLatestSmsList()
-        val modifiedSmsList = newSmsList.map { smsDetail ->
-            smsDetail.copy(
-                phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
-            )
-        }
-        val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
-        modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
-            val phoneNumber = smsDetail.phoneNumber.orEmpty()
-            if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
-                uniqueModifiedSmsMap[phoneNumber] = smsDetail
-            }
-        }
-        val thenewlist = uniqueModifiedSmsMap.values.toList()
-        Log.d("-------", "initall: $thenewlist")
-        if (::adapter.isInitialized) {
-            adapter.setData(thenewlist)
-        }
-
-        val smslist = viewmodel.getLatestSmsList(this@SmsActivity)
-        val joinedSmsList = thenewlist + smslist
-
-        thelist = joinedSmsList
-
-        return thelist
     }
 
 

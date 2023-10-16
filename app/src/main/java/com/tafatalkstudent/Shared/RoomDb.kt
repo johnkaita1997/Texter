@@ -9,7 +9,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [SmsDetail::class, NewSmsDetail::class], version = 1)
+@Database(entities = [SmsDetail::class], version = 1)
 abstract class RoomDb : RoomDatabase() {
 
     abstract fun getSmsDao(): SmsDao
@@ -41,9 +41,6 @@ interface SmsDao {
     suspend fun insertSmsDetail(smsDetail: SmsDetail): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNewSmsDetail(newSmsDetail: NewSmsDetail): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertBatch(objects: List<SmsDetail>)
 
 
@@ -55,30 +52,15 @@ interface SmsDao {
     suspend fun getLatestSmsList(): List<SmsDetail>
 
 
-    @Query("SELECT * FROM newsmsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM newsmsdetail GROUP BY phoneNumber) AS latestSms ON newsmsdetail.phoneNumber = latestSms.phoneNumber AND newsmsdetail.timestamp = latestSms.maxTimestamp")
-    suspend fun getNewLatestSmsList(): List<SmsDetail>
-
-
 
     @Query("SELECT * FROM smsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
     suspend fun getMessagesByPhoneNumber(phoneNumber: String): List<SmsDetail>
 
-    @Query("SELECT * FROM newsmsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
-    suspend fun getNewMessagesByPhoneNumber(phoneNumber: String): List<SmsDetail>
-
-    @Query("SELECT * FROM newsmsdetail WHERE timestamp = :timestamp")
+    @Query("SELECT * FROM smsdetail WHERE timestamp = :timestamp")
     suspend fun getSmsDetailByTimestamp(timestamp: Long): SmsDetail
-
-
 
     @Query("SELECT COUNT(*) FROM smsdetail WHERE timestamp = :timestamp")
     suspend fun doesMessageExist(timestamp: Long): Int
-
-    @Query("SELECT COUNT(*) FROM newsmsdetail WHERE timestamp = :timestamp")
-    suspend fun doesNewMessageExist(timestamp: Long): Int
-
-    @Query("SELECT COUNT(*) FROM newsmsdetail WHERE body = :body AND state = :state")
-    suspend fun doesBodyStateMessageExistInNewDB(body: String, state: String): Int
 
 
 
@@ -91,6 +73,14 @@ interface SmsDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSmsDetailIgnore(smsDetail: SmsDetail): Long
+
+
+    @Query("SELECT COUNT(*) FROM smsdetail")
+    suspend fun getTotalSmsDetailCount(): Int
+
+    @Query("SELECT COUNT(*) FROM smsdetail WHERE state = 'draft'")
+    suspend fun getDraftSmsCount(): Int
+
 
 }
 

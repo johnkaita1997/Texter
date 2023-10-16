@@ -462,16 +462,11 @@ class MyViewModel
     }
 
 
-    suspend fun insertSmsDetail(smsDetail: SmsDetail, activity: Activity, oldOrNew: String): SmsDetail {
+    suspend fun insertSmsDetail(smsDetail: SmsDetail, activity: Activity): SmsDetail {
         val database = RoomDb(activity).getSmsDao()
         var insertedId = ""
-        if (oldOrNew.equals("new")) {
-            insertedId = database.insertNewSmsDetail(NewSmsDetail(smsDetail.body,smsDetail.phoneNumber, smsDetail.timestamp, smsDetail.state, smsDetail.type, smsDetail.formattedTimestamp, smsDetail.status)).toString()
-            Log.d("Mychek-------", "initall: checking for ${insertedId}")
-        } else {
-            insertedId = database.insertSmsDetail(smsDetail).toString()
-            Log.d("Mychek-------", "initall: checking for ${insertedId}")
-        }
+        insertedId = database.insertSmsDetail(smsDetail).toString()
+        Log.d("Mychek-------", "initall: checking for ${insertedId}")
         return database.getSmsDetailByTimestamp(insertedId.toLong()) // Assuming you have a function to retrieve SmsDetail by ID
     }
 
@@ -535,26 +530,17 @@ class MyViewModel
     }*/
 
 
-    suspend fun getMessagesByPhoneNumber(phoneNumber: String, activity: Activity, oldOrNew: String): List<SmsDetail> {
+    suspend fun getMessagesByPhoneNumber(phoneNumber: String, activity: Activity): List<SmsDetail> {
         val normalizedPhoneNumber = normalizePhoneNumber(phoneNumber) // Normalize the phone number
         val database = RoomDb(activity).getSmsDao()
 
         var fullList: List<SmsDetail> = listOf()
 
-        if (oldOrNew.equals("new")) {
-            // Retrieve messages for both formats
-            val smsListOne = database.getNewMessagesByPhoneNumber(phoneNumber)
-            val smsListTwo = database.getNewMessagesByPhoneNumber(normalizedPhoneNumber)
-            Log.d("phonenumber-------", "initall: normalizedphonenumber ---- $normalizedPhoneNumber, phone number ----- ${phoneNumber}")
-            fullList = (smsListOne + smsListTwo).sortedBy { it.timestamp }
-
-        } else {
-            // Retrieve messages for both formats
-            val smsListOne = database.getMessagesByPhoneNumber(phoneNumber)
-            val smsListTwo = database.getMessagesByPhoneNumber(normalizedPhoneNumber)
-            Log.d("phonenumber-------", "initall: normalizedphonenumber ---- $normalizedPhoneNumber, phone number ----- ${phoneNumber}")
-            fullList = (smsListOne + smsListTwo).sortedBy { it.timestamp } as MutableList<SmsDetail>
-        }
+        // Retrieve messages for both formats
+        val smsListOne = database.getMessagesByPhoneNumber(phoneNumber)
+        val smsListTwo = database.getMessagesByPhoneNumber(normalizedPhoneNumber)
+        Log.d("phonenumber-------", "initall: normalizedphonenumber ---- $normalizedPhoneNumber, phone number ----- ${phoneNumber}")
+        fullList = (smsListOne + smsListTwo).sortedBy { it.timestamp } as MutableList<SmsDetail>
 
         return fullList
     }
@@ -576,21 +562,10 @@ class MyViewModel
     }
 
 
-    suspend fun doesMessageExist(timestamp: Long, activity: Activity, oldOrNew: String): Boolean {
+    suspend fun doesMessageExist(timestamp: Long, activity: Activity): Boolean {
         val database = RoomDb(activity).getSmsDao()
         var count = 0
-        if (oldOrNew.equals("new")) {
-            count = database.doesNewMessageExist(timestamp)
-        } else {
-            count = database.doesMessageExist(timestamp)
-        }
-        return count > 0
-    }
-
-
-    suspend fun doesBodyStateMessageExistInNewDB(body: String, state: String, activity: Activity): Boolean {
-        val database = RoomDb(activity).getSmsDao()
-        val count = database.doesBodyStateMessageExistInNewDB(body, state)
+        count = database.doesMessageExist(timestamp)
         return count > 0
     }
 
@@ -603,6 +578,21 @@ class MyViewModel
     suspend fun updateStatusByTimestamp(timestamp: Long, status: String, activity: Activity) {
         val database = RoomDb(activity).getSmsDao()
         database.updateStatusByTimestamp(timestamp, status)
+    }
+
+
+    suspend fun getTotalSmsDetailCount(activity: Activity) : Int {
+        return withContext(Dispatchers.IO) {
+            val database = RoomDb(activity).getSmsDao()
+            database.getTotalSmsDetailCount()
+        }
+    }
+
+    suspend fun getDraftSmsCount(activity: Activity) : Int{
+        return withContext(Dispatchers.IO) {
+            val database = RoomDb(activity).getSmsDao()
+            database.getDraftSmsCount()
+        }
     }
 
 

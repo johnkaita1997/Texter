@@ -61,26 +61,21 @@ class SmsDetailActivity : AppCompatActivity() {
         timestamp = System.nanoTime()
         val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
         recyclerView = binding.recyclerViewMessageDetails
-
         phoneNumber = intent.getStringExtra("phoneNumber").toString()
+
+
+        adapter = SmsDetailAdapter(viewmodel, this@SmsDetailActivity, mutableListOf(), binding.etMessage)
+        recyclerView.layoutManager = LinearLayoutManager(this@SmsDetailActivity)
+        /*val viewPool = RecyclerView.RecycledViewPool()
+        recyclerView.setRecycledViewPool(viewPool)*/
+        //recyclerView.setItemViewCacheSize(1000)
+        recyclerView.adapter = adapter
 
 
         threadScope.launch {
 
-            val _newphoneNumberMessageList = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity, "new") }
-            val newphoneNumberMessageList = _newphoneNumberMessageList.await()
-
-            mainScope.launch {
-                adapter = SmsDetailAdapter(viewmodel, this@SmsDetailActivity, newphoneNumberMessageList, binding.etMessage)
-                recyclerView.layoutManager = LinearLayoutManager(this@SmsDetailActivity)
-                /*val viewPool = RecyclerView.RecycledViewPool()
-                recyclerView.setRecycledViewPool(viewPool)*/
-                //recyclerView.setItemViewCacheSize(1000)
-                recyclerView.adapter = adapter
-            }
-
-            val oldphoneNumberMessageList = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity, "old") }.await()
-            val joinedlist: List<SmsDetail> = (newphoneNumberMessageList + oldphoneNumberMessageList).sortedBy { it.timestamp }
+            val oldphoneNumberMessageList = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity) }.await()
+            val joinedlist: List<SmsDetail> = oldphoneNumberMessageList
 
             mainScope.launch {
                 showAlertDialog(joinedlist.size.toString())
@@ -110,7 +105,7 @@ class SmsDetailActivity : AppCompatActivity() {
                 } else {
                     threadScope.launch {
                         delay(100)
-                        viewmodel.insertSmsDetail(SmsDetail(newText, phoneNumber, timestamp, "Draft", 3, formattedTimestamp, "Unsent"), this@SmsDetailActivity, "new")
+                        viewmodel.insertSmsDetail(SmsDetail(newText, phoneNumber, timestamp, "Draft", 3, formattedTimestamp, "Unsent"), this@SmsDetailActivity)
                     }
                 }
 
@@ -133,7 +128,7 @@ class SmsDetailActivity : AppCompatActivity() {
 
                 threadScope.launch {
 
-                    val _exists = async { viewmodel.doesMessageExist(timestamp, this@SmsDetailActivity, "new") }
+                    val _exists = async { viewmodel.doesMessageExist(timestamp, this@SmsDetailActivity) }
 
                     val subscriptionManager = getSystemService(SubscriptionManager::class.java)
                     val activeSubscriptionInfoList = subscriptionManager.activeSubscriptionInfoList
@@ -183,17 +178,17 @@ class SmsDetailActivity : AppCompatActivity() {
                 if (resultCode == RESULT_OK) {
                     threadScope.launch {
                         val sentTimestamp = System.currentTimeMillis()
-                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}"), this@SmsDetailActivity, "new")}
+                        val _insert =
+                            async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}"), this@SmsDetailActivity) }
                         val insert = _insert.await()
-                        //updateUI(phoneNumber)
                         updateItem(insert)
                         enableButton()
+                        viewmodel.deleteMessageByTimestamp(Companion.timestamp, this@SmsDetailActivity)
                     }
                 } else {
                     threadScope.launch {
-                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Failed", 4, formattedTimestamp, "Failed"), this@SmsDetailActivity, "new")}
+                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed"), this@SmsDetailActivity) }
                         val insert = _insert.await()
-                        //updateUI(phoneNumber)
                         updateItem(insert)
                         enableButton()
                     }
@@ -206,17 +201,21 @@ class SmsDetailActivity : AppCompatActivity() {
                 if (resultCode == RESULT_OK) {
                     val deliveryTimestamp = System.currentTimeMillis()
                     threadScope.launch {
-                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Delivered", 1, formattedTimestamp, "Delivered - ${deliveryTimestamp}"), this@SmsDetailActivity, "new") }
+                        val _insert = async {
+                            viewmodel.insertSmsDetail(
+                                SmsDetail(message, phoneNumber, timestamp, "Delivered", 1, formattedTimestamp, "Delivered - ${deliveryTimestamp}"),
+                                this@SmsDetailActivity
+                            )
+                        }
                         val insert = _insert.await()
-                        //updateUI(phoneNumber)
                         updateItem(insert)
                         enableButton()
+                        viewmodel.deleteMessageByTimestamp(Companion.timestamp, this@SmsDetailActivity)
                     }
                 } else {
                     threadScope.launch {
-                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Failed", 4, formattedTimestamp, "Failed"), this@SmsDetailActivity, "new") }
+                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Failed", 4, formattedTimestamp, "Failed"), this@SmsDetailActivity) }
                         val insert = _insert.await()
-                        //updateUI(phoneNumber)
                         updateItem(insert)
                         enableButton()
                     }
@@ -258,26 +257,7 @@ class SmsDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateUI(phoneNumber: String) {
-        threadScope.launch {
 
-            val newphoneNumberMessageList = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity, "new") }
-            val oldphoneNumberMessageList = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity, "old") }.await()
-
-            val allMessages = (newphoneNumberMessageList.await() + oldphoneNumberMessageList)
-
-            val filteredMessages = allMessages
-                .groupBy { it.body } // Group messages by body
-                .mapValues { (_, messages) -> messages.maxByOrNull { it.timestamp ?: 0 }!! } // Keep the latest message in each group
-
-            val joinedlist: List<SmsDetail> = filteredMessages.values.toList()
-
-
-            mainScope.launch {
-                adapter.setData(joinedlist)
-            }
-        }
-    }
 
 
     @SuppressLint("MissingPermission")

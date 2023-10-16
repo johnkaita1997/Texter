@@ -48,9 +48,7 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
 
     fun setData(newSmsMessages: List<SmsDetail>) {
         smsMessages = newSmsMessages
-        mainScope.launch {
-            notifyDataSetChanged()
-        }
+        notifyDataSetChanged()
     }
 
 
