@@ -68,10 +68,10 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var s
 
     }
 
-    override fun getItemViewType(position: Int): Int {
+    /*override fun getItemViewType(position: Int): Int {
         val sms = smsMessages[position]
         return sms.timestamp!!.toInt()
-    }
+    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
@@ -84,24 +84,15 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var s
     }
 
 
-    fun updateItem(updatedSmsDetail: SmsDetail) {
-        val position = smsMessages.indexOfFirst { it.timestamp == updatedSmsDetail.timestamp }
-
-        if (position != -1) {
-            // If item exists, update it
-            smsMessages = smsMessages.toMutableList().apply {
-                this[position] = updatedSmsDetail
-            }
-            notifyItemChanged(position)
-        } else {
-            // If item does not exist, add it at the bottom of the list
-            smsMessages = smsMessages.toMutableList().apply {
-                add(updatedSmsDetail)
-            }
-            notifyItemInserted(smsMessages.size - 1)
+    fun updateItem(updatedSmsDetail: SmsDetail, recyclerView: RecyclerView) {
+        smsMessages = smsMessages.toMutableList().apply {
+            add(updatedSmsDetail)
+        }
+        notifyItemInserted(smsMessages.size - 1)
+        recyclerView.post {
+            recyclerView.layoutManager?.scrollToPosition(smsMessages.size - 1)
         }
     }
-
 
 
 }

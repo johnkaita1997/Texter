@@ -128,7 +128,7 @@ dependencies {
 
     /*FOR ROOM DATABASE*/
     // Room components
-    def roomVersion = '2.4.2'
+    def roomVersion = '2.5.2'
     //noinspection GradleDependency
     implementation "androidx.room:room-runtime:$roomVersion"
     kapt "androidx.room:room-compiler:$roomVersion"

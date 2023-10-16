@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.Transaction
 
 @Database(entities = [SmsDetail::class], version = 1)
 abstract class RoomDb : RoomDatabase() {
@@ -40,9 +41,9 @@ interface SmsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSmsDetail(smsDetail: SmsDetail): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBatch(objects: List<SmsDetail>)
-
 
 
     @Query("SELECT * FROM smsdetail")
@@ -78,8 +79,12 @@ interface SmsDao {
     @Query("SELECT COUNT(*) FROM smsdetail")
     suspend fun getTotalSmsDetailCount(): Int
 
-    @Query("SELECT COUNT(*) FROM smsdetail WHERE state = 'draft'")
+    @Query("SELECT COUNT(*) FROM smsdetail WHERE state = 'Draft'")
     suspend fun getDraftSmsCount(): Int
+
+
+    @Query("DELETE FROM smsdetail WHERE status LIKE 'Delivered -%' OR status LIKE 'Sent -%'")
+    suspend fun deleteMessagesWithPattern()
 
 
 }

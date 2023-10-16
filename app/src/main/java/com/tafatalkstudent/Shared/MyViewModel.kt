@@ -483,6 +483,29 @@ class MyViewModel
     }
 
 
+    suspend fun insertBatchWithRetry(listOfSmsDetail: List<SmsDetail>, activity: Activity) {
+        var success = false
+
+        while (!success) {
+            runCatching {
+                val database = RoomDb(activity).getSmsDao()
+                database.insertBatch(listOfSmsDetail)
+                // If the code reaches here, the transaction was successful
+                success = true
+            }.onFailure {
+                // Handle the exception or log the error
+                success = false
+                val message =  it.message ?: "Unknown error occurred"
+                Log.d("FailedPut-", "initall: Failed inserting batch ${it.message}")
+                // Optionally, you can introduce a delay before retrying
+                delay(500L)
+            }
+        }
+
+    }
+
+
+
     suspend fun insertSmsDetailIgnore(smsDetail: SmsDetail, activity: Activity): UserFineDetails {
         var theresponse = UserFineDetails()
         runCatching {
@@ -534,15 +557,27 @@ class MyViewModel
         val normalizedPhoneNumber = normalizePhoneNumber(phoneNumber) // Normalize the phone number
         val database = RoomDb(activity).getSmsDao()
 
-        var fullList: List<SmsDetail> = listOf()
-
-        // Retrieve messages for both formats
         val smsListOne = database.getMessagesByPhoneNumber(phoneNumber)
         val smsListTwo = database.getMessagesByPhoneNumber(normalizedPhoneNumber)
-        Log.d("phonenumber-------", "initall: normalizedphonenumber ---- $normalizedPhoneNumber, phone number ----- ${phoneNumber}")
-        fullList = (smsListOne + smsListTwo).sortedBy { it.timestamp } as MutableList<SmsDetail>
 
-        return fullList
+        return when {
+            smsListOne.isNotEmpty() && smsListTwo.isNotEmpty() -> {
+                // Both lists have elements, concatenate them and return the sorted list
+                (smsListOne + smsListTwo).sortedBy { it.timestamp }
+            }
+            smsListOne.isNotEmpty() -> {
+                // Only smsListOne has elements, return it
+                smsListOne.sortedBy { it.timestamp }
+            }
+            smsListTwo.isNotEmpty() -> {
+                // Only smsListTwo has elements, return it
+                smsListTwo.sortedBy { it.timestamp }
+            }
+            else -> {
+                // Both lists are empty, return an empty list
+                emptyList()
+            }
+        }
     }
 
 
@@ -593,6 +628,11 @@ class MyViewModel
             val database = RoomDb(activity).getSmsDao()
             database.getDraftSmsCount()
         }
+    }
+
+    suspend fun deleteMessagesWithPattern(activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.deleteMessagesWithPattern()
     }
 
 

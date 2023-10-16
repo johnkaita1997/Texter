@@ -17,6 +17,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.Shared.Constants.mainScope
@@ -26,6 +27,7 @@ import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsDetailBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -72,13 +74,12 @@ class SmsDetailActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
 
-        threadScope.launch {
+        lifecycleScope.launch {
 
             val oldphoneNumberMessageList = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity) }.await()
             val joinedlist: List<SmsDetail> = oldphoneNumberMessageList
 
             mainScope.launch {
-                showAlertDialog(joinedlist.size.toString())
                 adapter.setData(joinedlist)
                 val lastItemIndex = joinedlist.size - 1
                 recyclerView.scrollToPosition(lastItemIndex)
@@ -176,21 +177,29 @@ class SmsDetailActivity : AppCompatActivity() {
         val sentReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (resultCode == RESULT_OK) {
-                    threadScope.launch {
+                    GlobalScope.launch {
                         val sentTimestamp = System.currentTimeMillis()
                         val _insert =
                             async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}"), this@SmsDetailActivity) }
                         val insert = _insert.await()
-                        updateItem(insert)
-                        enableButton()
+                        try {
+                            updateItem(insert)
+                            enableButton()
+                        } catch (e: Exception) {
+                            Log.d("-------", "initall: ")
+                        }
                         viewmodel.deleteMessageByTimestamp(Companion.timestamp, this@SmsDetailActivity)
                     }
                 } else {
-                    threadScope.launch {
+                    GlobalScope.launch {
                         val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed"), this@SmsDetailActivity) }
                         val insert = _insert.await()
-                        updateItem(insert)
-                        enableButton()
+                        try {
+                            updateItem(insert)
+                            enableButton()
+                        } catch (e: Exception) {
+                            Log.d("-------", "initall: ")
+                        }
                     }
                 }
             }
@@ -200,7 +209,7 @@ class SmsDetailActivity : AppCompatActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (resultCode == RESULT_OK) {
                     val deliveryTimestamp = System.currentTimeMillis()
-                    threadScope.launch {
+                    GlobalScope.launch {
                         val _insert = async {
                             viewmodel.insertSmsDetail(
                                 SmsDetail(message, phoneNumber, timestamp, "Delivered", 1, formattedTimestamp, "Delivered - ${deliveryTimestamp}"),
@@ -208,16 +217,24 @@ class SmsDetailActivity : AppCompatActivity() {
                             )
                         }
                         val insert = _insert.await()
-                        updateItem(insert)
-                        enableButton()
+                        try {
+                            //updateItem(insert)
+                            enableButton()
+                        } catch (e: Exception) {
+                            Log.d("-------", "initall: ")
+                        }
                         viewmodel.deleteMessageByTimestamp(Companion.timestamp, this@SmsDetailActivity)
                     }
                 } else {
-                    threadScope.launch {
+                    GlobalScope.launch {
                         val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Failed", 4, formattedTimestamp, "Failed"), this@SmsDetailActivity) }
                         val insert = _insert.await()
-                        updateItem(insert)
-                        enableButton()
+                        try {
+                            updateItem(insert)
+                            enableButton()
+                        } catch (e: Exception) {
+                            Log.d("-------", "initall: ")
+                        }
                     }
                 }
             }
@@ -246,7 +263,11 @@ class SmsDetailActivity : AppCompatActivity() {
 
     private fun updateItem(insert: SmsDetail) {
         mainScope.launch {
-            adapter.updateItem(insert)
+            try {
+                adapter.updateItem(insert, recyclerView)
+            } catch (e: Exception) {
+                Log.d("-------", "initall: ")
+            }
         }
     }
 
@@ -256,8 +277,6 @@ class SmsDetailActivity : AppCompatActivity() {
             binding.submitSMS.isEnabled = false
         }
     }
-
-
 
 
     @SuppressLint("MissingPermission")
