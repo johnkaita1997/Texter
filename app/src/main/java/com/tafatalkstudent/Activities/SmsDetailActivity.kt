@@ -105,7 +105,7 @@ class SmsDetailActivity : AppCompatActivity() {
                     }
                 } else {
                     threadScope.launch {
-                        delay(100)
+                        //delay(100)
                         viewmodel.insertSmsDetail(SmsDetail(newText, phoneNumber, timestamp, "Draft", 3, formattedTimestamp, "Unsent"), this@SmsDetailActivity)
                     }
                 }
@@ -264,7 +264,7 @@ class SmsDetailActivity : AppCompatActivity() {
     private fun updateItem(insert: SmsDetail) {
         mainScope.launch {
             try {
-                adapter.updateItem(insert, recyclerView)
+                adapter.updateItem(insert)
             } catch (e: Exception) {
                 Log.d("-------", "initall: ")
             }
