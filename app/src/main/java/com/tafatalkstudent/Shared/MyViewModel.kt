@@ -553,7 +553,7 @@ class MyViewModel
     }*/
 
 
-    suspend fun getMessagesByPhoneNumber(phoneNumber: String, activity: Activity): List<SmsDetail> {
+    suspend fun getMessagesByPhoneNumber(phoneNumber: String, activity: Activity): MutableList<SmsDetail> {
         val normalizedPhoneNumber = normalizePhoneNumber(phoneNumber) // Normalize the phone number
         val database = RoomDb(activity).getSmsDao()
 
@@ -563,19 +563,19 @@ class MyViewModel
         return when {
             smsListOne.isNotEmpty() && smsListTwo.isNotEmpty() -> {
                 // Both lists have elements, concatenate them and return the sorted list
-                (smsListOne + smsListTwo).sortedBy { it.timestamp }
+                (smsListOne + smsListTwo).sortedBy { it.timestamp }.toMutableList()
             }
             smsListOne.isNotEmpty() -> {
                 // Only smsListOne has elements, return it
-                smsListOne.sortedBy { it.timestamp }
+                smsListOne.sortedBy { it.timestamp }.toMutableList()
             }
             smsListTwo.isNotEmpty() -> {
                 // Only smsListTwo has elements, return it
-                smsListTwo.sortedBy { it.timestamp }
+                smsListTwo.sortedBy { it.timestamp }.toMutableList()
             }
             else -> {
                 // Both lists are empty, return an empty list
-                emptyList()
+                mutableListOf<SmsDetail>()
             }
         }
     }
@@ -633,6 +633,26 @@ class MyViewModel
     suspend fun deleteMessagesWithPattern(activity: Activity) {
         val database = RoomDb(activity).getSmsDao()
         database.deleteMessagesWithPattern()
+    }
+
+
+    suspend fun getDraftMessage(activity: Activity): SmsDetail? {
+        val database = RoomDb(activity).getSmsDao()
+        return database.getDraftMessage()
+    }
+
+
+
+    // ViewModel method to insert active SIM card
+    suspend fun insertActiveSimCard(simCard: SimCard, activity: Activity): Long {
+        val database = RoomDb(activity).getSmsDao()
+        return database.insertActiveSimCard(simCard)
+    }
+
+    // ViewModel method to get active SIM card
+    suspend fun getActiveSimCard(activity: Activity): SimCard? {
+        val database = RoomDb(activity).getSmsDao()
+        return database.getActiveSimCard()
     }
 
 

@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FF5733" /> <!-- Background color for the rounded image -->
+    <corners android:radius="75dp" /> <!-- Adjust the radius to change the roundness of the image -->
+</shape>

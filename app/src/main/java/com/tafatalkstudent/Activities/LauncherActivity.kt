@@ -158,7 +158,6 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
                 dialog.dismiss()
                 finish()
             }).setNegativeButton("Dismis", { dialog, _ -> dialog.dismiss() }).show()
-
     }
 
 }

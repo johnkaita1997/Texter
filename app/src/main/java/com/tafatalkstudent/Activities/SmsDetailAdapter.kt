@@ -1,25 +1,26 @@
 package com.tafatalkstudent.Activities
 
+import android.R.attr.data
 import android.app.Activity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatEditText
 import androidx.cardview.widget.CardView
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.R
-import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.SmsDetail
-import kotlinx.coroutines.launch
 
 
-class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var smsMessages: List<SmsDetail>, var etMessage: AppCompatEditText) : RecyclerView.Adapter<SmsDetailAdapter.ViewHolder>() {
+class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var etMessage: EditText) : RecyclerView.Adapter<SmsDetailAdapter.ViewHolder>() {
 
     lateinit var view: View
+    var smsMessages: MutableList<SmsDetail> = mutableListOf()
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -38,65 +39,55 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var s
 
         val phoneNumber = sms.phoneNumber
 
-        if (sms.state == "Received") {
-            val theView = holder.itemView.findViewById<TextView>(R.id.receivedTextView)
-            theView.setText(sms.body)
-            holder.itemView.findViewById<CardView>(R.id.receivedcard).visibility = View.VISIBLE
-        }
+        if (sms.body!!.isNotEmpty()) {
 
-        if (sms.state == "Sent") {
-            val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
-            theView.setText(sms.body)
-            holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
-        }
-
-        if (sms.state == "Delivered") {
-            val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
-            theView.setText(sms.body)
-            holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
-        }
-
-
-        if (sms.state == "Draft") {
-            etMessage.setText(sms.body)
-            sms.timestamp?.let {
-                SmsDetailActivity.timestamp = it
+            if (sms.state == "Received") {
+                val theView = holder.itemView.findViewById<TextView>(R.id.receivedTextView)
+                theView.setText(sms.body)
+                holder.itemView.findViewById<CardView>(R.id.receivedcard).visibility = View.VISIBLE
+            } else if (sms.state == "Sent") {
+                val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
+                theView.setText(sms.body)
+                holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
+                theView.visibility = View.VISIBLE
+            } else if (sms.state == "Delivered") {
+                val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
+                theView.setText(sms.body)
+                holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
+                holder.itemView.findViewById<CardView>(R.id.sentTextView).visibility = View.VISIBLE
+            } else {
+                Log.d("messageDetail-------", "initall: $ - ${sms.state}")
+                holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.GONE
+                holder.itemView.findViewById<CardView>(R.id.receivedcard).visibility = View.GONE
             }
-            Log.d("Draft-------", "initall: Found a draft")
+
         }
-
-        Log.d("messageDetail-------", "initall: $ - ${sms.state}")
-
     }
 
-    override fun getItemViewType(position: Int): Int {
+    /*override fun getItemViewType(position: Int): Int {
         val sms = smsMessages[position]
         return sms.timestamp!!.toInt()
-    }
+    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
 
-    fun setData(newSmsMessages: List<SmsDetail>) {
-        val diffCallback = SmsDetailDiffCallback(smsMessages, newSmsMessages)
-        val diffResult = DiffUtil.calculateDiff(diffCallback)
-
-        smsMessages = newSmsMessages.toMutableList()
-        diffResult.dispatchUpdatesTo(this)
+    fun setData(newSmsMessages: MutableList<SmsDetail>) {
+        smsMessages = newSmsMessages
+        //notifyDataSetChanged()
     }
 
-    fun updateItem(updatedSmsDetail: SmsDetail) {
-        val thelist = smsMessages as MutableList<SmsDetail>
-        val oldList = ArrayList(thelist)
-        val updatedIndex = thelist.indexOfFirst { it.timestamp == updatedSmsDetail.timestamp }
-        if (updatedIndex != -1) {
-            thelist[updatedIndex] = updatedSmsDetail  // Update the item directly in the original list
-            val diffCallback = SmsDetailDiffCallback(oldList, thelist)
-            val diffResult = DiffUtil.calculateDiff(diffCallback)
-            diffResult.dispatchUpdatesTo(this)
+    fun updateItem(newItem: SmsDetail, recyclerView: RecyclerView) {
+        try {
+            smsMessages.add(newItem)
+            notifyItemInserted(smsMessages.size - 1)
+            recyclerView.scrollToPosition(smsMessages.size - 1)
+        } catch (e: Exception) {
+            Log.d("updateItem-------", "initall: AN EXCEPTION OCCURRED")
+            Log.d("updateItem-------", "initall: ${e}")
         }
-    }
 
+    }
 
 
 }
@@ -105,22 +96,3 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var s
 
 
 
-class SmsDetailDiffCallback(private val oldList: List<SmsDetail>, private val newList: List<SmsDetail>) : DiffUtil.Callback() {
-
-    override fun getOldListSize(): Int {
-        return oldList.size
-    }
-
-    override fun getNewListSize(): Int {
-        return newList.size
-    }
-
-    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition].timestamp == newList[newItemPosition].timestamp
-    }
-
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldList[oldItemPosition] == newList[newItemPosition]
-    }
-
-}

@@ -48,7 +48,7 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
-            android:windowSoftInputMode="adjustPan|stateHidden"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:name=".Activities.SmsDetailActivity"
             android:exported="false" />
         <activity

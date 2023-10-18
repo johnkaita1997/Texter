@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Shared
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
@@ -733,29 +734,28 @@ data class GetMobile(
 
 
 
-@Entity(primaryKeys = ["timestamp"])
+@Entity(indices = [Index(value = ["timestamp"])], primaryKeys = ["timestamp"])
 data class SmsDetail(
     val body: String?,
     val phoneNumber: String?,
-    val timestamp: Long?,
+    var timestamp: Long?,
     val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
     val type: Int?,  // Message type: 1 for received, 2 for sent
     val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
     val status: String?,  // Indicates whether the message has been read
+    val name: String?,  // Indicates whether the message has been read
+)
+
+
+@Entity
+data class SimCard(
+    @PrimaryKey
+    val id: Int? = 0,
+    val body: Int?,
 )
 
 
 
-@Entity(primaryKeys = ["timestamp"])
-data class NewSmsDetail(
-    val body: String?,
-    val phoneNumber: String?,
-    val timestamp: Long?,
-    val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
-    val type: Int?,  // Message type: 1 for received, 2 for sent
-    val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
-    val status: String?,  // Indicates whether the message has been read
-)
 
 
 

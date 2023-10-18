@@ -10,7 +10,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
 
-@Database(entities = [SmsDetail::class], version = 1)
+@Database(entities = [SmsDetail::class, SimCard::class], version = 1)
 abstract class RoomDb : RoomDatabase() {
 
     abstract fun getSmsDao(): SmsDao
@@ -55,7 +55,7 @@ interface SmsDao {
 
 
     @Query("SELECT * FROM smsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
-    suspend fun getMessagesByPhoneNumber(phoneNumber: String): List<SmsDetail>
+    suspend fun getMessagesByPhoneNumber(phoneNumber: String): MutableList<SmsDetail>
 
     @Query("SELECT * FROM smsdetail WHERE timestamp = :timestamp")
     suspend fun getSmsDetailByTimestamp(timestamp: Long): SmsDetail
@@ -85,6 +85,16 @@ interface SmsDao {
 
     @Query("DELETE FROM smsdetail WHERE status LIKE 'Delivered -%' OR status LIKE 'Sent -%'")
     suspend fun deleteMessagesWithPattern()
+
+    @Query("SELECT * FROM smsdetail WHERE state = 'Draft'")
+    suspend fun getDraftMessage(): SmsDetail?
+
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertActiveSimCard(simCard: SimCard): Long
+
+    @Query("SELECT * FROM smsdetail")
+    suspend fun getActiveSimCard(): SimCard
 
 
 }
