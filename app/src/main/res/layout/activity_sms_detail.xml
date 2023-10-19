@@ -9,28 +9,28 @@
     tools:context=".Activities.SmsDetailActivity">
 
     <LinearLayout
-        android:paddingBottom="1dp"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_alignParentTop="true"
+        android:orientation="horizontal"
+        android:paddingBottom="1dp">
 
 
         <RelativeLayout
-            android:layout_gravity="center"
-            android:visibility="visible"
             android:id="@+id/namedRL"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="visible">
 
             <ImageView
-                android:layout_gravity="center"
                 android:id="@+id/namedIv"
                 android:layout_width="45dp"
                 android:layout_height="50dp"
                 android:layout_centerInParent="true"
-                android:scaleType="centerCrop"
-                android:background="@drawable/rounded_background" />
+                android:layout_gravity="center"
+                android:background="@drawable/rounded_background"
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/namedTv"
@@ -43,12 +43,12 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_marginLeft="3dp"
-            android:layout_gravity="center"
-            android:visibility="gone"
             android:id="@+id/unnamedRL"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="3dp"
+            android:visibility="gone">
 
             <ImageView
                 android:id="@+id/roundedImageView"
@@ -60,22 +60,21 @@
                 android:scaleType="centerCrop" />
 
             <ImageView
-                android:src="@drawable/person"
                 android:id="@+id/unnamedTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:src="@drawable/person"
                 android:textColor="#FFFFFF" />
 
         </RelativeLayout>
 
 
-
         <LinearLayout
-            android:layout_weight="1.5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="1.5"
             android:orientation="vertical"
             android:paddingHorizontal="10dp">
 
@@ -91,7 +90,6 @@
                 android:textStyle="bold" />
 
 
-
         </LinearLayout>
 
 
@@ -99,75 +97,73 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:paddingTop="55dp"
         android:id="@+id/recyclerViewMessageDetails"
         android:layout_width="match_parent"
-        android:layout_above="@+id/bottonlayout"
-        android:layout_marginBottom="20dp"
         android:layout_height="match_parent"
-        android:layout_marginTop="0dp" />
+        android:layout_above="@+id/bottonlayout"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="55dp" />
 
     <LinearLayout
         android:id="@+id/bottonlayout"
-        android:layout_marginBottom="5dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dp"
         android:orientation="horizontal"
         android:weightSum="3">
 
 
-
-
-
         <EditText
             android:id="@+id/etMessage"
-            android:background="@drawable/rounded_edittext_background"
             style="@style/modifiedEditText"
-            android:layout_weight="2.0"
-            android:paddingHorizontal="17dp"
-            android:paddingVertical="10dp"
-            android:backgroundTint="#e6e6e6"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:minHeight="45dp"
+            android:layout_weight="2.0"
+            android:background="@drawable/rounded_edittext_background"
+            android:backgroundTint="#e6e6e6"
             android:editable="false"
             android:hint="Text Message"
+            android:inputType="textMultiLine"
             android:maxLines="5"
-            android:layout_height="wrap_content"
-            android:textSize="13dp"
-            android:inputType="textMultiLine"/>
-
-
+            android:minHeight="45dp"
+            android:paddingHorizontal="17dp"
+            android:paddingVertical="10dp"
+            android:textSize="13dp" />
 
 
         <RelativeLayout
-            android:paddingRight="10dp"
             android:id="@+id/simcardlayout"
-            android:layout_weight="0.5"
-            android:visibility="visible"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="2dp"
+            android:layout_weight="0.5"
+            android:paddingRight="10dp"
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/simCard"
                 android:layout_width="70dp"
                 android:layout_height="45dp"
                 android:layout_centerInParent="true"
+                android:layout_marginBottom="5dp"
                 android:background="@drawable/simcard"
                 android:backgroundTint="#808080"
                 android:scaleType="centerCrop" />
 
 
             <TextView
-                android:paddingVertical="2dp"
-                android:layout_marginRight="12dp"
                 android:id="@+id/simCardText"
                 android:layout_width="28dp"
                 android:layout_height="35dp"
-                android:text="1"
                 android:layout_marginLeft="24dp"
+                android:layout_marginRight="12dp"
                 android:backgroundTint="@color/white"
+                android:paddingVertical="2dp"
+                android:text="1"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 
@@ -175,16 +171,14 @@
         </RelativeLayout>
 
 
-
-
-
         <RelativeLayout
             android:id="@+id/submitLayout"
-            android:layout_weight="0.5"
-            android:layout_marginHorizontal="4dp"
-            android:visibility="visible"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="0.5"
+            android:visibility="visible">
 
             <ImageView
                 android:layout_width="70dp"
@@ -196,16 +190,52 @@
 
 
             <Button
-                android:layout_marginRight="12dp"
                 android:id="@+id/submitSMS"
                 android:layout_width="28dp"
                 android:layout_height="25dp"
-                android:layout_weight="1.5"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
                 android:layout_marginLeft="14dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="12dp"
+                android:layout_weight="1.5"
                 android:background="@drawable/baseline_send_24"
                 android:backgroundTint="@color/white"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/spinkitLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="4dp"
+            android:layout_marginTop="3dp"
+            android:layout_weight="0.5"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="45dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/rounded_background"
+                android:backgroundTint="@color/black"
+                android:scaleType="centerCrop" />
+
+
+            <com.github.ybq.android.spinkit.SpinKitView
+                android:id="@+id/spinkit"
+                android:layout_width="28dp"
+                android:layout_height="25dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginRight="12dp"
+                android:layout_weight="1.5"
+                style="@style/SpinKitView.Large.Circle"
+                android:backgroundTint="@color/white"
+                android:gravity="center"
                 android:textAllCaps="false"
                 android:textColor="@color/white" />
 

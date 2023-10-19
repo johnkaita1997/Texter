@@ -3,9 +3,9 @@ package com.tafatalkstudent.Shared
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.*
 import com.tafatalkstudent.Activities.LauncherActivity
-import com.tafatalkstudent.Activities.TestActivity
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,20 +26,8 @@ class MyViewModel
     @Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context
 ) : ViewModel() {
 
-    val _userfinedetails = MutableLiveData<UserFineDetails>()
-    val userfinedetails: LiveData<UserFineDetails?> get() = _userfinedetails
-
-    val _studentloggedin = MutableLiveData<GetStudentResult>()
-    val studentloggedin: LiveData<GetStudentResult?> get() = _studentloggedin
-
-    val _constants = MutableLiveData<GetConstantsResult>()
-    val constants: LiveData<GetConstantsResult?> get() = _constants
-
     val _isParentAccountActive = MutableLiveData<Boolean?>()
     val isParentAccountActive: LiveData<Boolean?> get() = _isParentAccountActive
-
-    val _contactmodelofloggedinuser = MutableLiveData<GetContactModelOfLoggedInUser>()
-    val contactmodelofloggedinuser: LiveData<GetContactModelOfLoggedInUser?> get() = _contactmodelofloggedinuser
 
     val _bothNames = MutableLiveData<String>()
     val bothNames: LiveData<String> get() = _bothNames
@@ -49,9 +37,6 @@ class MyViewModel
 
     val _getTotalNumberofReceipts = MutableLiveData<String>()
     val getTotalNumberofReceipts: LiveData<String> get() = _getTotalNumberofReceipts
-
-    val _listRentals = MutableLiveData<MutableList<RentDetail>>()
-    val listRentals: LiveData<MutableList<RentDetail>> get() = _listRentals
 
 
     fun Context.coroutineexception(activity: Activity): CoroutineContext {
@@ -126,182 +111,6 @@ class MyViewModel
 
     }
 
-    suspend fun getFineUserDetails(activity: Activity): UserFineDetails {
-        var myuserfinedetails = UserFineDetails()
-        runCatching {
-            val response = api.getuserfinedetails(activity.getAuthDetails().access)
-            if (response.code() == 401) {
-                SessionManager(activity).logout()
-                activity.goToActivity(activity, LauncherActivity::class.java)
-                return@runCatching
-            } else if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                myuserfinedetails = response.body()!!
-                _userfinedetails.postValue(myuserfinedetails)
-                val isactive = myuserfinedetails.get(0)?.is_active
-                _isParentAccountActive.postValue(isactive)
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getFineUserDetails()", activity)
-        }
-        return myuserfinedetails
-    }
-
-
-    suspend fun getstudentlist(userid: String, activity: Activity): GetStudentResult {
-        var myuserfinedetails = GetStudentResult()
-        runCatching {
-            val response = api.getstudentlist(activity.getAuthDetails().access, userid)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                myuserfinedetails = response.body()!!
-                _studentloggedin.postValue(myuserfinedetails)
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getstudentlist()", activity)
-        }
-        return myuserfinedetails
-    }
-
-
-    suspend fun createCallLog(
-        school: String,
-        createCallLog: CreateCallLog,
-        studentid: Int,
-        newstudenttokenbalance: Float?,
-        userid: String,
-        mobileid: Int?,
-        callminutesconsumed: Float,
-        tokensused: Float,
-        activity: Activity
-    ) {
-        runCatching {
-            val response = api.createCallLog(activity.getAuthDetails().access, createCallLog)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-//                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                getStudentDetail(studentid, newstudenttokenbalance!!, activity) //This method updates the token balance
-                getstudentlist(userid, activity)
-                getFineUserDetails(activity)
-                getConstantResults(school, activity)
-                if (mobileid != null) {
-                    updateMobileMinutesAndToken(mobileid, UpdateMobileBody(callminutesconsumed, tokensused), activity)
-                } else {
-                    Log.d("-------", "initall: Found mobile to be null")
-                }
-            }
-        }.onFailure {
-//            networkResponseFailure(it, null)
-        }
-    }
-
-
-    suspend fun getConstantResults(school: String, activity: Activity): GetConstantsResult {
-        var theresult = GetConstantsResult()
-        runCatching {
-            val response = api.getConstants(school)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                theresult = response.body()!!
-                _constants.postValue(theresult)
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getConstantResults()", activity)
-        }
-        return theresult
-    }
-
-
-    suspend fun getStudentDetail(studentid: Int, tokenbalance: Float, activity: Activity) {
-        runCatching {
-            val response = api.studentDetail(studentid, UpdateTokenBalanceObject(tokenbalance))
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-//                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-//                    activity.showAlertDialog(response.body()?.details.toString())
-                }
-            }
-        }.onFailure {
-//            networkResponseFailure(it, null)
-        }
-    }
-
-
-    suspend fun updateMobileMinutesAndToken(mobileid: Int, updatemobilebody: UpdateMobileBody, activity: Activity) {
-        runCatching {
-            val response = api.getMobiles(mobileid, updatemobilebody)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-//                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-//                    activity.showAlertDialog(response.body()?.details.toString())
-                }
-            }
-        }.onFailure {
-//            networkResponseFailure(it, null)
-        }
-    }
-
-
-    suspend fun getUserWithNumber(mobilecalled: String, activity: Activity): UserFineDetails {
-        var theresponse = UserFineDetails()
-        runCatching {
-            val response = api.getUserWithNumber(activity.getAuthDetails().access, mobilecalled)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-                    theresponse = response.body()!!
-//                    activity.showAlertDialog(response.body()?.details.toString())
-                }
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getUserWithNumber()", activity)
-        }
-        return theresponse
-    }
-
-
-    suspend fun getSchoolDetails(schoolid: String, activity: Activity): SchoolTwo {
-        var theresponse = SchoolTwo()
-        runCatching {
-            val response = api.getSchoolDetails(schoolid)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-                    theresponse = response.body()!!
-                }
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getSchoolDetails()", activity)
-        }
-        return theresponse
-    }
 
     suspend fun getStandingTokenForSchool(schoolid: String, activity: Activity): Double {
         var theresponse = 0.0
@@ -343,122 +152,11 @@ class MyViewModel
         return theresponse
     }
 
-    suspend fun getGlobalSettings(activity: Activity): GetGlobalSettingsItem {
-        var theresponse = GetGlobalSettings()
-        runCatching {
-            val response = api.getGlobalSettings()
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-                    theresponse = response.body()!!
-                }
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getMobileId()", activity)
-        }
-        return theresponse.get(0)!!
-    }
-
-    suspend fun getDeviceBalance(mobileNumber: String, activity: Activity): GetDeviceBalance {
-        var theresponse = GetDeviceBalance(null, null)
-        runCatching {
-            val response = api.getDeviceBalance(mobileNumber)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-                    theresponse = response.body()!!
-                }
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getMobileId()", activity)
-        }
-        return theresponse
-    }
-
-    suspend fun getMobile(mobileid: String, activity: Activity): GetMobile {
-        var theresponse = GetMobile(null, null, null, null, null, null, null, null)
-        runCatching {
-            val response = api.getMobile(mobileid)
-            if (!response.isSuccessful) {
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-                withContext(Dispatchers.Main) {
-                    activity.dismissProgress()
-                    theresponse = response.body()!!
-                }
-            }
-        }.onFailure {
-            networkResponseFailure(it, null, "getDeviceBalance()", activity)
-        }
-        return theresponse
-    }
-
-
     private fun saveLoginSessionToStudentId(studentid: Int, activity: Activity) {
         /*val login = Login(studentId = studentid.toString(), loginTimestamp = System.currentTimeMillis(), logoutTimestamp = null)
         CoroutineScope(Dispatchers.IO).launch() {
             val database = RoomDb(activity).loginDao().insert(login)
         }*/
-    }
-
-
-    suspend fun loginuser(email: String, password: String, mydialog: SpotsDialog?, activity: Activity) {
-
-        runCatching {
-
-            val response = api.login(LoginBody(email, password))
-
-            if (!response.isSuccessful) {
-                mainScope.launch { activity.dismissProgress() }
-                val errorBody = response.errorBody()?.string()
-                handleResponse(errorBody, null, activity)
-                return@runCatching
-            } else {
-
-                withContext(Dispatchers.Main) {
-
-                    val access = response.body()?.access.toString()
-                    val refresh = response.body()?.refresh.toString()
-
-                    val map = mutableMapOf<String, String>()
-                    map["access"] = access
-                    map["refresh"] = refresh
-
-                    SessionManager(activity).savejwtToken(access, refresh)
-                    SessionManager(activity).saveUp(email, password)
-                    Log.d("-------", "initall: $email,  $password")
-
-                    val _userid = async { getFineUserDetails(activity) }
-                    val userid = _userid.await().get(0)!!.id
-                    val _studentind = async { getstudentlist(userid, activity) }
-                    val studentid = _studentind.await().get(0).id
-                    saveLoginSessionToStudentId(studentid, activity)
-
-                    withContext(Dispatchers.Main) {
-                        activity.dismissProgress()
-                        activity.makeLongToast("Login was successful")
-                        activity.goToActivity(activity, TestActivity::class.java)
-                    }
-
-                }
-
-            }
-
-        }.onFailure {
-            mainScope.launch { activity.dismissProgress() }
-            networkResponseFailure(it, mydialog, "loginuser()", activity)
-        }
-
     }
 
 
@@ -469,19 +167,6 @@ class MyViewModel
         Log.d("Mychek-------", "initall: checking for ${insertedId}")
         return database.getSmsDetailByTimestamp(insertedId.toLong()) // Assuming you have a function to retrieve SmsDetail by ID
     }
-
-
-    suspend fun insertBatch(listOfSmsDetail: List<SmsDetail>, activity: Activity): UserFineDetails {
-        val theresponse = UserFineDetails()
-        runCatching {
-            val database = RoomDb(activity).getSmsDao()
-            database.insertBatch(listOfSmsDetail)
-        }.onFailure {
-            //networkResponseFailure(it, null, "insertSmsDetail()", activity)
-        }
-        return theresponse
-    }
-
 
     suspend fun insertBatchWithRetry(listOfSmsDetail: List<SmsDetail>, activity: Activity) {
         var success = false
@@ -495,7 +180,7 @@ class MyViewModel
             }.onFailure {
                 // Handle the exception or log the error
                 success = false
-                val message =  it.message ?: "Unknown error occurred"
+                val message = it.message ?: "Unknown error occurred"
                 Log.d("FailedPut-", "initall: Failed inserting batch ${it.message}")
                 // Optionally, you can introduce a delay before retrying
                 delay(500L)
@@ -505,22 +190,7 @@ class MyViewModel
     }
 
 
-
-    suspend fun insertSmsDetailIgnore(smsDetail: SmsDetail, activity: Activity): UserFineDetails {
-        var theresponse = UserFineDetails()
-        runCatching {
-            val database = RoomDb(activity).getSmsDao()
-            database.insertSmsDetailIgnore(smsDetail)
-            Log.d("insertSmsDetail-------", "initall: ${smsDetail}")
-        }.onFailure {
-            //networkResponseFailure(it, null, "insertSmsDetail()", activity)
-        }
-        return theresponse
-    }
-
-
     suspend fun getLatestSmsList(activity: Activity): List<SmsDetail> {
-
 
         val database = RoomDb(activity).getSmsDao()
         val smslist = database.getLatestSmsList()
@@ -565,14 +235,17 @@ class MyViewModel
                 // Both lists have elements, concatenate them and return the sorted list
                 (smsListOne + smsListTwo).sortedBy { it.timestamp }.toMutableList()
             }
+
             smsListOne.isNotEmpty() -> {
                 // Only smsListOne has elements, return it
                 smsListOne.sortedBy { it.timestamp }.toMutableList()
             }
+
             smsListTwo.isNotEmpty() -> {
                 // Only smsListTwo has elements, return it
                 smsListTwo.sortedBy { it.timestamp }.toMutableList()
             }
+
             else -> {
                 // Both lists are empty, return an empty list
                 mutableListOf<SmsDetail>()
@@ -616,14 +289,14 @@ class MyViewModel
     }
 
 
-    suspend fun getTotalSmsDetailCount(activity: Activity) : Int {
+    suspend fun getTotalSmsDetailCount(activity: Activity): Int {
         return withContext(Dispatchers.IO) {
             val database = RoomDb(activity).getSmsDao()
             database.getTotalSmsDetailCount()
         }
     }
 
-    suspend fun getDraftSmsCount(activity: Activity) : Int{
+    suspend fun getDraftSmsCount(activity: Activity): Int {
         return withContext(Dispatchers.IO) {
             val database = RoomDb(activity).getSmsDao()
             database.getDraftSmsCount()
@@ -642,7 +315,6 @@ class MyViewModel
     }
 
 
-
     // ViewModel method to insert active SIM card
     suspend fun insertActiveSimCard(simCard: SimCard, activity: Activity): Long {
         val database = RoomDb(activity).getSmsDao()
@@ -656,7 +328,7 @@ class MyViewModel
     }
 
 
-    suspend fun markMessagesAsRead(phoneNumber: String, activity:Activity): Boolean {
+    suspend fun markMessagesAsRead(phoneNumber: String, activity: Activity): Boolean {
         return try {
             val database = RoomDb(activity).getSmsDao()
             database.markMessagesAsRead(phoneNumber)
@@ -665,6 +337,52 @@ class MyViewModel
             // Handle exceptions if needed
             false
         }
+    }
+
+
+    suspend fun updateMembers(groupId: Long, membersToAdd: List<Contact>, membersToRemove: List<Contact>, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        val group = database.getGroupById(groupId)
+        val existingMembers = group.members.toMutableList()
+
+        // Add new members
+        for (newMember in membersToAdd) {
+            if (!existingMembers.contains(newMember)) {
+                existingMembers.add(newMember)
+            }
+        }
+
+        // Remove members
+        existingMembers.removeAll(membersToRemove)
+
+        val updatedGroup = group.copy(members = existingMembers)
+        database.updateGroup(updatedGroup)
+    }
+
+
+    suspend fun insertGroup(group: Groups, activity: Activity): Boolean {
+        val database = RoomDb(activity).getSmsDao()
+        return try {
+            database.insertGroup(group)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun updateGroup(group: Groups, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.updateGroup(group)
+    }
+
+    suspend fun deleteGroup(groupId: Long, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.deleteGroupById(groupId)
+    }
+
+    suspend fun getAllGroups(activity: Activity): MutableList<Groups> {
+        val database = RoomDb(activity).getSmsDao()
+        return database.getAllGroups()
     }
 
 

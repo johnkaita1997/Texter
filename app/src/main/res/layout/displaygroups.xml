@@ -2,7 +2,6 @@
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentCardViewLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -30,33 +29,7 @@
                 android:layout_height="35dp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/rounded_background"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/namedTv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="C"
-                android:textColor="#FFFFFF"
-                android:textSize="20dp" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/unnamedRL"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/roundedImageView"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_centerInParent="true"
-                android:background="@drawable/rounded_background"
-                android:backgroundTint="@color/blue"
+                android:backgroundTint="@color/ardhisasacolorPrimary"
                 android:scaleType="centerCrop" />
 
             <ImageView
@@ -69,6 +42,7 @@
 
         </RelativeLayout>
 
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,16 +53,18 @@
             android:paddingHorizontal="10dp">
 
             <TextView
-                android:id="@+id/contactName"
+                android:id="@+id/groupNameTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_weight="1"
                 android:text="John Kaita"
                 android:textColor="@color/black"
                 android:textSize="15dp" />
 
             <TextView
+                android:visibility="gone"
                 android:id="@+id/messageBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

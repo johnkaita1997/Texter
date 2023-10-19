@@ -32,6 +32,7 @@ import com.tafatalkstudent.Shared.SimCard
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.makeLongToast
 import com.tafatalkstudent.Shared.showAlertDialog
+import com.tafatalkstudent.Shared.showLongSnackbar
 import com.tafatalkstudent.databinding.ActivitySmsDetailBinding
 import com.tafatalkstudent.databinding.BottomsheetBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +50,7 @@ class SmsDetailActivity : AppCompatActivity() {
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var activeSubscriptionInfoList: MutableList<SubscriptionInfo>
     private lateinit var subscriptionManager: SubscriptionManager
+
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
     @SuppressLint("MissingPermission")
 
@@ -68,7 +70,7 @@ class SmsDetailActivity : AppCompatActivity() {
     private lateinit var isNumericOnly: String
     private lateinit var colorCode: String
     private lateinit var upperCasedName: String
-    private lateinit var receivedTimestamp : String
+    private lateinit var receivedTimestamp: String
 
     companion object {
         var timestamp: Long = 0
@@ -128,7 +130,7 @@ class SmsDetailActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this@SmsDetailActivity)
         /*val viewPool = RecyclerView.RecycledViewPool()
         recyclerView.setRecycledViewPool(viewPool)*/
-        recyclerView.setItemViewCacheSize(1000)
+        recyclerView.setItemViewCacheSize(100)
         recyclerView.adapter = adapter
 
         populateMessageRecyclerView()
@@ -141,21 +143,49 @@ class SmsDetailActivity : AppCompatActivity() {
 
     private fun makeIsReadToTrue(phoneNumber: String) {
         threadScope.launch {
-            viewmodel.markMessagesAsRead(phoneNumber,this@SmsDetailActivity)
+
+            val formattedNumbers = mutableListOf<String>()
+            val cleanedPhoneNumber = phoneNumber.replace("[\\s-]".toRegex(), "")
+            formattedNumbers.add(cleanedPhoneNumber)
+            if (cleanedPhoneNumber.startsWith("0")) {
+                val formattedNumber = "254${cleanedPhoneNumber.substring(1)}"
+                formattedNumbers.add(formattedNumber)
+                if (formattedNumber.startsWith("+254")) {
+                    formattedNumbers.add(formattedNumber.substring(1))
+                } else {
+                    formattedNumbers.add("+${formattedNumber}")
+                }
+            } else if (cleanedPhoneNumber.startsWith("+254")) {
+                val formattedNumber = cleanedPhoneNumber.substring(1)
+                formattedNumbers.add("0${formattedNumber}")
+                formattedNumbers.add("+${formattedNumber}")
+                formattedNumbers.add(formattedNumber)
+            } else if (cleanedPhoneNumber.startsWith("254")) {
+                val formattedNumber = "+${cleanedPhoneNumber}"
+                formattedNumbers.add("0${cleanedPhoneNumber.substring(3)}")
+                formattedNumbers.add(formattedNumber)
+                formattedNumbers.add(cleanedPhoneNumber)
+            }
+
+            formattedNumbers.forEach {
+                Log.d("formattedNumbers-------", "initall: $formattedNumbers")
+                viewmodel.markMessagesAsRead(it,this@SmsDetailActivity)
+            }
         }
+
     }
 
     private fun setTextWithActiveSimCardNumber() {
         threadScope.launch {
             val _activeSimCard = async { viewmodel.getActiveSimCard(this@SmsDetailActivity) }
             val activeSimCard = _activeSimCard.await()
-             binding.simCardText.setText(activeSimCard!!.body.toString())
+            binding.simCardText.setText(activeSimCard!!.body.toString())
         }
     }
 
     private fun setActiveSimCard(simNumber: Int) {
         threadScope.launch {
-            val insert = async {  viewmodel.insertActiveSimCard(SimCard(0, simNumber), this@SmsDetailActivity) }
+            val insert = async { viewmodel.insertActiveSimCard(SimCard(0, simNumber), this@SmsDetailActivity) }
             insert.await()
             mainScope.launch {
                 binding.simCardText.setText(simNumber)
@@ -279,9 +309,9 @@ class SmsDetailActivity : AppCompatActivity() {
 
                         Log.d("BROAD-------", "initall: SENT BROAD")
                         try {
+                            context?.unregisterReceiver(sentReceiver)
                             updateItem(insert)
                             enableButton()
-                            context?.unregisterReceiver(sentReceiver)
                             //context?.unregisterReceiver(deliveredReceiver)
                         } catch (e: Exception) {
                             context?.unregisterReceiver(sentReceiver)
@@ -291,12 +321,13 @@ class SmsDetailActivity : AppCompatActivity() {
                     }
                 } else {
                     GlobalScope.launch {
-                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed", name, true), this@SmsDetailActivity) }
-                        val insert = _insert.await()
+                        /*val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed", name, true), this@SmsDetailActivity) }
+                        val insert = _insert.await()*/
                         try {
-                            updateItem(insert)
-                            enableButton()
                             context?.unregisterReceiver(sentReceiver)
+                            /*updateItem(insert)*/
+                            enableButton()
+                            showLongSnackbar("Failed! Please try again!", binding.root)
                         } catch (e: Exception) {
                             Log.d("-------", "initall: ")
                             context?.unregisterReceiver(sentReceiver)
@@ -381,6 +412,7 @@ class SmsDetailActivity : AppCompatActivity() {
             binding.etMessage.setText("")
             binding.submitSMS.isVisible = false
             binding.submitLayout.isVisible = false
+            binding.spinkitLayout.visibility = View.VISIBLE
         }
     }
 
@@ -434,6 +466,7 @@ class SmsDetailActivity : AppCompatActivity() {
         mainScope.launch {
             binding.submitSMS.isVisible = true
             binding.submitLayout.isVisible = true
+            binding.spinkitLayout.visibility = View.GONE
         }
     }
 

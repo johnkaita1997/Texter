@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="10dp"
+    android:layout_marginVertical="20dp"
+    tools:context=".Activities.SmsActivity">
+
+    <TextView
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View or Create A New Group"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="18dp" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerviewGroups"
+        android:layout_marginTop="60dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+    <Button
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="20dp"
+        android:id="@+id/createNewGroupButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Create New Group"
+        android:background="@color/black"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
+
+</RelativeLayout>

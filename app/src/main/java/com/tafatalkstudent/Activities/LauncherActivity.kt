@@ -68,7 +68,7 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
         CoroutineScope(Dispatchers.IO).launch() {
             delay(100)
             mainScope.launch {
-                goToActivity(this@LauncherActivity, SmsActivity::class.java)
+                goToActivity(this@LauncherActivity, LandingPage::class.java)
             }
         }
 
@@ -95,10 +95,10 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
                     else -> password
                 }
 
-                updatedemail = updatedemail + "@gmail.com"
+                /*updatedemail = updatedemail + "@gmail.com"
                 CoroutineScope(Dispatchers.IO).launch() {
                     viewmodel.loginuser(updatedemail, updatedpassword, null, this@LauncherActivity)
-                }
+                }*/
             }
         }
     }

@@ -16,6 +16,7 @@ import android.view.*
 import android.widget.*
 import androidx.annotation.RequiresApi
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
+import com.google.android.material.snackbar.Snackbar
 import com.tafatalkstudent.Activities.LauncherActivity
 import com.tafatalkstudent.R
 import com.tafatalkstudent.Shared.Constants.datemap
@@ -116,6 +117,17 @@ fun Context.showAlertDialog(message: String) {
         alert.show()
         isDialogShown = true
     }
+}
+
+
+
+fun showShortSnackbar(message: String, rootView:View) {
+    Snackbar.make(rootView, message, Snackbar.LENGTH_SHORT).show()
+}
+
+
+fun showLongSnackbar(message: String, rootView:View) {
+    Snackbar.make(rootView, message, Snackbar.LENGTH_LONG).show()
 }
 
 
@@ -247,14 +259,6 @@ fun Context.dismiss(mydialog: SpotsDialog) {
 fun Context.showDialog(mydialog: SpotsDialog, message: String) {
     mydialog.setMessage(message)
     mydialog.show()
-}
-
-
-
-fun Context.getAuthDetails(): MyAuth {
-    val access = SessionManager(this).fetchAccessToken()
-    val refresh = SessionManager(this).fetchRefreshToken()
-    return MyAuth(access, refresh)
 }
 
 

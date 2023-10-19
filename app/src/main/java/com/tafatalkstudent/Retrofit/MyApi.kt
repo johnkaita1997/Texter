@@ -42,56 +42,7 @@ interface MyApi {
     }
 
 
-    @POST("api/v1/users/login")
-    suspend fun login(@Body loginbody: LoginBody): Response<SuccessLogin>
 
-    @GET("api/v1/users/userdetails")
-    suspend fun getuserfinedetails(@Header("Authorization") authorization: String?): Response<UserFineDetails?>
-
-    @GET("api/v1/students/list")
-    suspend fun getstudentlist(
-        @Header("Authorization") authorization: String?,
-        @Query("user") userid: String?,
-    ): Response<GetStudentResult?>
-
-    @POST("api/v1/calls/create")
-    suspend fun createCallLog(
-        @Header("Authorization") authorization: String?,
-        @Body createCallLog: CreateCallLog
-    ): Response<Success?>
-
-
-    @GET("api/v1/constants/list")
-    suspend fun getConstants(
-        @Query("school") school: String
-    ): Response<GetConstantsResult?>
-
-
-    @PATCH("api/v1/students/{id}")
-    suspend fun studentDetail(
-        @Path("id") id: Int,
-        @Body updateTokenBalanceObject: UpdateTokenBalanceObject
-    ): Response<Success?>
-
-
-    @PUT("api/v1/mobiles/{id}")
-    suspend fun getMobiles(
-        @Path("id") id: Int,
-        @Body updateMobileBody: UpdateMobileBody
-    ): Response<Success?>
-
-
-    @GET("api/v1/users/list")
-    suspend fun getUserWithNumber(
-        @Header("Authorization") authorization: String?,
-        @Query("mobile") mobile: String
-    ): Response<UserFineDetails?>
-
-
-    @GET("api/v1/schools/{id}")
-    suspend fun getSchoolDetails(
-        @Path("id") id: String,
-    ): Response<SchoolTwo?>
 
     @GET("api/v1/schools/standingtoken/{id}")
     suspend fun getStandingTokenForSchool(
@@ -103,18 +54,6 @@ interface MyApi {
         @Path("id") id: String,
     ): Response<String?>
 
-    @GET("api/v1/constants/global/list")
-    suspend fun getGlobalSettings(): Response<GetGlobalSettings?>
-
-    @GET("api/v1/mobiles/balance/{id}")
-    suspend fun getDeviceBalance(
-        @Path("id") id: String,
-    ): Response<GetDeviceBalance?>
-
-    @GET("api/v1/mobiles/{id}")
-    suspend fun getMobile(
-        @Path("id") id: String,
-    ): Response<GetMobile?>
 
 
 }

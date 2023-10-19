@@ -3,14 +3,18 @@ package com.tafatalkstudent.Shared;
 import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
+import androidx.room.TypeConverters
+import androidx.room.Update
 
-@Database(entities = [SmsDetail::class, SimCard::class], version = 1)
+@TypeConverters(Converters::class)
+@Database(entities = [SmsDetail::class, SimCard::class, Groups::class], version = 1)
 abstract class RoomDb : RoomDatabase() {
 
     abstract fun getSmsDao(): SmsDao
@@ -98,6 +102,27 @@ interface SmsDao {
 
     @Query("UPDATE smsdetail SET isRead = 1 WHERE phoneNumber = :phoneNumber")
     suspend fun markMessagesAsRead(phoneNumber: String)
+
+
+
+    @Update
+    suspend fun updateGroup(group: Groups)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGroup(groupId: Groups) : Long
+
+    // Delete a group by ID
+    @Query("DELETE FROM groups WHERE id = :groupId")
+    suspend fun deleteGroupById(groupId: Long)
+
+    @Query("SELECT * FROM groups")
+    fun getAllGroups(): MutableList<Groups>
+
+    // Fetch a group by ID
+    @Query("SELECT * FROM groups WHERE id = :groupId")
+    suspend fun getGroupById(groupId: Long): Groups
+
+
 
 }
 

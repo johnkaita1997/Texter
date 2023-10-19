@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:padding="10dp"
+        android:id="@+id/linearNewTask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorWhite"
+        android:orientation="vertical"
+        android:paddingHorizontal="0dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="Enter Group Information"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Grop Name*"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+
+        <EditText
+            android:id="@+id/groupNameEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/edit_text_bc"
+            android:hint="Name ..."
+            android:singleLine="true"
+            android:textSize="15dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Description*"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp" />
+
+
+        <EditText
+            android:id="@+id/groupDescriptionEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/edit_text_bc"
+            android:gravity="top"
+            android:hint="Description"
+            android:lines="5"
+            android:maxLines="10"
+            android:textSize="15dp" />
+
+
+        <Button
+            android:layout_marginTop="50dp"
+            android:id="@+id/addContactsBtn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|center"
+            android:layout_marginHorizontal="0dp"
+            android:background="@drawable/rounded_button"
+            android:gravity="center"
+            android:text="Add Contacts"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

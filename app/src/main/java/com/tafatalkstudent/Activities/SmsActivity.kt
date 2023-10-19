@@ -20,10 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.Constants.threadScope
+import com.tafatalkstudent.Shared.Contact
 import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.SimCard
 import com.tafatalkstudent.Shared.SmsDetail
+import com.tafatalkstudent.Shared.goToActivity_Unfinished
 import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -137,7 +139,6 @@ class SmsActivity : AppCompatActivity() {
                 val smsManager = SmsManager.getDefault()
                 smsManager.sendTextMessage(mobile, null, message, sentPI, deliveredPI)*/
 
-
         cdd = CustomLoadDialogClass(this@SmsActivity)
         cdd.setCanceledOnTouchOutside(false)
         cdd.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -145,7 +146,7 @@ class SmsActivity : AppCompatActivity() {
         adapter = ContactsAdapter(viewmodel, this@SmsActivity, mutableListOf(), mutableListOf())
         val recyclerView: RecyclerView = binding.recyclerviewContacts
         recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
-        recyclerView.setItemViewCacheSize(1000)
+        recyclerView.setItemViewCacheSize(10000)
         recyclerView.adapter = adapter
 
         threadScope.launch {
@@ -154,6 +155,7 @@ class SmsActivity : AppCompatActivity() {
 
 
     }
+
 
     private fun setUpActiveSimCardIfNotExisting() {
         threadScope.launch {
@@ -410,7 +412,9 @@ class SmsActivity : AppCompatActivity() {
                                         }
 
                                         threadScope.launch {
-                                            val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, false)
+                                            var isread  = false
+                                            isread = state == "Sent"
+                                            val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, isread)
                                             batchList.add(smsDetail)
                                             Log.d("herere-------", "initall: Here........................................")
                                         }

@@ -3,6 +3,9 @@ package com.tafatalkstudent.Activities
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +14,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.R
 import com.tafatalkstudent.Shared.*
@@ -21,7 +26,6 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 
-data class Contact(val name: String, val phoneNumber: String)
 data class SmsMessage(val body: String, val phoneNumber: String, val timestamp: Long, val type: Int)
 
 class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var contacts: List<Contact>, var smsMessages: List<SmsDetail>) : RecyclerView.Adapter<ContactsAdapter.ViewHolder>() {
@@ -41,18 +45,33 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val sms = smsMessages[position]
 
+        var body = ""
+
         val isRead = sms.isRead
         if (!isRead!!) {
+            body = if (sms.body!!.length > 100) {
+                "${sms.body.substring(0, 100)}..."
+            } else {
+                sms.body
+            }
             holder.contactName.setTypeface(null, Typeface.BOLD);
             holder.messageBody.setTypeface(null, Typeface.BOLD);
         } else {
+            body = if (sms.body!!.length > 40) {
+                "${sms.body.substring(0, 40)}..."
+            } else {
+                sms.body
+            }
             holder.contactName.setTypeface(null, Typeface.NORMAL);
             holder.messageBody.setTypeface(null, Typeface.NORMAL);
         }
 
         val phoneNumber = sms.phoneNumber.toString()
         val name = sms.name.toString()
-        val body = if (sms.body!!.length > 40) { "${sms.body.substring(0, 40)}..." } else { sms.body }
+
+
+
+
 
         val isNumericOnly = isNumeric(name)
         val colorCode = generateColorCodeFromNumber(phoneNumber)
@@ -72,16 +91,32 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
             holder.namedRL.visibility = View.GONE
         }
 
+
         holder.contactName.text = name
         holder.messageBody.text = body
-        holder.parentLinearLayout.setOnClickListener {
-            activity.goToactivityIntent_Unfinished(activity, SmsDetailActivity::class.java, mapOf("phoneNumber" to phoneNumber,
-                "name" to name,
-                "isNumericOnly" to isNumericOnly.toString(),
-                "colorCode" to colorCode,
-                "upperCasedName" to upperCasedName,
-            ))
+        val originalColor = holder.itemView.background // Save the original background drawable
+
+        holder.parentCardViewLayout.setOnClickListener {
+            val highlightColor = ContextCompat.getColor(holder.itemView.context, R.color.grey_dull)
+            holder.itemView.setBackgroundColor(highlightColor)
+            activity.goToactivityIntent_Unfinished(
+                activity, SmsDetailActivity::class.java, mapOf(
+                    "phoneNumber" to phoneNumber,
+                    "name" to name,
+                    "isNumericOnly" to isNumericOnly.toString(),
+                    "colorCode" to colorCode,
+                    "upperCasedName" to upperCasedName,
+                )
+            )
+
+            // Restore the original color after a delay (for example, 1 second)
+            Handler().postDelayed({
+                holder.itemView.background = originalColor
+            }, 10) // Delayed for 1 second (1000 milliseconds)
+
         }
+
+
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -91,7 +126,7 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
         val namedRL: RelativeLayout = itemView.findViewById(R.id.namedRL)
         val contactName: TextView = itemView.findViewById(R.id.contactName)
         val messageBody: TextView = itemView.findViewById(R.id.messageBody)
-        val parentLinearLayout: LinearLayout = itemView.findViewById(R.id.parentLinearLayout)
+        val parentCardViewLayout: CardView = itemView.findViewById(R.id.parentCardViewLayout)
     }
 
     fun setData(newSmsMessages: List<SmsDetail>) {
@@ -113,7 +148,7 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
     fun isNumeric(input: String): Boolean {
         if (input[0].isDigit()) {
             return true
-        }else return input[0].toString().equals("+")
+        } else return input[0].toString().equals("+")
     }
 
 

@@ -48,25 +48,25 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
         <activity
-            android:windowSoftInputMode="adjustResize|stateHidden"
-            android:name=".Activities.SmsDetailActivity"
+            android:name=".Activities.ViewGroupsActivity"
             android:exported="false" />
+        <activity
+            android:name=".Activities.LandingPage"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.GroupNameAndDesc"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.SelectContactsActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".Activities.SmsDetailActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity
             android:name=".Activities.SmsActivity"
             android:exported="false" />
-        <activity
-            android:name=".Activities.TestActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.ANSWER" />
-                <action android:name="android.intent.action.DIAL" />
-                <action android:name="android.intent.action.CALL" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:scheme="tel" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".Activities.MainActivity"
             android:exported="false"
