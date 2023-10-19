@@ -58,15 +58,13 @@ class SelectContactAdapter(private var contacts: MutableList<Contact>, var numbe
     }
 
     fun setSearchFilter(filter: String, newcontacts: MutableList<Contact>) {
-        contacts = if (filter.isEmpty()) {
-            newcontacts.toMutableList()
+        if (filter.isEmpty()) {
+            contacts = newcontacts
         } else {
-            newcontacts.filter { contact ->
-                contact.name?.contains(filter, ignoreCase = true) == true ||
-                        contact.phoneNumber?.contains(filter) == true
-            }.toMutableList()
+            contacts = contacts.filter { contact -> contact.name!!.contains(filter, ignoreCase = true) == true || contact.phoneNumber?.contains(filter) == true }.toMutableList()
         }
         notifyDataSetChanged()
     }
+
 
 }
