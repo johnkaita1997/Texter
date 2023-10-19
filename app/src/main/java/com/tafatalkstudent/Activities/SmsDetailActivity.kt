@@ -68,6 +68,7 @@ class SmsDetailActivity : AppCompatActivity() {
     private lateinit var isNumericOnly: String
     private lateinit var colorCode: String
     private lateinit var upperCasedName: String
+    private lateinit var receivedTimestamp : String
 
     companion object {
         var timestamp: Long = 0
@@ -85,6 +86,14 @@ class SmsDetailActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun initall() {
 
+        phoneNumber = intent.getStringExtra("phoneNumber").toString()
+        name = intent.getStringExtra("name").toString()
+        isNumericOnly = intent.getStringExtra("isNumericOnly").toString()
+        colorCode = intent.getStringExtra("colorCode").toString()
+        upperCasedName = intent.getStringExtra("upperCasedName").toString()
+        name = intent.getStringExtra("name").toString()
+
+        makeIsReadToTrue(phoneNumber)
         setTextWithActiveSimCardNumber()
 
         subscriptionManager = getSystemService(SubscriptionManager::class.java)
@@ -104,13 +113,6 @@ class SmsDetailActivity : AppCompatActivity() {
         timestamp = System.nanoTime()
         val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(timestamp))
         recyclerView = binding.recyclerViewMessageDetails
-
-        phoneNumber = intent.getStringExtra("phoneNumber").toString()
-        name = intent.getStringExtra("name").toString()
-        isNumericOnly = intent.getStringExtra("isNumericOnly").toString()
-        colorCode = intent.getStringExtra("colorCode").toString()
-        upperCasedName = intent.getStringExtra("upperCasedName").toString()
-        name = intent.getStringExtra("name").toString()
 
         if (isNumericOnly.equals("false")) {
             binding.namedIv.setBackgroundColor(Color.parseColor("#9ba0e4"))
@@ -137,11 +139,17 @@ class SmsDetailActivity : AppCompatActivity() {
 
     }
 
+    private fun makeIsReadToTrue(phoneNumber: String) {
+        threadScope.launch {
+            viewmodel.markMessagesAsRead(phoneNumber,this@SmsDetailActivity)
+        }
+    }
+
     private fun setTextWithActiveSimCardNumber() {
         threadScope.launch {
-            val activeSimCard = async { viewmodel.getActiveSimCard(this@SmsDetailActivity) }
-            activeSimCard.await()
-             binding.simCardText.setText(activeSimCard.toString())
+            val _activeSimCard = async { viewmodel.getActiveSimCard(this@SmsDetailActivity) }
+            val activeSimCard = _activeSimCard.await()
+             binding.simCardText.setText(activeSimCard!!.body.toString())
         }
     }
 
@@ -200,7 +208,7 @@ class SmsDetailActivity : AppCompatActivity() {
                         }
                     } else {
                         threadScope.launch {
-                            viewmodel.insertSmsDetail(SmsDetail(newText, phoneNumber, phoneNumberStamp, "Draft", 3, formattedTimestamp, "Unsent", name), this@SmsDetailActivity)
+                            viewmodel.insertSmsDetail(SmsDetail(newText, phoneNumber, phoneNumberStamp, "Draft", 3, formattedTimestamp, "Unsent", name, true), this@SmsDetailActivity)
                         }
                     }
                     isUpdating = false
@@ -264,7 +272,7 @@ class SmsDetailActivity : AppCompatActivity() {
                 if (resultCode == RESULT_OK) {
                     GlobalScope.launch {
                         val sentTimestamp = System.currentTimeMillis()
-                        val myObject = SmsDetail(message, phoneNumber, phoneNumberStamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}", name)
+                        val myObject = SmsDetail(message, phoneNumber, phoneNumberStamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}", name, true)
 
                         val _insert = async { viewmodel.insertSmsDetail(myObject, this@SmsDetailActivity) }
                         val insert = _insert.await()
@@ -283,7 +291,7 @@ class SmsDetailActivity : AppCompatActivity() {
                     }
                 } else {
                     GlobalScope.launch {
-                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed", name), this@SmsDetailActivity) }
+                        val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed", name, true), this@SmsDetailActivity) }
                         val insert = _insert.await()
                         try {
                             updateItem(insert)

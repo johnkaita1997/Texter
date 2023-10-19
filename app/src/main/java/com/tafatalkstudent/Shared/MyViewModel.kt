@@ -656,4 +656,16 @@ class MyViewModel
     }
 
 
+    suspend fun markMessagesAsRead(phoneNumber: String, activity:Activity): Boolean {
+        return try {
+            val database = RoomDb(activity).getSmsDao()
+            database.markMessagesAsRead(phoneNumber)
+            true
+        } catch (e: Exception) {
+            // Handle exceptions if needed
+            false
+        }
+    }
+
+
 }

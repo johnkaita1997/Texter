@@ -744,6 +744,7 @@ data class SmsDetail(
     val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
     val status: String?,  // Indicates whether the message has been read
     val name: String?,  // Indicates whether the message has been read
+    val isRead: Boolean?,  // Indicates whether the message has been read
 )
 
 

@@ -93,9 +93,11 @@ interface SmsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActiveSimCard(simCard: SimCard): Long
 
-    @Query("SELECT * FROM smsdetail")
+    @Query("SELECT * FROM simcard")
     suspend fun getActiveSimCard(): SimCard
 
+    @Query("UPDATE smsdetail SET isRead = 1 WHERE phoneNumber = :phoneNumber")
+    suspend fun markMessagesAsRead(phoneNumber: String)
 
 }
 

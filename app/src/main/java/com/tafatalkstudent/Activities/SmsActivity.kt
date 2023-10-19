@@ -257,7 +257,7 @@ class SmsActivity : AppCompatActivity() {
                                 }
 
                                 val deferred = async {
-                                    SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name)
+                                    SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, true)
                                 }
                                 deferredList.add(deferred)
                             } while (it.moveToNext())
@@ -410,7 +410,7 @@ class SmsActivity : AppCompatActivity() {
                                         }
 
                                         threadScope.launch {
-                                            val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name)
+                                            val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, false)
                                             batchList.add(smsDetail)
                                             Log.d("herere-------", "initall: Here........................................")
                                         }

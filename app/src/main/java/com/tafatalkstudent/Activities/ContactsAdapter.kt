@@ -2,6 +2,7 @@ package com.tafatalkstudent.Activities
 
 import android.app.Activity
 import android.graphics.Color
+import android.graphics.Typeface
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -39,6 +40,15 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val sms = smsMessages[position]
+
+        val isRead = sms.isRead
+        if (!isRead!!) {
+            holder.contactName.setTypeface(null, Typeface.BOLD);
+            holder.messageBody.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.contactName.setTypeface(null, Typeface.NORMAL);
+            holder.messageBody.setTypeface(null, Typeface.NORMAL);
+        }
 
         val phoneNumber = sms.phoneNumber.toString()
         val name = sms.name.toString()
