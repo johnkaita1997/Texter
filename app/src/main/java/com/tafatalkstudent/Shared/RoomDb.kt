@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Shared;
 
 import android.content.Context
+import androidx.constraintlayout.widget.Group
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -14,7 +15,7 @@ import androidx.room.TypeConverters
 import androidx.room.Update
 
 @TypeConverters(Converters::class)
-@Database(entities = [SmsDetail::class, SimCard::class, Groups::class], version = 1)
+@Database(entities = [SmsDetail::class, SimCard::class, Groups::class, GroupSmsDetail::class], version = 1)
 abstract class RoomDb : RoomDatabase() {
 
     abstract fun getSmsDao(): SmsDao
@@ -124,7 +125,37 @@ interface SmsDao {
 
 
 
-}
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertGroupSmsDetail(smsDetail: GroupSmsDetail): Long
+
+    @Query("SELECT * FROM groupsmsdetail WHERE timestamp = :timestamp")
+    suspend fun getGroupSmsDetailByTimestamp(timestamp: Long): GroupSmsDetail
+
+    // Delete a message by timestamp
+    @Query("DELETE FROM groupsmsdetail WHERE timestamp = :timestamp")
+    suspend fun deleteGroupMessageByTimestamp(timestamp: Long)
+
+    // Delete a message by timestamp
+    @Query("DELETE FROM groupsmsdetail WHERE timestamp = :timestamp AND state = 'Draft'")
+    suspend fun deleteGroupMessageByTimestampAndDraft(timestamp: Long)
+
+    @Query("UPDATE groupsmsdetail SET isRead = 1 WHERE groupId = :groupId AND isRead = 0")
+    suspend fun markAllGroupMessagesAsRead(groupId: Long)
+
+    @Query("SELECT * FROM groupsmsdetail WHERE state = 'Draft' ORDER BY timestamp DESC LIMIT 1")
+    suspend fun getLatestGroupDraftMessage(): GroupSmsDetail?
+
+    @Query("SELECT * FROM groupsmsdetail WHERE groupId = :groupId ORDER BY timestamp ASC")
+    suspend fun getGroupSmsDetailById(groupId: Long): MutableList<GroupSmsDetail>
+
+    @Query("SELECT * FROM groupsmsdetail WHERE groupId = :groupId ORDER BY timestamp DESC LIMIT 1")
+    suspend fun getLatestGroupMessage(groupId: Long): GroupSmsDetail?
+
+    @Query("SELECT * FROM groupsmsdetail WHERE groupId = :groupId GROUP BY codeStamp HAVING MAX(timestamp) ORDER BY timestamp ASC")
+    suspend fun getGroupSmsDetailByIdUniqueCodeStamp(groupId: Long): MutableList<GroupSmsDetail>
+
+
+}
 
 

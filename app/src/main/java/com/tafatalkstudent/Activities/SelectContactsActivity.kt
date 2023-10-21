@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SelectContactsActivity : AppCompatActivity() {
+    private lateinit var fullContactList: MutableList<Contact>
     private lateinit var binding: ActivitySelectContactsBinding
     private lateinit var numberofGroupContacts: TextView
     private lateinit var description: String
@@ -40,6 +42,7 @@ class SelectContactsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySelectContactsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
         initall()
     }
 
@@ -53,13 +56,13 @@ class SelectContactsActivity : AppCompatActivity() {
         listview.adapter = arrayAdapter
         numberofGroupContacts = binding.numberofGroupContacts
 
-        val contacts = getContacts(this)
-        val selectContactAdapter = SelectContactAdapter(contacts, numberofGroupContacts,this@SelectContactsActivity, listview, arrayAdapter)
+        fullContactList = getContacts(this)
+        val selectContactAdapter = SelectContactAdapter(fullContactList, numberofGroupContacts,this@SelectContactsActivity, listview, arrayAdapter)
         binding.contactsRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.contactsRecyclerView.setItemViewCacheSize(1000)
         binding.contactsRecyclerView.adapter = selectContactAdapter
 
-        onclickListeners(contacts, selectContactAdapter)
+        onclickListeners(fullContactList, selectContactAdapter)
 
     }
 
@@ -73,9 +76,9 @@ class SelectContactsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val newText = s.toString()
                 if (newText.isEmpty()) {
-                    selectContactAdapter.setSearchFilter(newText, contacts)
+                    selectContactAdapter.setSearchFilter(newText, contacts, fullContactList)
                 } else {
-                    selectContactAdapter.setSearchFilter(newText, mutableListOf())
+                    selectContactAdapter.setSearchFilter(newText, mutableListOf(), fullContactList)
                 }
             }
         })
@@ -102,6 +105,8 @@ class SelectContactsActivity : AppCompatActivity() {
     @SuppressLint("Range")
     fun getContacts(context: Context): MutableList<Contact> {
         val contactsList = mutableListOf<Contact>()
+        val uniquePhoneNumbers = HashSet<String>() // HashSet to store unique phone numbers
+
         val contentResolver = context.contentResolver
         val cursor = contentResolver.query(
             ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
@@ -115,11 +120,16 @@ class SelectContactsActivity : AppCompatActivity() {
             while (it.moveToNext()) {
                 val name = it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
                 val phoneNumber = it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
-                contactsList.add(Contact(name, phoneNumber))
+
+                // Check if the phone number is unique before adding it to the list
+                if (uniquePhoneNumbers.add(phoneNumber)) {
+                    contactsList.add(Contact(name, phoneNumber))
+                }
             }
         }
         return contactsList
     }
+
 
 
 }

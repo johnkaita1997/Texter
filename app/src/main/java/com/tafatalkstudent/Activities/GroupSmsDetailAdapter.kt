@@ -12,15 +12,15 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.R
+import com.tafatalkstudent.Shared.GroupSmsDetail
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.SmsDetail
 
 
-class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var etMessage: EditText) : RecyclerView.Adapter<SmsDetailAdapter.ViewHolder>() {
+class GroupSmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var etMessage: EditText) : RecyclerView.Adapter<GroupSmsDetailAdapter.ViewHolder>() {
 
     lateinit var view: View
-    var smsMessages: MutableList<SmsDetail> = mutableListOf()
-
+    var smsMessages: MutableList<GroupSmsDetail> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -37,16 +37,22 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var e
         val sms = smsMessages[position]
 
         Log.d("checking-------", "initall: ${sms.state} - ${sms.body} - ${sms.timestamp} - ${position}")
-
-        val phoneNumber = sms.phoneNumber
+        val theView = holder.itemView.findViewById<TextView>(R.id.receivedTextView)
 
         if (sms.body!!.isNotEmpty()) {
+            Log.d("NotEmpty-------", "initall: Not empty")
 
             if (sms.state == "Received") {
-                val theView = holder.itemView.findViewById<TextView>(R.id.receivedTextView)
                 theView.setText(sms.body)
                 holder.itemView.findViewById<CardView>(R.id.receivedcard).visibility = View.VISIBLE
             } else if (sms.state == "Sent") {
+                Log.d("sent-------", "initall: It is sent")
+                val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
+                theView.setText(sms.body)
+                holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
+                theView.visibility = View.VISIBLE
+            } else if (sms.state == "Pending") {
+                Log.d("sent-------", "initall: It is sent")
                 val theView = holder.itemView.findViewById<TextView>(R.id.sentTextView)
                 theView.setText(sms.body)
                 holder.itemView.findViewById<CardView>(R.id.sentCard).visibility = View.VISIBLE
@@ -65,20 +71,16 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var e
         }
     }
 
-    /*override fun getItemViewType(position: Int): Int {
-        val sms = smsMessages[position]
-        return sms.timestamp!!.toInt()
-    }*/
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
 
-    fun setData(newSmsMessages: MutableList<SmsDetail>) {
+    fun setData(newSmsMessages: MutableList<GroupSmsDetail>) {
         smsMessages = newSmsMessages
-        //notifyDataSetChanged()
+        notifyDataSetChanged()
     }
 
-    fun updateItem(newItem: SmsDetail, recyclerView: RecyclerView) {
+    fun updateItem(newItem: GroupSmsDetail, recyclerView: RecyclerView) {
         try {
             smsMessages.add(newItem)
             notifyItemInserted(smsMessages.size - 1)

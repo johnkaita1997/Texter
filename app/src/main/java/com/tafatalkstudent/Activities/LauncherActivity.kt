@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings
+import android.util.Log
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.activity.viewModels
@@ -45,9 +46,9 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
         super.onCreate(savedInstanceState)
         binding = LauncherActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
 
-        ActivityCompat.requestPermissions(
-            this, arrayOf(
+        ActivityCompat.requestPermissions(this, arrayOf(
                 Manifest.permission.CALL_PHONE,
                 Manifest.permission.KILL_BACKGROUND_PROCESSES,
                 Manifest.permission.READ_CALL_LOG,

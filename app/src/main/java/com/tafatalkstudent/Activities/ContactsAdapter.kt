@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Activities
 
 import android.app.Activity
+import android.app.PendingIntent.getActivity
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
@@ -35,6 +36,7 @@ class ContactsAdapter(var viewModel: MyViewModel, var activity: Activity, var co
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         view = layoutInflater.inflate(R.layout.displaycontacts, parent, false)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName + " Current Adapter -> " + this::class.simpleName)
         return ViewHolder(view)
     }
 

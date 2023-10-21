@@ -168,6 +168,8 @@ class MyViewModel
         return database.getSmsDetailByTimestamp(insertedId.toLong()) // Assuming you have a function to retrieve SmsDetail by ID
     }
 
+
+
     suspend fun insertBatchWithRetry(listOfSmsDetail: List<SmsDetail>, activity: Activity) {
         var success = false
 
@@ -252,7 +254,6 @@ class MyViewModel
             }
         }
     }
-
 
     private fun normalizePhoneNumber(phoneNumber: String): String {
         // If the phone number starts with "07", add "+254" and remove the leading "0"
@@ -383,6 +384,69 @@ class MyViewModel
     suspend fun getAllGroups(activity: Activity): MutableList<Groups> {
         val database = RoomDb(activity).getSmsDao()
         return database.getAllGroups()
+    }
+
+
+    suspend fun getGroupById(groupId: Long, activity: Activity): Groups? {
+        val database = RoomDb(activity).getSmsDao()
+        return try {
+            database.getGroupById(groupId)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
+
+    suspend fun insertGroupSmsDetail(smsDetail: GroupSmsDetail, activity: Activity): GroupSmsDetail {
+        val database = RoomDb(activity).getSmsDao()
+        var insertedId = ""
+        insertedId = database.insertGroupSmsDetail(smsDetail).toString()
+        Log.d("Mychek-------", "initall: checking for ${insertedId}")
+        return database.getGroupSmsDetailByTimestamp(insertedId.toLong()) // Assuming you have a function to retrieve SmsDetail by ID
+    }
+
+
+    suspend fun deleteGroupMessageByTimestamp(timestamp: Long, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.deleteGroupMessageByTimestamp(timestamp)
+    }
+
+    suspend fun deleteGroupMessageByTimestampAndDraft(timestamp: Long, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.deleteGroupMessageByTimestampAndDraft(timestamp)
+    }
+
+
+    suspend fun markAllGroupMessagesAsRead(groupId: Long, activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.markAllGroupMessagesAsRead(groupId)
+    }
+
+
+    suspend fun getLatestGroupDraftMessage(activity: Activity): GroupSmsDetail? {
+        val database = RoomDb(activity).getSmsDao()
+        return database.getLatestGroupDraftMessage()
+    }
+
+
+    suspend fun getGroupSmsDetailById(groupId: Long, activity: Activity): MutableList<GroupSmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val getGroupSmsDetailById = database.getGroupSmsDetailById(groupId)
+        return getGroupSmsDetailById
+    }
+
+
+    suspend fun getGroupSmsDetailByIdUniqueCodeStamp(groupId: Long, activity: Activity): MutableList<GroupSmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val getGroupSmsDetailById = database.getGroupSmsDetailByIdUniqueCodeStamp(groupId)
+        return getGroupSmsDetailById
+    }
+
+    suspend fun getLatestGroupMessage(groupId: Long, activity: Activity): GroupSmsDetail? {
+        val database = RoomDb(activity).getSmsDao()
+        val getGroupSmsDetailById = database.getLatestGroupMessage(groupId)
+        return getGroupSmsDetailById
     }
 
 

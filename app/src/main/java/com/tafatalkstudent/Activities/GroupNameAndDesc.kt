@@ -2,6 +2,7 @@ package com.tafatalkstudent.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.tafatalkstudent.R
 import com.tafatalkstudent.Shared.goToActivity
 import com.tafatalkstudent.Shared.goToactivityIntent_Unfinished
@@ -17,6 +18,7 @@ class GroupNameAndDesc : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupNameAndDescBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
         initall()
     }
 

@@ -25,6 +25,7 @@ import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.SimCard
 import com.tafatalkstudent.Shared.SmsDetail
+import com.tafatalkstudent.Shared.getContactName
 import com.tafatalkstudent.Shared.goToActivity_Unfinished
 import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsBinding
@@ -62,14 +63,13 @@ class SmsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySmsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
         initall()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     @SuppressLint("MissingPermission")
     private fun initall() {
-
-        setUpActiveSimCardIfNotExisting()
 
         sharedPrefs = getSharedPreferences(PREFS_NAME, 0)
         isFirstTime = sharedPrefs.getBoolean(PREF_FIRST_TIME, true)
@@ -156,12 +156,6 @@ class SmsActivity : AppCompatActivity() {
 
     }
 
-
-    private fun setUpActiveSimCardIfNotExisting() {
-        threadScope.launch {
-            viewmodel.insertActiveSimCard(SimCard(0, 1), this@SmsActivity)
-        }
-    }
 
 
     @SuppressLint("Range")
@@ -476,57 +470,6 @@ class SmsActivity : AppCompatActivity() {
             delete.await()
             updateSmsList()
         }
-    }
-
-
-    fun getContactName(phoneNumber: String): String {
-        // Try the original number
-        var contactName = getContactFromDatabase(phoneNumber)
-
-        // If not found, try with the +254 prefix
-        if (contactName.isBlank() && phoneNumber.startsWith("0")) {
-            val formattedNumber = "+254" + phoneNumber.substring(1)
-            contactName = getContactFromDatabase(formattedNumber)
-        }
-
-        // If still not found, try without leading 0 or +
-        if (contactName.isBlank() && (phoneNumber.startsWith("+254") || phoneNumber.startsWith("0"))) {
-            val formattedNumber = if (phoneNumber.startsWith("+254")) {
-                phoneNumber.substring(1)
-            } else {
-                phoneNumber.substring(1)
-            }
-            contactName = getContactFromDatabase(formattedNumber)
-        }
-
-        // If no contact name found, return the original number
-        return if (contactName.isBlank()) {
-            phoneNumber
-        } else {
-            contactName
-        }
-    }
-
-
-    fun getContactFromDatabase(phoneNumber: String): String {
-        val projection = arrayOf(Phone.DISPLAY_NAME)
-        val cursor = contentResolver.query(
-            Phone.CONTENT_URI,
-            projection,
-            Phone.NUMBER + " = ?",
-            arrayOf(phoneNumber),
-            null
-        )
-
-        var contactName = ""
-        cursor?.use {
-            if (it.moveToFirst()) {
-                contactName = it.getString(it.getColumnIndexOrThrow(Phone.DISPLAY_NAME))
-            }
-        }
-        cursor?.close()
-
-        return contactName
     }
 
 

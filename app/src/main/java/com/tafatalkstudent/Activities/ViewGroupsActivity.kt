@@ -2,6 +2,7 @@ package com.tafatalkstudent.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +27,7 @@ class ViewGroupsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityViewGroupsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
         initall()
     }
 
@@ -57,6 +59,11 @@ class ViewGroupsActivity : AppCompatActivity() {
         binding.createNewGroupButton.setOnClickListener {
             goToActivity_Unfinished(this, GroupNameAndDesc::class.java)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchGroups()
     }
 
 }

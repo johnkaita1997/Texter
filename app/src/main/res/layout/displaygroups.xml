@@ -57,19 +57,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
+                android:gravity="left"
                 android:layout_weight="1"
                 android:text="John Kaita"
                 android:textColor="@color/black"
                 android:textSize="15dp" />
 
             <TextView
-                android:visibility="gone"
-                android:id="@+id/messageBody"
+                android:visibility="visible"
+                android:id="@+id/groupMessage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="You attempted to call me but I was not available ..."
+                android:text="0 Messages"
                 android:textColor="@color/black"
                 android:textSize="15dp" />
 

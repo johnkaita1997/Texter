@@ -42,12 +42,42 @@ class ViewGroupsAdapter(var viewModel: MyViewModel, var activity: Activity, var 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         val group = groups[position]
         holder.groupName.text = group.name.toString()
+
+        threadScope.launch {
+            val latestGroupMessage = async { viewModel.getLatestGroupMessage(group.id!!, activity) }.await()
+            latestGroupMessage?.body?.let {
+                mainScope.launch {
+                    holder.groupMessage.text = latestGroupMessage.body.toString()
+                    if (latestGroupMessage.isRead == false) {
+                        holder.groupName.setTypeface(null, Typeface.BOLD);
+                        holder.groupMessage.setTypeface(null, Typeface.BOLD);
+                    } else {
+                        holder.groupName.setTypeface(null, Typeface.NORMAL);
+                        holder.groupMessage.setTypeface(null, Typeface.NORMAL);
+                    }
+                }
+            }
+
+        }
+
+        holder.itemView.setOnClickListener {
+            activity.goToactivityIntent_Unfinished(
+                activity, GroupSmsActivity::class.java, mutableMapOf(
+                    "groupId" to group.id.toString(),
+                    "groupName" to group.name.toString(),
+                    "groupDescription" to group.description.toString(),
+                )
+            )
+        }
+
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val groupName: TextView = itemView.findViewById(R.id.groupNameTv)
+        val groupMessage: TextView = itemView.findViewById(R.id.groupMessage)
     }
 
     fun setData(newGroups: MutableList<Groups>) {

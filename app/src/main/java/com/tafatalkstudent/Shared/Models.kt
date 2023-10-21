@@ -23,6 +23,26 @@ data class SmsDetail(
 )
 
 
+@Entity(indices = [Index(value = ["timestamp"])])
+data class GroupSmsDetail(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long? = 0,
+    val body: String?,
+    val phoneNumber: String?,
+    var timestamp: Long?,
+    val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
+    val type: Int?,  // Message type: 1 for received, 2 for sent
+    val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
+    val status: String?,  // Indicates whether the message has been read
+    val isRead: Boolean?,  // Indicates whether the message has been read
+    val groupId: Long?,  // Indicates whether the message has been read
+    val groupName: String?,  // Indicates whether the message has been read
+    val senderName:String?,
+    val senderNumber: String?,  // Indicates whether the message has been read
+    val codeStamp: Long?  // Indicates whether the message has been read
+)
+
+
 @Entity
 data class SimCard(
     @PrimaryKey
@@ -59,6 +79,7 @@ class Converters {
     fun toJson(value: MutableList<Contact>): String {
         return Gson().toJson(value)
     }
+
 
 }
 

@@ -2,6 +2,7 @@ package com.tafatalkstudent.Activities
 
 import android.app.Activity
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,6 @@ import android.widget.ListView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.R
-import com.tafatalkstudent.R2.id.numberofGroupContacts
 import com.tafatalkstudent.Shared.Contact
 
 class SelectContactAdapter(private var contacts: MutableList<Contact>, var numberofGroupContacts: TextView, var activity: Activity, var listview: ListView, var arrayAdapter: ArrayAdapter<String>) :
@@ -21,6 +21,7 @@ class SelectContactAdapter(private var contacts: MutableList<Contact>, var numbe
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.display_contact_item, parent, false)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName + " Current Adapter -> " + this::class.simpleName)
         return ViewHolder(view)
     }
 
@@ -29,6 +30,15 @@ class SelectContactAdapter(private var contacts: MutableList<Contact>, var numbe
         val contact = contacts[position]
         holder.nameTextView.text = contact.name
         holder.phoneNumberTextView.text = contact.phoneNumber
+
+        if (contact in contactList) {
+            holder.addContact.setBackgroundColor(Color.parseColor("#E57373"))
+            holder.addContact.setText("Remove")
+        } else {
+            holder.addContact.setBackgroundColor(Color.parseColor("#000000"))
+            holder.addContact.setText("Add")
+        }
+
         holder.addContact.setOnClickListener {
             if (contact in contactList) {
                 contactList.remove(contact)
@@ -57,11 +67,11 @@ class SelectContactAdapter(private var contacts: MutableList<Contact>, var numbe
         val addContact: Button = itemView.findViewById(R.id.addContact)
     }
 
-    fun setSearchFilter(filter: String, newcontacts: MutableList<Contact>) {
+    fun setSearchFilter(filter: String, newcontacts: MutableList<Contact>, fullContactList: MutableList<Contact>) {
         if (filter.isEmpty()) {
             contacts = newcontacts
         } else {
-            contacts = contacts.filter { contact -> contact.name!!.contains(filter, ignoreCase = true) == true || contact.phoneNumber?.contains(filter) == true }.toMutableList()
+            contacts = fullContactList.filter { contact -> contact.name!!.contains(filter, ignoreCase = true) == true || contact.phoneNumber?.contains(filter) == true }.toMutableList()
         }
         notifyDataSetChanged()
     }

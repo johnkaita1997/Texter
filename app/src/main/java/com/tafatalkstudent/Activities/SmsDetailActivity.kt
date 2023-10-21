@@ -82,6 +82,7 @@ class SmsDetailActivity : AppCompatActivity() {
         binding = ActivitySmsDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initall()
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
     }
 
     @SuppressLint("MissingPermission")

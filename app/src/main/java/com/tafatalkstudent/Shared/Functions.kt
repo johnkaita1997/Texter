@@ -1,5 +1,6 @@
 package com.tafatalkstudent.Shared
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -9,6 +10,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
+import android.provider.ContactsContract
+import android.telephony.SubscriptionManager
+import android.telephony.TelephonyManager
 import android.text.TextUtils
 import android.text.format.DateFormat
 import android.util.Log
@@ -414,4 +418,100 @@ fun makeInvisible(view: View) {
 
 fun makeGone(view: View) {
     view.visibility = View.GONE
+}
+
+
+fun Context.formatPhoneNumber(senderNumber: String): String {
+    val sanitizedNumber = senderNumber.replace("+", "").replace(" ", "")
+
+    return when {
+        sanitizedNumber.startsWith("254") && sanitizedNumber.length == 12 -> {
+            // Format the number to 07XXXXXXXXX if it starts with 254 and has 12 digits
+            "0" + sanitizedNumber.substring(3)
+        }
+        sanitizedNumber.startsWith("072") && sanitizedNumber.length == 12 -> {
+            // Number is already in the correct format
+            sanitizedNumber
+        }
+        else -> {
+            // Retain the number if it does not match the specified formats
+            sanitizedNumber
+        }
+    }
+}
+
+
+
+
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP_MR1)
+@SuppressLint("ServiceCast", "MissingPermission")
+fun Context.getPhoneNumberForSubscriptionId(subscriptionId: Int): String {
+    val subscriptionManager = getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+    val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+
+    val activeSubscriptions = subscriptionManager.activeSubscriptionInfoList
+    activeSubscriptions?.forEach { subscriptionInfo ->
+        if (subscriptionInfo.subscriptionId == subscriptionId) {
+            val phoneNumber = subscriptionInfo.number
+            if (phoneNumber != null && phoneNumber.isNotBlank()) {
+                return phoneNumber
+            }
+        }
+    }
+
+    // If the phone number is not available, you can return a default value or an empty string.
+    return "Not Available"
+}
+
+
+
+
+fun Context.getContactFromDatabase(phoneNumber: String): String {
+    val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+    val cursor = contentResolver.query(
+        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+        projection,
+        ContactsContract.CommonDataKinds.Phone.NUMBER + " = ?",
+        arrayOf(phoneNumber),
+        null
+    )
+
+    var contactName = ""
+    cursor?.use {
+        if (it.moveToFirst()) {
+            contactName = it.getString(it.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+        }
+    }
+    cursor?.close()
+
+    return contactName
+}
+
+
+fun Context.getContactName(phoneNumber: String): String {
+    // Try the original number
+    var contactName = getContactFromDatabase(phoneNumber)
+
+    // If not found, try with the +254 prefix
+    if (contactName.isBlank() && phoneNumber.startsWith("0")) {
+        val formattedNumber = "+254" + phoneNumber.substring(1)
+        contactName = getContactFromDatabase(formattedNumber)
+    }
+
+    // If still not found, try without leading 0 or +
+    if (contactName.isBlank() && (phoneNumber.startsWith("+254") || phoneNumber.startsWith("0"))) {
+        val formattedNumber = if (phoneNumber.startsWith("+254")) {
+            phoneNumber.substring(1)
+        } else {
+            phoneNumber.substring(1)
+        }
+        contactName = getContactFromDatabase(formattedNumber)
+    }
+
+    // If no contact name found, return the original number
+    return if (contactName.isBlank()) {
+        phoneNumber
+    } else {
+        contactName
+    }
 }
