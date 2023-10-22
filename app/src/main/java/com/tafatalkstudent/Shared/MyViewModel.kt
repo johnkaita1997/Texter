@@ -169,7 +169,6 @@ class MyViewModel
     }
 
 
-
     suspend fun insertBatchWithRetry(listOfSmsDetail: List<SmsDetail>, activity: Activity) {
         var success = false
 
@@ -397,7 +396,6 @@ class MyViewModel
     }
 
 
-
     suspend fun insertGroupSmsDetail(smsDetail: GroupSmsDetail, activity: Activity): GroupSmsDetail {
         val database = RoomDb(activity).getSmsDao()
         var insertedId = ""
@@ -452,6 +450,12 @@ class MyViewModel
             val getGroupSmsDetailById = database.getLatestGroupMessage(groupId)
             return getGroupSmsDetailById
         }
+    }
+
+    suspend fun getFailedGroupMessages(activity: Activity): List<GroupSmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val failedGroupMessages = database.getFailedGroupMessages()
+        return failedGroupMessages
     }
 
 

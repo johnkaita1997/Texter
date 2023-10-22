@@ -159,6 +159,9 @@ interface SmsDao {
     @Query("SELECT * FROM groupsmsdetail WHERE groupId = :groupId AND timestamp = 999999999 LIMIT 1")
     suspend fun getSpecificTimestampGroupMessage(groupId: Long): GroupSmsDetail?
 
+    @Query("SELECT * FROM groupsmsdetail WHERE state = 'Failed'")
+    suspend fun getFailedGroupMessages(): List<GroupSmsDetail>
+
 }
 
 
