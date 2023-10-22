@@ -193,9 +193,6 @@ class GroupSmsActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun onClickListeners() {
 
-        val codestamp = System.nanoTime()
-        val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(codestamp))
-
         binding.etMessage.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
@@ -209,6 +206,8 @@ class GroupSmsActivity : AppCompatActivity() {
                     }
                 } else {
                     threadScope.launch {
+                        val codestamp = System.nanoTime()
+                        val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(codestamp))
                         val myObject = GroupSmsDetail(999999999,
                             newText, "999999999", 999999999, "Draft", 1, formattedTimestamp,
                             "Sent", true, groupId, groupName, senderName, senderNumber, codestamp
@@ -234,6 +233,9 @@ class GroupSmsActivity : AppCompatActivity() {
                 disableEditTextAndButton()
 
                 threadScope.launch {
+
+                    val codestamp = System.nanoTime()
+                    val formattedTimestamp = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(codestamp))
 
                     if (activeSubscriptionInfoList != null && activeSubscriptionInfoList.size >= 2) {
                         sendNormalMessage(message, codestamp ,true)

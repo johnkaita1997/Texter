@@ -34,6 +34,7 @@ class ViewGroupsAdapter(var viewModel: MyViewModel, var activity: Activity, var 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         view = layoutInflater.inflate(R.layout.displaygroups, parent, false)
+        Log.d("ActivityName", "Current Activity: " + javaClass.simpleName + " Current Adapter -> " + this::class.simpleName)
         return ViewHolder(view)
     }
 

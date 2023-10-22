@@ -30,16 +30,16 @@ data class GroupSmsDetail(
     val body: String?,
     val phoneNumber: String?,
     var timestamp: Long?,
-    val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
-    val type: Int?,  // Message type: 1 for received, 2 for sent
-    val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
-    val status: String?,  // Indicates whether the message has been read
-    val isRead: Boolean?,  // Indicates whether the message has been read
-    val groupId: Long?,  // Indicates whether the message has been read
-    val groupName: String?,  // Indicates whether the message has been read
+    val state: String?,
+    val type: Int?,
+    val formattedTimestamp: String?,
+    val status: String?,
+    val isRead: Boolean?,
+    val groupId: Long?,
+    val groupName: String?,
     val senderName:String?,
-    val senderNumber: String?,  // Indicates whether the message has been read
-    val codeStamp: Long?  // Indicates whether the message has been read
+    val senderNumber: String?,
+    val codeStamp: Long?
 )
 
 

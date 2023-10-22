@@ -445,8 +445,13 @@ class MyViewModel
 
     suspend fun getLatestGroupMessage(groupId: Long, activity: Activity): GroupSmsDetail? {
         val database = RoomDb(activity).getSmsDao()
-        val getGroupSmsDetailById = database.getLatestGroupMessage(groupId)
-        return getGroupSmsDetailById
+        val draftMessage = database.getSpecificTimestampGroupMessage(groupId)
+        if (draftMessage != null) {
+            return draftMessage
+        } else {
+            val getGroupSmsDetailById = database.getLatestGroupMessage(groupId)
+            return getGroupSmsDetailById
+        }
     }
 
 
