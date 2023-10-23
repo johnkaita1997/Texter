@@ -51,8 +51,6 @@ interface SmsDao {
     suspend fun insertBatch(objects: List<SmsDetail>)
 
 
-    @Query("SELECT * FROM smsdetail")
-    suspend fun getAllSmsDetails(): List<SmsDetail>
 
     @Query("SELECT * FROM smsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM smsdetail GROUP BY phoneNumber) AS latestSms ON smsdetail.phoneNumber = latestSms.phoneNumber AND smsdetail.timestamp = latestSms.maxTimestamp")
     suspend fun getLatestSmsList(): List<SmsDetail>
@@ -124,6 +122,8 @@ interface SmsDao {
     suspend fun getGroupById(groupId: Long): Groups
 
 
+    @Query("SELECT * FROM smsdetail ORDER BY timestamp DESC LIMIT 2")
+    suspend fun getAllSmsDetails(): MutableList<SmsDetail>
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -161,6 +161,9 @@ interface SmsDao {
 
     @Query("SELECT * FROM groupsmsdetail WHERE state = 'Failed'")
     suspend fun getFailedGroupMessages(): List<GroupSmsDetail>
+
+    @Query("SELECT * FROM groupsmsdetail ORDER BY timestamp DESC LIMIT 2")
+    suspend fun getAllGroupSmsDetails(): MutableList<GroupSmsDetail>
 
 }
 

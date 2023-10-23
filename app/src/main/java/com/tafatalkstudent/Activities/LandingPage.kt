@@ -11,13 +11,16 @@ import android.provider.Telephony.Sms
 import android.telephony.SmsManager
 import android.util.Log
 import androidx.activity.viewModels
+import com.google.gson.Gson
 import com.tafatalkstudent.R
 import com.tafatalkstudent.Shared.Constants
 import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.Constants.threadScope
 import com.tafatalkstudent.Shared.GroupSmsDetail
+import com.tafatalkstudent.Shared.Groups
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.SimCard
+import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.formatPhoneNumber
 import com.tafatalkstudent.Shared.goToActivity
 import com.tafatalkstudent.Shared.goToActivity_Unfinished
@@ -50,6 +53,31 @@ class LandingPage : AppCompatActivity() {
         setUpActiveSimCardIfNotExisting()
         resendFailedGroupMessagesIfExisting()
         onClicklisteners()
+
+        fun convertToJson(groups: List<Groups>): String {
+            val gson = Gson()
+            return gson.toJson(groups)
+        }
+
+        fun convertToJson(groups: List<GroupSmsDetail>): String {
+            val gson = Gson()
+            return gson.toJson(groups)
+        }
+
+        fun convertToJson(groups: List<SmsDetail>): String {
+            val gson = Gson()
+            return gson.toJson(groups)
+        }
+
+        threadScope.launch {
+           val groups = viewmodel.getAllGroups(this@LandingPage)
+           val allGroupSmsDetails = viewmodel.getAllGroupSmsDetails(this@LandingPage)
+           val allSmsDetails = viewmodel.getAllSmsDetails(this@LandingPage)
+            Log.d("convertToJson-------", "initall: ${convertToJson(groups)}")
+            Log.d("convertToJson-------", "initall: ${convertToJson(allGroupSmsDetails)}")
+            Log.d("convertToJson-------", "initall: ${convertToJson(allSmsDetails)}")
+        }
+
     }
 
     private fun resendFailedGroupMessagesIfExisting() {

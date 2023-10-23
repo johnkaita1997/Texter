@@ -434,6 +434,18 @@ class MyViewModel
         return getGroupSmsDetailById
     }
 
+    suspend fun getAllGroupSmsDetails(activity: Activity): MutableList<GroupSmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val getGroupSmsDetailById = database.getAllGroupSmsDetails()
+        return getGroupSmsDetailById
+    }
+
+    suspend fun getAllSmsDetails(activity: Activity): MutableList<SmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val getAllSmsDetails = database.getAllSmsDetails()
+        return getAllSmsDetails
+    }
+
 
     suspend fun getGroupSmsDetailByIdUniqueCodeStamp(groupId: Long, activity: Activity): MutableList<GroupSmsDetail> {
         val database = RoomDb(activity).getSmsDao()
