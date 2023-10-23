@@ -83,7 +83,22 @@ class Converters {
 
 }
 
+data class LoginBody(var phone: String?, var password: String?)
+data class SuccessLogin(
+    val access: String?,
+    val refresh: String?
+)
+data class SuccessLoginWithoutRefreshToken(
+    val token: String?,
+)
 
+data class User(
+    val email: String?,
+    val password: String?,
+    val first_name: String?,
+    val last_name: String?,
+    val phone: String?,
+)
 
 
 

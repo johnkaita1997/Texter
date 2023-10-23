@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.*
+import com.tafatalkstudent.Activities.LandingPage
 import com.tafatalkstudent.Activities.LauncherActivity
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
@@ -468,6 +469,89 @@ class MyViewModel
         val database = RoomDb(activity).getSmsDao()
         val failedGroupMessages = database.getFailedGroupMessages()
         return failedGroupMessages
+    }
+
+
+    suspend fun loginuser(email: String, password: String, mydialog: SpotsDialog?, activity: Activity) {
+
+        runCatching {
+
+            val response = api.login(LoginBody(email, password))
+
+            if (!response.isSuccessful) {
+                mainScope.launch { activity.dismissProgress() }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+
+                withContext(Dispatchers.Main) {
+                    val access = response.body()?.token.toString()
+                    val refresh = response.body()?.token.toString()
+                    val map = mutableMapOf<String, String>()
+                    map["access"] = access
+                    map["refresh"] = refresh
+
+                    SessionManager(activity).savejwtToken(access, refresh)
+                    SessionManager(activity).saveUp(email, password)
+                    Log.d("-------", "initall: $email,  $password")
+
+                    activity.dismissProgress()
+                    activity.makeLongToast("Login was successful")
+                    activity.goToActivity(activity, LandingPage::class.java)
+                }
+            }
+
+        }.onFailure {
+            mainScope.launch { activity.dismissProgress() }
+            networkResponseFailure(it, mydialog, "loginuser()", activity)
+        }
+
+    }
+
+    suspend fun refreshtoken(u: String, p: String, activity: Activity) {
+        runCatching {
+            val response = api.login(LoginBody(u, p))
+            if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string()
+                return@runCatching
+            } else {
+                val access = response.body()?.token.toString()
+                val refresh = response.body()?.token.toString()
+                val map = mutableMapOf<String, String>()
+                map["access"] = access
+                map["refresh"] = refresh
+                SessionManager(activity).savejwtToken(access, refresh)
+                SessionManager(activity).saveUp(u, p)
+                Log.d("-------", "initall: $u,  $p")
+            }
+
+        }.onFailure {}
+    }
+
+
+    suspend fun registeruser(email: String, first_name: String, last_name: String, password: String, phone: String, activity: Activity) {
+        val user = User(email, password, first_name, last_name, phone)
+        val response = api.register(user)
+        runCatching {
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                delay(4000)
+                loginuser(email, password, null, activity)
+                SessionManager(activity).saveUp(email, password)
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "registeruser()", activity)
+        }
     }
 
 

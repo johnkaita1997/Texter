@@ -54,7 +54,11 @@ interface MyApi {
         @Path("id") id: String,
     ): Response<String?>
 
+    @POST("api/v1/acl/login")
+    suspend fun login(@Body loginbody: LoginBody): Response<SuccessLoginWithoutRefreshToken>
 
+    @POST("api/v1/acl/create-account")
+    suspend fun register(@Body user: User): Response<String>
 
 }
 
