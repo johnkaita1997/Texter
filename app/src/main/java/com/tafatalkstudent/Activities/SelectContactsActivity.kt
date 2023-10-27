@@ -88,17 +88,21 @@ class SelectContactsActivity : AppCompatActivity() {
             val groupDescription = description
             val groupId = null
             val members = membersList
+            val group = Groups(groupId, groupname, groupDescription, members)
             threadScope.launch {
-                val _inserted = async {  viewmodel.insertGroup(Groups(groupId, groupname, groupDescription, members), this@SelectContactsActivity) }
+                val _inserted = async {  viewmodel.insertGroup(group, this@SelectContactsActivity) }
                 val inserted = _inserted.await()
-                if (inserted) {
+                if (inserted != null) {
                     mainScope.launch {
+                        val saveGroup = async { viewmodel.saveGroup(inserted, this@SelectContactsActivity) }
+                        saveGroup.await()
                         makeLongToast("Group Created Successfully")
                         goToActivity(this@SelectContactsActivity, ViewGroupsActivity::class.java)
                     }
                 }
             }
         }
+
 
     }
 

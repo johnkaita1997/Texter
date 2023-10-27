@@ -51,10 +51,14 @@ interface SmsDao {
     suspend fun insertBatch(objects: List<SmsDetail>)
 
 
+    /*@Query("SELECT * FROM smsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM smsdetail GROUP BY phoneNumber ORDER BY maxTimestamp DESC LIMIT :pageSize OFFSET (:pageNumber - 1) * :pageSize) AS latestSms ON smsdetail.phoneNumber = latestSms.phoneNumber AND smsdetail.timestamp = latestSms.maxTimestamp")
+    suspend fun getLatestPagedSmsList(pageNumber: Int, pageSize: Int): MutableList<SmsDetail>*/
+
+    @Query("SELECT * FROM smsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM smsdetail GROUP BY phoneNumber) AS latestSms ON smsdetail.phoneNumber = latestSms.phoneNumber AND smsdetail.timestamp = latestSms.maxTimestamp ORDER BY latestSms.maxTimestamp DESC LIMIT :pageSize OFFSET (:pageNumber - 1) * :pageSize")
+    suspend fun getLatestPagedSmsList(pageNumber: Int, pageSize: Int): List<SmsDetail>
 
     @Query("SELECT * FROM smsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM smsdetail GROUP BY phoneNumber) AS latestSms ON smsdetail.phoneNumber = latestSms.phoneNumber AND smsdetail.timestamp = latestSms.maxTimestamp")
     suspend fun getLatestSmsList(): List<SmsDetail>
-
 
 
     @Query("SELECT * FROM smsdetail WHERE phoneNumber = :phoneNumber ORDER BY timestamp DESC")
@@ -122,7 +126,7 @@ interface SmsDao {
     suspend fun getGroupById(groupId: Long): Groups
 
 
-    @Query("SELECT * FROM smsdetail ORDER BY timestamp DESC LIMIT 2")
+    @Query("SELECT * FROM smsdetail ORDER BY timestamp DESC")
     suspend fun getAllSmsDetails(): MutableList<SmsDetail>
 
 

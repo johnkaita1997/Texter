@@ -3,16 +3,18 @@ package com.tafatalkstudent.Shared
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.*
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.tafatalkstudent.Activities.LandingPage
-import com.tafatalkstudent.Activities.LauncherActivity
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
@@ -23,9 +25,7 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class MyViewModel
-@Inject constructor(
-    @Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context
-) : ViewModel() {
+@Inject constructor(@Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context) : ViewModel() {
 
     val _isParentAccountActive = MutableLiveData<Boolean?>()
     val isParentAccountActive: LiveData<Boolean?> get() = _isParentAccountActive
@@ -38,7 +38,6 @@ class MyViewModel
 
     val _getTotalNumberofReceipts = MutableLiveData<String>()
     val getTotalNumberofReceipts: LiveData<String> get() = _getTotalNumberofReceipts
-
 
     fun Context.coroutineexception(activity: Activity): CoroutineContext {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -197,7 +196,6 @@ class MyViewModel
         val database = RoomDb(activity).getSmsDao()
         val smslist = database.getLatestSmsList()
 
-        // Remove country code for phone numbers starting with "+254"
         val modifiedSmsList = smslist.map { smsDetail ->
             smsDetail.copy(
                 phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
@@ -361,15 +359,18 @@ class MyViewModel
     }
 
 
-    suspend fun insertGroup(group: Groups, activity: Activity): Boolean {
+    suspend fun insertGroup(group: Groups, activity: Activity): Groups? {
         val database = RoomDb(activity).getSmsDao()
         return try {
-            database.insertGroup(group)
-            true
+            val groupId = database.insertGroup(group)
+            // Query for the inserted group
+            val insertedGroup = database.getGroupById(groupId)
+            insertedGroup // Return the inserted group or null if not found
         } catch (e: Exception) {
-            false
+            null
         }
     }
+
 
     suspend fun updateGroup(group: Groups, activity: Activity) {
         val database = RoomDb(activity).getSmsDao()
@@ -552,6 +553,122 @@ class MyViewModel
             }
             networkResponseFailure(it, null, "registeruser()", activity)
         }
+    }
+
+
+    suspend fun pushMessages(messageList: MutableList<PostSmsBody>, activity: Activity) {
+        runCatching {
+            val response = api.pushMessages(activity.getHeaders(), messageList)
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "registeruser()", activity)
+        }
+    }
+
+
+    suspend fun pushGroupMessage(groupmessageList: MutableList<GroupSmsDetail>, activity: Activity) {
+        runCatching {
+            val response = api.pushGroupMessages(activity.getHeaders(),groupmessageList)
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "pushGroupMessage()", activity)
+        }
+    }
+
+
+
+
+    suspend fun getCloudSmsCount(type: String, group_id: Long?, activity: Activity): Int {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = api.getCloudSmsCount(activity.getHeaders(),type, group_id)
+                if (response.isSuccessful) {
+                    response.body() ?: 0 // Return 0 if response.body() is null
+                } else {
+                    withContext(Dispatchers.Main) {
+                        activity.dismissProgress()
+                        val errorBody = response.errorBody()?.string()
+                        handleResponse(errorBody, null, activity)
+                    }
+                    0 // Return a default value on error
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    activity.dismissProgress()
+                    networkResponseFailure(e, null, "pushGroupMessage()", activity)
+                }
+                0 // Return a default value on failure
+            }
+        }
+    }
+
+
+    suspend fun saveGroup(group: Groups, activity: Activity) {
+        runCatching {
+            val response = api.postGroup(activity.getHeaders(), PostGroup(group.description.toString(), group.id.toString(), group.members, group.name.toString()))
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "registeruser()", activity)
+        }
+    }
+
+
+    suspend fun getLatestPagedSmsList(pageNumber: Int, pageSize: Int, activity: Activity): List<SmsDetail> {
+
+        val database = RoomDb(activity).getSmsDao()
+        val smslist = database.getLatestPagedSmsList(pageNumber, pageSize)
+
+        val modifiedSmsList = smslist.map { smsDetail ->
+            smsDetail.copy(phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0"))
+        }
+
+        val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
+        modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
+            val phoneNumber = smsDetail.phoneNumber.orEmpty()
+            if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
+                uniqueModifiedSmsMap[phoneNumber] = smsDetail
+            }
+        }
+
+        val thelist = uniqueModifiedSmsMap.values.toList()
+        return thelist
+
     }
 
 

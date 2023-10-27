@@ -36,8 +36,11 @@ import com.tafatalkstudent.Shared.showLongSnackbar
 import com.tafatalkstudent.databinding.ActivitySmsDetailBinding
 import com.tafatalkstudent.databinding.BottomsheetBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -47,6 +50,7 @@ import java.util.Locale
 @AndroidEntryPoint
 class SmsDetailActivity : AppCompatActivity() {
 
+    val isthreadScope = CoroutineScope(Dispatchers.IO)
     private lateinit var bottomSheetDialog: BottomSheetDialog
     private lateinit var activeSubscriptionInfoList: MutableList<SubscriptionInfo>
     private lateinit var subscriptionManager: SubscriptionManager
@@ -143,7 +147,7 @@ class SmsDetailActivity : AppCompatActivity() {
     }
 
     private fun makeIsReadToTrue(phoneNumber: String) {
-        threadScope.launch {
+        isthreadScope.launch {
 
             val formattedNumbers = mutableListOf<String>()
             val cleanedPhoneNumber = phoneNumber.replace("[\\s-]".toRegex(), "")
@@ -177,7 +181,7 @@ class SmsDetailActivity : AppCompatActivity() {
     }
 
     private fun setTextWithActiveSimCardNumber() {
-        threadScope.launch {
+        isthreadScope.launch {
             val _activeSimCard = async { viewmodel.getActiveSimCard(this@SmsDetailActivity) }
             val activeSimCard = _activeSimCard.await()
             binding.simCardText.setText(activeSimCard!!.body.toString())
@@ -185,7 +189,7 @@ class SmsDetailActivity : AppCompatActivity() {
     }
 
     private fun setActiveSimCard(simNumber: Int) {
-        threadScope.launch {
+        isthreadScope.launch {
             val insert = async { viewmodel.insertActiveSimCard(SimCard(0, simNumber), this@SmsDetailActivity) }
             insert.await()
             mainScope.launch {
@@ -260,7 +264,6 @@ class SmsDetailActivity : AppCompatActivity() {
                 disableEditTextAndButton()
 
                 threadScope.launch {
-
                     if (activeSubscriptionInfoList != null && activeSubscriptionInfoList.size >= 2) {
                         sendNormalMessage(message, timestamp, phoneNumber, true)
                     } else {
@@ -475,6 +478,7 @@ class SmsDetailActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         unregisterBroadcastReceivers()
+        isthreadScope.cancel()
     }
 
 

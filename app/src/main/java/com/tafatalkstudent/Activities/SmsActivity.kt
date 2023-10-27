@@ -1,5 +1,6 @@
 package com.tafatalkstudent.Activities
 
+import ContactsAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,29 +11,41 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.ContactsContract
-import android.provider.ContactsContract.CommonDataKinds.Phone
 import android.provider.Telephony
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.Shared.Constants.mainScope
-import com.tafatalkstudent.Shared.Constants.threadScope
+import com.tafatalkstudent.Shared.Constants.pagingConfig
 import com.tafatalkstudent.Shared.Contact
 import com.tafatalkstudent.Shared.CustomLoadDialogClass
+import com.tafatalkstudent.Shared.GroupSmsDetail
+import com.tafatalkstudent.Shared.Groups
 import com.tafatalkstudent.Shared.MyViewModel
-import com.tafatalkstudent.Shared.SimCard
+import com.tafatalkstudent.Shared.PostSmsBody
 import com.tafatalkstudent.Shared.SmsDetail
+import com.tafatalkstudent.Shared.SmsPagingSource
 import com.tafatalkstudent.Shared.getContactName
-import com.tafatalkstudent.Shared.goToActivity_Unfinished
-import com.tafatalkstudent.Shared.showAlertDialog
+import com.tafatalkstudent.Shared.makeLongToast
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,8 +53,12 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class SmsActivity : AppCompatActivity() {
+class SmsActivity : AppCompatActivity(), LifecycleOwner {
 
+
+    private lateinit var isthreadScope: CoroutineScope
+    private lateinit var smsPagingSource: SmsPagingSource
+    private lateinit var pagingData: Flow<PagingData<SmsDetail>>
     private var isFirstTime: Boolean = true
     private lateinit var runnable: Runnable
     private lateinit var binding: ActivitySmsBinding
@@ -49,8 +66,9 @@ class SmsActivity : AppCompatActivity() {
     private lateinit var adapter: ContactsAdapter
     private lateinit var cdd: CustomLoadDialogClass
     val handler = Handler()
-    val delayMillis: Long = 500 // 1 second
+    val delayMillis: Long = 2000 // 1 second
     private lateinit var sharedPrefs: SharedPreferences
+
 
     companion object {
         val uri = Uri.parse("content://sms")
@@ -71,91 +89,162 @@ class SmsActivity : AppCompatActivity() {
     @SuppressLint("MissingPermission")
     private fun initall() {
 
+        isthreadScope = CoroutineScope(Dispatchers.IO)
+
+        smsPagingSource = SmsPagingSource(viewmodel, this)
+        pagingData = Pager(config = pagingConfig, pagingSourceFactory = { smsPagingSource }).flow.cachedIn(lifecycleScope)
+        pagingData.asLiveData().observe(this@SmsActivity) { pagedData ->
+            lifecycleScope.launch {
+                adapter.submitData(pagedData)
+            }
+        }
+
         sharedPrefs = getSharedPreferences(PREFS_NAME, 0)
         isFirstTime = sharedPrefs.getBoolean(PREF_FIRST_TIME, true)
-
-        /*
-                val SENT = "SMS_SENT"
-                val DELIVERED = "SMS_DELIVERED"
-
-
-                val sentReceiver = object : BroadcastReceiver() {
-                    override fun onReceive(context: Context?, intent: Intent?) {
-                        when (resultCode) {
-                            Activity.RESULT_OK -> {
-                                // Message sent successfully
-                                Log.d("Delivery-------", "initall: 00000")
-                            }
-
-                            SmsManager.RESULT_ERROR_GENERIC_FAILURE -> {
-                                // Generic failure
-                                Log.d("Delivery-------", "initall: 111111")
-                            }
-
-                            SmsManager.RESULT_ERROR_NO_SERVICE -> {
-                                // No service
-                                Log.d("Delivery-------", "initall: 2222222")
-                            }
-
-                            SmsManager.RESULT_ERROR_NULL_PDU -> {
-                                // Null PDU
-                                Log.d("Delivery-------", "initall: 33333333")
-                            }
-
-                            SmsManager.RESULT_ERROR_RADIO_OFF -> {
-                                // Radio off
-                                Log.d("Delivery-------", "initall: 444444444")
-                            }
-                        }
-                    }
-                }
-
-                val deliveredReceiver = object : BroadcastReceiver() {
-                    override fun onReceive(context: Context?, intent: Intent?) {
-                        when (resultCode) {
-                            Activity.RESULT_OK -> {
-                                // Message delivered successfully
-                                Log.d("Delivery-------", "initall: DELIVERED")
-                            }
-                            Activity.RESULT_CANCELED -> {
-                                // Message not delivered
-                                Log.d("Delivery-------", "initall: FAILED")
-                            }
-                        }
-                    }
-                }
-
-                registerReceiver(sentReceiver, IntentFilter(SENT))
-                registerReceiver(deliveredReceiver, IntentFilter(DELIVERED))
-
-
-                val message = "Test A"
-                val mobile = "0725641526"
-
-
-                val sentPI = PendingIntent.getBroadcast(this, 0, Intent(SENT), PendingIntent.FLAG_IMMUTABLE)
-                val deliveredPI = PendingIntent.getBroadcast(this, 0, Intent(DELIVERED), PendingIntent.FLAG_IMMUTABLE)
-
-                val smsManager = SmsManager.getDefault()
-                smsManager.sendTextMessage(mobile, null, message, sentPI, deliveredPI)*/
 
         cdd = CustomLoadDialogClass(this@SmsActivity)
         cdd.setCanceledOnTouchOutside(false)
         cdd.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        adapter = ContactsAdapter(viewmodel, this@SmsActivity, mutableListOf(), mutableListOf())
+        adapter = ContactsAdapter(this)
         val recyclerView: RecyclerView = binding.recyclerviewContacts
         recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
-        recyclerView.setItemViewCacheSize(10000)
+        recyclerView.setItemViewCacheSize(500)
         recyclerView.adapter = adapter
 
-        threadScope.launch {
+        isthreadScope.launch {
             saveMessages(this@SmsActivity)
+        }
+
+        isthreadScope.launch {
+            saveSmsMessagesToCloud()
+        }
+
+    }
+
+    fun saveSmsMessagesToCloud() {
+
+        //GET TOTAL COUNT OF LOCAL MESSAGES
+        isthreadScope.launch {
+
+            /*val groupList = viewmodel.getAllGroups(this@SmsActivity)
+            groupList.forEach {
+                val groupid = it.id
+
+                val groupMessages = viewmodel.getGroupSmsDetailById(groupid!!, this@SmsActivity)
+
+                val totalLocalMessages = viewmodel.getGroupSmsDetailById(it.id, this@SmsActivity).size
+                val _totalCloudGroupSms = async { viewmodel.getCloudSmsCount("group", groupid, this@SmsActivity) }
+                val totalCloudGroupSms = _totalCloudGroupSms.await()
+
+                if (totalLocalMessages > totalCloudGroupSms) {
+                    val difference = totalLocalMessages - totalCloudGroupSms
+                    Log.d("GROUPCHECK-------", "initall: GROUP -> ${it.name} HAS ${groupMessages.size} Messages and Cloud has ${totalCloudGroupSms} and difference is ${difference}")
+                    //pushTheLastXYGroupMessagesToCloud(difference, it, groupMessages)
+                }
+
+            }*/
+
+            val _totalCloudSms = async { viewmodel.getCloudSmsCount("sms", null, this@SmsActivity) }
+            val totalCloudSms = _totalCloudSms.await()
+            val localMessages = viewmodel.getAllSmsDetails(this@SmsActivity)
+            val messagesize = localMessages.size
+            val difference = messagesize - totalCloudSms
+            if (messagesize > totalCloudSms) {
+                Log.d("SMSCHECK-------", "initall: Local -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
+                pushTheLastXYMessagesToCloud(difference, localMessages)
+            } else {
+                Log.d("SMSCHECK-------", "initall: Local -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
+            }
+
         }
 
 
     }
 
+    private fun pushTheLastXYMessagesToCloud(difference: Int, localMessages: MutableList<SmsDetail>) {
+
+        isthreadScope.launch {
+
+            if (localMessages.isNotEmpty()) {
+                if (difference > 0) {
+
+                    val deferredList = mutableListOf<Deferred<PostSmsBody>>()
+
+                    val latest12Messages = localMessages.sortedByDescending { it.timestamp }.take(difference)
+                    latest12Messages.forEachIndexed { index, smsDetail ->
+                        val deferred = async {
+                            PostSmsBody(
+                                smsDetail.body.toString(),
+                                smsDetail.name.toString(), smsDetail.phoneNumber.toString(), smsDetail.state.toString(), smsDetail.status.toString(),
+                                smsDetail.formattedTimestamp.toString(), smsDetail.timestamp.toString(), smsDetail.type.toString()
+                            )
+                        }
+                        deferredList.add(deferred)
+                    }
+
+                    val batchList = deferredList.awaitAll()
+
+                    // Usage example
+                    val batchSize = 500
+                    val batches = mutableListOf<List<PostSmsBody>>()
+                    for (i in 0 until batchList.size step batchSize) {
+                        val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
+                        batches.add(batch)
+                    }
+
+                    val _waiter = async {
+                        /*batches.forEach {
+                            //viewmodel.pushMessages(it.toMutableList(), this@SmsActivity)
+                        }*/
+                        batches.forEachIndexed { index, postSmsBodies ->
+                            Log.d("BATCH-------", "initall: BATCH $index")
+                        }
+                    }
+                    _waiter.await()
+                }
+            }
+        }
+
+    }
+
+
+    private fun pushTheLastXYGroupMessagesToCloud(difference: Int, group: Groups, groupMessages: MutableList<GroupSmsDetail>) {
+
+        isthreadScope.launch {
+
+            if (groupMessages.isNotEmpty()) {
+                if (difference > 0) {
+
+                    val deferredList = mutableListOf<Deferred<GroupSmsDetail>>()
+                    val latest12Messages = groupMessages.sortedByDescending { it.timestamp }.take(difference)
+                    latest12Messages.forEachIndexed { index, smsDetail ->
+                        val deferred = async { smsDetail }
+                        deferredList.add(deferred)
+                    }
+
+                    val batchList = deferredList.awaitAll()
+
+                    // Usage example
+                    val batchSize = 500
+                    val batches = mutableListOf<List<GroupSmsDetail>>()
+                    for (i in 0 until batchList.size step batchSize) {
+                        val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
+                        batches.add(batch)
+                    }
+
+                    val _waiter = async {
+                        batches.forEach {
+                            viewmodel.pushGroupMessage(it.toMutableList(), this@SmsActivity)
+                        }
+                    }
+                    _waiter.await()
+
+                }
+            }
+        }
+
+    }
 
 
     @SuppressLint("Range")
@@ -186,7 +275,6 @@ class SmsActivity : AppCompatActivity() {
 
     fun saveMessages(context: Context) {
 
-
         if (isFirstTime) {
             mainScope.launch {
                 cdd.show()
@@ -201,7 +289,7 @@ class SmsActivity : AppCompatActivity() {
         cursor.close()
 
         var standingSmsCount = 0
-        threadScope.launch {
+        isthreadScope.launch {
 
             val totalSmsDetailCount = async { viewmodel.getTotalSmsDetailCount(this@SmsActivity) }
             val numberOfDraftItems = async { viewmodel.getDraftSmsCount(this@SmsActivity) }
@@ -298,6 +386,9 @@ class SmsActivity : AppCompatActivity() {
                     isFirstTime = false
                     editor.apply()
                     updateSmsList()
+                    isthreadScope.launch {
+                        saveSmsMessagesToCloud()
+                    }
                 }
 
             } else {
@@ -318,7 +409,7 @@ class SmsActivity : AppCompatActivity() {
 
     fun updateSmsList() {
 
-        threadScope.launch {
+        isthreadScope.launch {
 
             val _smslist = async { viewmodel.getLatestSmsList(this@SmsActivity) }
             val smslist = _smslist.await()
@@ -337,7 +428,8 @@ class SmsActivity : AppCompatActivity() {
 
             if (::adapter.isInitialized) {
                 mainScope.launch {
-                    adapter.setData(filteredSmsList)
+                    refreshData()
+                    Log.d("CALLED-------", "initall: FINAL")
                 }
             }
 
@@ -346,20 +438,17 @@ class SmsActivity : AppCompatActivity() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        deleExistingMessagesAndUpdate()
-        if (!isFirstTime) {
-            checkForNewMessages()
-        }
-
+    // Call this function when you want to refresh your data
+    private fun refreshData() {
+        smsPagingSource.invalidate() // Invalidate the paging source
     }
+
 
     private fun checkForNewMessages() {
         runnable = object : Runnable {
             override fun run() {
-                threadScope.launch {
+                isthreadScope.launch {
 
                     val cursor = this@SmsActivity.contentResolver.query(uri, null, null, null, null)
                     val numberofItems = cursor!!.count
@@ -371,9 +460,11 @@ class SmsActivity : AppCompatActivity() {
                     val standingSmsCount = totalSmsDetailCount.await() - numberOfDraftItems.await()
 
                     val difference = numberofItems - standingSmsCount
-                    val message = "Curosor Count -> ${numberofItems}\nStanding Db Count ->${standingSmsCount}\nDifference -> ${difference}\n"
+                    val message = "Curosor Count -> ${numberofItems}    Standing Db Count ->${standingSmsCount}    Difference -> ${difference}\n"
                     Log.d("tracker-------", "initall: $message")
                     if (difference > 0) {
+
+                        Log.d("CALLED-------0", "initall: CURSOR SIZE = $numberofItems AND ")
 
                         val batchList = mutableListOf<SmsDetail>()
 
@@ -405,17 +496,17 @@ class SmsActivity : AppCompatActivity() {
                                             else -> "Unknown"
                                         }
 
-                                        threadScope.launch {
-                                            var isread  = false
+                                        isthreadScope.launch {
+                                            var isread = false
                                             isread = state == "Sent"
                                             val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, isread)
                                             batchList.add(smsDetail)
                                             Log.d("herere-------", "initall: Here........................................")
                                         }
 
-
                                     } while (it.moveToNext())
                                 } else {
+                                    latestCursor?.close()
                                 }
                             } else {
                                 mainScope.launch {
@@ -435,7 +526,7 @@ class SmsActivity : AppCompatActivity() {
                         }
 
 
-                        threadScope.launch {
+                        isthreadScope.launch {
                             val _waiter = async {
                                 batches.forEach {
                                     viewmodel.insertBatchWithRetry(it, this@SmsActivity)
@@ -448,10 +539,15 @@ class SmsActivity : AppCompatActivity() {
                             mainScope.launch {
                                 updateSmsList()
                             }
+                            isthreadScope.launch {
+                                saveSmsMessagesToCloud()
+                            }
                         } catch (e: Exception) {
                             Log.d("-------", "initall: ")
                         }
 
+                    } else {
+                        Log.d("CALLED-------0", "initall: NOT BIGGER THAN")
                     }
 
 
@@ -464,8 +560,9 @@ class SmsActivity : AppCompatActivity() {
         handler.postDelayed(runnable, delayMillis)
     }
 
+
     private fun deleExistingMessagesAndUpdate() {
-        threadScope.launch {
+        isthreadScope.launch {
             val delete = async { viewmodel.deleteMessagesWithPattern(this@SmsActivity) }
             delete.await()
             updateSmsList()
@@ -475,21 +572,31 @@ class SmsActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (::runnable.isInitialized) {
-            handler.removeCallbacks(runnable)
-        }
+        if (::runnable.isInitialized) handler.removeCallbacks(runnable)
+        isthreadScope.cancel()
+        lifecycleScope.cancel()
     }
 
     override fun onStop() {
         super.onStop()
-        if (::runnable.isInitialized) {
-            handler.removeCallbacks(runnable)
-        }
+        if (::runnable.isInitialized) handler.removeCallbacks(runnable)
+        isthreadScope.cancel()
+        lifecycleScope.cancel()
     }
 
-
-
-
+    override fun onResume() {
+        super.onResume()
+        deleExistingMessagesAndUpdate()
+        if (!isFirstTime) {
+            if (!isthreadScope.isActive) {
+                isthreadScope = CoroutineScope(Dispatchers.IO)
+            }
+            checkForNewMessages()
+            isthreadScope.launch {
+                saveSmsMessagesToCloud()
+            }
+        }
+    }
 
 
 }

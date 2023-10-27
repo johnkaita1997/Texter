@@ -1,5 +1,7 @@
 package com.tafatalkstudent.Shared
 
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -22,7 +24,6 @@ data class SmsDetail(
     val isRead: Boolean?,  // Indicates whether the message has been read
 )
 
-
 @Entity(indices = [Index(value = ["timestamp"])])
 data class GroupSmsDetail(
     @PrimaryKey(autoGenerate = true)
@@ -41,7 +42,6 @@ data class GroupSmsDetail(
     val senderNumber: String?,
     val codeStamp: Long?
 )
-
 
 @Entity
 data class SimCard(
@@ -100,8 +100,23 @@ data class User(
     val phone: String?,
 )
 
+data class PostSmsBody(
+    val body: String,
+    val name: String,
+    val phoneNumber: String,
+    val state: String,
+    val status: String,
+    val time: String,
+    val timestamp: String,
+    val type: String
+)
 
-
+data class PostGroup(
+    val description: String,
+    val groupId: String,
+    val members: MutableList<Contact>,
+    val name: String
+)
 
 
 

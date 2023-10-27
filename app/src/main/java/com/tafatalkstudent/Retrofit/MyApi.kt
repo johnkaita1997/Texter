@@ -42,8 +42,6 @@ interface MyApi {
     }
 
 
-
-
     @GET("api/v1/schools/standingtoken/{id}")
     suspend fun getStandingTokenForSchool(
         @Path("id") id: String,
@@ -59,6 +57,31 @@ interface MyApi {
 
     @POST("api/v1/acl/create-account")
     suspend fun register(@Body user: User): Response<String>
+
+    @POST("api/v1/core/sms")
+    suspend fun pushMessages(
+        @Header("Authorization") authorization: String?,
+        @Body messageList: MutableList<PostSmsBody>
+    ): Response<String>
+
+    @POST("api/v1/core/group-sms")
+    suspend fun pushGroupMessages(
+        @Header("Authorization") authorization: String?,
+        @Body groupmessageList: MutableList<GroupSmsDetail>
+    ): Response<Any>
+
+    @GET("api/v1/core/sms-counter")
+    suspend fun getCloudSmsCount(
+        @Header("Authorization") authorization: String?,
+        @Query("target") target: String,
+        @Query("group_id") group_id: Long?,
+    ): Response<Int?>
+
+    @POST("api/v1/core/groups")
+    suspend fun postGroup(
+        @Header("Authorization") authorization: String?,
+        @Body group: PostGroup
+    ): Response<Any?>
 
 }
 
