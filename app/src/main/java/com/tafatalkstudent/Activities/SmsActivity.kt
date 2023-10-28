@@ -171,10 +171,8 @@ class SmsActivity : AppCompatActivity() {
 
         cursor?.use {
             while (it.moveToNext()) {
-                val name =
-                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                val phoneNumber =
-                    it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                val name = it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                val phoneNumber = it.getString(it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))
                 contactsList.add(Contact(name, phoneNumber))
             }
         }
@@ -311,8 +309,6 @@ class SmsActivity : AppCompatActivity() {
             }
 
         }
-
-
     }
 
 
