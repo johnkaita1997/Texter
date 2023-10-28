@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Telephony.Sms
+import android.se.omapi.Session
 import android.telephony.SmsManager
 import android.util.Log
 import androidx.activity.viewModels
@@ -19,6 +20,7 @@ import com.tafatalkstudent.Shared.Constants.threadScope
 import com.tafatalkstudent.Shared.GroupSmsDetail
 import com.tafatalkstudent.Shared.Groups
 import com.tafatalkstudent.Shared.MyViewModel
+import com.tafatalkstudent.Shared.SessionManager
 import com.tafatalkstudent.Shared.SimCard
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.formatPhoneNumber
@@ -70,9 +72,9 @@ class LandingPage : AppCompatActivity() {
         }
 
         threadScope.launch {
-           val groups = viewmodel.getAllGroups(this@LandingPage)
-           val allGroupSmsDetails = viewmodel.getAllGroupSmsDetails(this@LandingPage)
-           val allSmsDetails = viewmodel.getAllSmsDetails(this@LandingPage)
+            val groups = viewmodel.getAllGroups(this@LandingPage)
+            val allGroupSmsDetails = viewmodel.getAllGroupSmsDetails(this@LandingPage)
+            val allSmsDetails = viewmodel.getAllSmsDetails(this@LandingPage)
             Log.d("convertToJson-------", "initall: ${convertToJson(groups)}")
             Log.d("convertToJson-------", "initall: ${convertToJson(allGroupSmsDetails)}")
             Log.d("convertToJson-------", "initall: ${convertToJson(allSmsDetails)}")
@@ -92,6 +94,14 @@ class LandingPage : AppCompatActivity() {
 
 
     private fun onClicklisteners() {
+
+        binding.logout.setOnClickListener {
+            val logout = SessionManager(this).logout()
+            if (logout) {
+                goToActivity(this@LandingPage, LoginActivity::class.java)
+            }
+        }
+
         binding.viewGroups.setOnClickListener {
             goToActivity_Unfinished(this, ViewGroupsActivity::class.java)
         }

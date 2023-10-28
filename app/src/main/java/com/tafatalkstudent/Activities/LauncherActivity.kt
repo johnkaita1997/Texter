@@ -26,6 +26,7 @@ import com.tafatalkstudent.databinding.LauncherActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -66,41 +67,31 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun initall() {
 
-        CoroutineScope(Dispatchers.IO).launch() {
-            delay(100)
-            mainScope.launch {
-                goToActivity(this@LauncherActivity, LandingPage::class.java)
+        if (issignedIn()) {
+            CoroutineScope(Dispatchers.IO).launch() {
+                delay(2000)
+                mainScope.launch {
+                    refreshLogin()
+                    goToActivity(this@LauncherActivity, LandingPage::class.java)
+                }
+            }
+        } else {
+            CoroutineScope(Dispatchers.IO).launch() {
+                delay(2000)
+                mainScope.launch {
+                    makeGone(binding.loadinglayout)
+                    goToActivity(this@LauncherActivity, LoginActivity::class.java)
+                }
             }
         }
 
-        binding.studentsignin.setOnClickListener {
+    }
 
-            val email = binding.kaemail.text.toString().trim()
-            val password = binding.kapassword.text.toString().trim()
-
-            if (email.length <= 0) {
-                makeLongToast("Enter your email")
-            } else if (password.length <= 0) {
-                makeLongToast("Enter your password")
-            } else {
-                showProgress(this)
-                var updatedemail = when {
-                    email.startsWith("0") -> email.replaceFirst("0", "254")
-                    email.startsWith("+254") -> email.replaceFirst("+254", "254")
-                    else -> email
-                }
-
-                val updatedpassword = when {
-                    password.startsWith("0") -> password.replaceFirst("0", "254")
-                    password.startsWith("+254") -> password.replaceFirst("+254", "254")
-                    else -> password
-                }
-
-                /*updatedemail = updatedemail + "@gmail.com"
-                CoroutineScope(Dispatchers.IO).launch() {
-                    viewmodel.loginuser(updatedemail, updatedpassword, null, this@LauncherActivity)
-                }*/
-            }
+    private fun refreshLogin() {
+        val u = SessionManager(this).fetchu().toString()
+        val p = SessionManager(this).fetchp().toString()
+        GlobalScope.launch {
+            viewmodel.refreshtoken(u,p, this@LauncherActivity)
         }
     }
 

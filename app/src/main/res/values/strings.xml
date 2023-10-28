@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Tafa Talk</string>
+    <string name="app_name">Smart Sms</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
     <string name="login_password_hint">Password</string>
@@ -11,7 +11,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="already_have_an_account">Already have an account? <font fgcolor='#0000FF'> Login</font> </string>
+    <string name="already_have_an_account">Already have an account? <font fgcolor='#FFFF00'> Login</font> </string>
     <string name="resetPassword">Forgot Your Password?  <font fgcolor='#FFFF00'>  Reset Now</font> </string>
     <string name="dont_have_an_account">Dont Have An Account?<font fgcolor='#FFFF00'>  Create One</font>  </string>
     <string name="view_all_bets"><u>View all bets</u></string>

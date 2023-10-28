@@ -39,14 +39,19 @@
     <application
         android:name=".Dagger.MyApplication"
         android:allowBackup="false"
-        android:icon="@drawable/logodark"
+        android:icon="@color/ardhisasacolorPrimaryDark"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:roundIcon="@drawable/logodark"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
+        <activity
+            android:name=".Activities.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:exported="false" />
         <activity
             android:name=".Activities.ViewGroupsActivity"
             android:exported="false" />

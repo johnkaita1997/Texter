@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Shared
 
 import android.net.Uri
+import androidx.paging.PagingConfig
 import com.marwaeltayeb.progressdialog.ProgressDialog
 import com.tafatalkstudent.Activities.MainActivity
 import dmax.dialog.SpotsDialog
@@ -25,10 +26,15 @@ object Constants {
     val threadScope = CoroutineScope(Dispatchers.IO) // Create your own CoroutineScope
     const val permission_request = 100
 
+    val pagingConfig = PagingConfig(
+        pageSize = 20, // Number of items to load per page
+        enablePlaceholders = false
+    )
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAGINATION START
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    var baseurl = "https://tafatalk.co.ke"
+    var baseurl = "http://20.102.106.83:2001"
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              MPESA START

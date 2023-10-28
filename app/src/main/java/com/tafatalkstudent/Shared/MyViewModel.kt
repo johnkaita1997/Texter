@@ -3,15 +3,18 @@ package com.tafatalkstudent.Shared
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.constraintlayout.widget.Group
 import androidx.lifecycle.*
-import com.tafatalkstudent.Activities.LauncherActivity
+import androidx.paging.Pager
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.tafatalkstudent.Activities.LandingPage
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
@@ -22,9 +25,7 @@ import kotlin.coroutines.CoroutineContext
 
 @HiltViewModel
 class MyViewModel
-@Inject constructor(
-    @Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context
-) : ViewModel() {
+@Inject constructor(@Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context) : ViewModel() {
 
     val _isParentAccountActive = MutableLiveData<Boolean?>()
     val isParentAccountActive: LiveData<Boolean?> get() = _isParentAccountActive
@@ -37,7 +38,6 @@ class MyViewModel
 
     val _getTotalNumberofReceipts = MutableLiveData<String>()
     val getTotalNumberofReceipts: LiveData<String> get() = _getTotalNumberofReceipts
-
 
     fun Context.coroutineexception(activity: Activity): CoroutineContext {
         val handler = CoroutineExceptionHandler { _, exception ->
@@ -196,7 +196,6 @@ class MyViewModel
         val database = RoomDb(activity).getSmsDao()
         val smslist = database.getLatestSmsList()
 
-        // Remove country code for phone numbers starting with "+254"
         val modifiedSmsList = smslist.map { smsDetail ->
             smsDetail.copy(
                 phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0")
@@ -360,15 +359,18 @@ class MyViewModel
     }
 
 
-    suspend fun insertGroup(group: Groups, activity: Activity): Boolean {
+    suspend fun insertGroup(group: Groups, activity: Activity): Groups? {
         val database = RoomDb(activity).getSmsDao()
         return try {
-            database.insertGroup(group)
-            true
+            val groupId = database.insertGroup(group)
+            // Query for the inserted group
+            val insertedGroup = database.getGroupById(groupId)
+            insertedGroup // Return the inserted group or null if not found
         } catch (e: Exception) {
-            false
+            null
         }
     }
+
 
     suspend fun updateGroup(group: Groups, activity: Activity) {
         val database = RoomDb(activity).getSmsDao()
@@ -468,6 +470,205 @@ class MyViewModel
         val database = RoomDb(activity).getSmsDao()
         val failedGroupMessages = database.getFailedGroupMessages()
         return failedGroupMessages
+    }
+
+
+    suspend fun loginuser(email: String, password: String, mydialog: SpotsDialog?, activity: Activity) {
+
+        runCatching {
+
+            val response = api.login(LoginBody(email, password))
+
+            if (!response.isSuccessful) {
+                mainScope.launch { activity.dismissProgress() }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+
+                withContext(Dispatchers.Main) {
+                    val access = response.body()?.token.toString()
+                    val refresh = response.body()?.token.toString()
+                    val map = mutableMapOf<String, String>()
+                    map["access"] = access
+                    map["refresh"] = refresh
+
+                    SessionManager(activity).savejwtToken(access, refresh)
+                    SessionManager(activity).saveUp(email, password)
+                    Log.d("-------", "initall: $email,  $password")
+
+                    activity.dismissProgress()
+                    activity.makeLongToast("Login was successful")
+                    activity.goToActivity(activity, LandingPage::class.java)
+                }
+            }
+
+        }.onFailure {
+            mainScope.launch { activity.dismissProgress() }
+            networkResponseFailure(it, mydialog, "loginuser()", activity)
+        }
+
+    }
+
+    suspend fun refreshtoken(u: String, p: String, activity: Activity) {
+        runCatching {
+            val response = api.login(LoginBody(u, p))
+            if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string()
+                return@runCatching
+            } else {
+                val access = response.body()?.token.toString()
+                val refresh = response.body()?.token.toString()
+                val map = mutableMapOf<String, String>()
+                map["access"] = access
+                map["refresh"] = refresh
+                SessionManager(activity).savejwtToken(access, refresh)
+                SessionManager(activity).saveUp(u, p)
+                Log.d("-------", "initall: $u,  $p")
+            }
+
+        }.onFailure {}
+    }
+
+
+    suspend fun registeruser(email: String, first_name: String, last_name: String, password: String, phone: String, activity: Activity) {
+        val user = User(email, password, first_name, last_name, phone)
+        val response = api.register(user)
+        runCatching {
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                delay(9000)
+                loginuser(email, password, null, activity)
+                SessionManager(activity).saveUp(email, password)
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "registeruser()", activity)
+        }
+    }
+
+
+    suspend fun pushMessages(messageList: MutableList<PostSmsBody>, activity: Activity) {
+        runCatching {
+            val response = api.pushMessages(activity.getHeaders(), messageList)
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "registeruser()", activity)
+        }
+    }
+
+
+    suspend fun pushGroupMessage(groupmessageList: MutableList<GroupSmsDetail>, activity: Activity) {
+        runCatching {
+            val response = api.pushGroupMessages(activity.getHeaders(),groupmessageList)
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "pushGroupMessage()", activity)
+        }
+    }
+
+
+
+
+    suspend fun getCloudSmsCount(type: String, group_id: Long?, activity: Activity): Int {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = api.getCloudSmsCount(activity.getHeaders(),type, group_id)
+                if (response.isSuccessful) {
+                    response.body() ?: 0 // Return 0 if response.body() is null
+                } else {
+                    withContext(Dispatchers.Main) {
+                        activity.dismissProgress()
+                        val errorBody = response.errorBody()?.string()
+                        handleResponse(errorBody, null, activity)
+                    }
+                    0 // Return a default value on error
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    activity.dismissProgress()
+                    networkResponseFailure(e, null, "pushGroupMessage()", activity)
+                }
+                0 // Return a default value on failure
+            }
+        }
+    }
+
+
+    suspend fun saveGroup(group: Groups, activity: Activity) {
+        runCatching {
+            val response = api.postGroup(activity.getHeaders(), PostGroup(group.description.toString(), group.id.toString(), group.members, group.name.toString()))
+            if (!response.isSuccessful) {
+                mainScope.launch {
+                    activity.dismissProgress()
+                }
+                val errorBody = response.errorBody()?.string()
+                handleResponse(errorBody, null, activity)
+                return@runCatching
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            mainScope.launch {
+                activity.dismissProgress()
+            }
+            networkResponseFailure(it, null, "registeruser()", activity)
+        }
+    }
+
+
+    suspend fun getLatestPagedSmsList(pageNumber: Int, pageSize: Int, activity: Activity): List<SmsDetail> {
+
+        val database = RoomDb(activity).getSmsDao()
+        val smslist = database.getLatestPagedSmsList(pageNumber, pageSize)
+
+        val modifiedSmsList = smslist.map { smsDetail ->
+            smsDetail.copy(phoneNumber = smsDetail.phoneNumber?.replace("^\\+254".toRegex(), "0"))
+        }
+
+        val uniqueModifiedSmsMap = mutableMapOf<String, SmsDetail>()
+        modifiedSmsList.sortedByDescending { it.timestamp }.forEach { smsDetail ->
+            val phoneNumber = smsDetail.phoneNumber.orEmpty()
+            if (!uniqueModifiedSmsMap.containsKey(phoneNumber)) {
+                uniqueModifiedSmsMap[phoneNumber] = smsDetail
+            }
+        }
+
+        val thelist = uniqueModifiedSmsMap.values.toList()
+        return thelist
+
     }
 
 

@@ -515,3 +515,17 @@ fun Context.getContactName(phoneNumber: String): String {
         contactName
     }
 }
+
+
+
+
+data class MyAuth(var authToken: String?)
+
+fun Context.getAuthDetails(): MyAuth {
+    val authtoken = "${SessionManager(this).fetchAccessToken()}"
+    return MyAuth(authtoken)
+}
+
+fun Context.getHeaders() : String {
+    return "${getAuthDetails().authToken.toString()}"
+}
