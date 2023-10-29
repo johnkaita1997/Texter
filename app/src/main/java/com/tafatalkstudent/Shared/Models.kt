@@ -120,3 +120,41 @@ data class PostGroup(
 
 
 
+class GetScheduledSms : ArrayList<GetScheduledSmsItem>()
+data class GetScheduledSmsItem(
+    val body: String?,
+    val client: Client?,
+    val date_created: String?,
+    val formattedTimestamp: String?,
+    val groupId: Int?,
+    val id: String?,
+    val is_sent: Boolean?,
+    val timestamp: Long?,
+    val to: List<String>?,
+    val type: Int?
+)
+
+data class Client(
+    val date_created: String,
+    val email: String,
+    val first_name: String,
+    val id: String,
+    val is_active: String,
+    val is_suspended: String,
+    val last_name: String,
+    val phone: String,
+    val user_groups: List<UserGroup>
+)
+
+data class UserGroup(
+    val id: String,
+    val name: String
+)
+
+data class PutScheduleSms(
+    val to: List<String>?,
+    val body: String?,
+    val groupId: Int?,
+    val type: Int?,
+    val sent_id: String?,
+)

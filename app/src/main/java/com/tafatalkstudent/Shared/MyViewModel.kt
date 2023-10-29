@@ -1,5 +1,6 @@
 package com.tafatalkstudent.Shared
 
+import android.accounts.NetworkErrorException
 import android.app.Activity
 import android.content.Context
 import android.util.Log
@@ -10,6 +11,7 @@ import androidx.paging.cachedIn
 import com.tafatalkstudent.Activities.LandingPage
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
+import com.tafatalkstudent.Shared.Constants.threadScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dmax.dialog.SpotsDialog
@@ -21,11 +23,17 @@ import javax.inject.Inject
 import javax.inject.Named
 import kotlin.collections.set
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 
 @HiltViewModel
 class MyViewModel
 @Inject constructor(@Named("myapi") private val api: MyApi, @ApplicationContext private val appcontext: Context) : ViewModel() {
+
+    private val _scheduledSmsData = MutableLiveData<GetScheduledSms?>()
+    val scheduledSmsData: LiveData<GetScheduledSms?> get() = _scheduledSmsData
 
     val _isParentAccountActive = MutableLiveData<Boolean?>()
     val isParentAccountActive: LiveData<Boolean?> get() = _isParentAccountActive
@@ -580,7 +588,7 @@ class MyViewModel
 
     suspend fun pushGroupMessage(groupmessageList: MutableList<GroupSmsDetail>, activity: Activity) {
         runCatching {
-            val response = api.pushGroupMessages(activity.getHeaders(),groupmessageList)
+            val response = api.pushGroupMessages(activity.getHeaders(), groupmessageList)
             if (!response.isSuccessful) {
                 mainScope.launch {
                     activity.dismissProgress()
@@ -600,12 +608,10 @@ class MyViewModel
     }
 
 
-
-
     suspend fun getCloudSmsCount(type: String, group_id: Long?, activity: Activity): Int {
         return withContext(Dispatchers.IO) {
             try {
-                val response = api.getCloudSmsCount(activity.getHeaders(),type, group_id)
+                val response = api.getCloudSmsCount(activity.getHeaders(), type, group_id)
                 if (response.isSuccessful) {
                     response.body() ?: 0 // Return 0 if response.body() is null
                 } else {
@@ -669,6 +675,58 @@ class MyViewModel
         val thelist = uniqueModifiedSmsMap.values.toList()
         return thelist
 
+    }
+
+
+    fun getScheduledSmsData(activity: Activity) {
+        threadScope.launch {
+            try {
+                val response = api.getScheduledSms(activity.getHeaders())
+                if (response.isSuccessful) {
+                    _scheduledSmsData.postValue(response.body())
+                } else {
+                    // Handle error, response.errorBody() contains error details
+                    _scheduledSmsData.postValue(null)
+                }
+            } catch (e: Exception) {
+                // Handle network or other errors
+                _scheduledSmsData.postValue(null)
+            }
+        }
+    }
+
+
+    suspend fun updateScheduledSms(putScheduleSms: PutScheduleSms, activity: Activity) {
+        runCatching {
+            val response = api.updateScheduledSms(activity.getHeaders(), putScheduleSms)
+            if (!response.isSuccessful) {
+                Log.d("-------", "initall: ")
+            } else {
+                Log.d("-------", "initall: Message Pushed Successfully")
+            }
+        }.onFailure {
+            Log.d("-------", "initall: ")
+        }
+    }
+
+
+    suspend fun getScheduledSmsDataService(activity: Activity): GetScheduledSms? {
+        return suspendCoroutine { continuation ->
+            threadScope.launch {
+                try {
+                    Log.d("Observer-------", "initall: New observer")
+                    val response = api.getScheduledSms(activity.getHeaders())
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        continuation.resume(result)
+                    } else {
+                        continuation.resumeWithException(NetworkErrorException("Failed to fetch data"))
+                    }
+                } catch (e: Exception) {
+                    continuation.resumeWithException(e)
+                }
+            }
+        }
     }
 
 

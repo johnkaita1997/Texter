@@ -83,6 +83,21 @@ interface MyApi {
         @Body group: PostGroup
     ): Response<Any?>
 
+
+    @GET("api/v1/core/scheduled-sms")
+    suspend fun getScheduledSms(
+        @Header("Authorization") authorization: String?,
+    ): Response<GetScheduledSms?>
+
+
+    @PUT("api/v1/core/scheduled-sms")
+    suspend fun updateScheduledSms(
+        @Header("Authorization") authorization: String?,
+        @Body putScheduleSms: PutScheduleSms
+    ): Response<Any?>
+
+
+
 }
 
 

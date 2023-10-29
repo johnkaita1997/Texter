@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Shared
 
 import android.net.Uri
+import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.paging.PagingConfig
 import com.marwaeltayeb.progressdialog.ProgressDialog
 import com.tafatalkstudent.Activities.MainActivity
@@ -27,9 +28,13 @@ object Constants {
     const val permission_request = 100
 
     val pagingConfig = PagingConfig(
-        pageSize = 20, // Number of items to load per page
-        enablePlaceholders = false
+        pageSize = 20, // Define your page size here
+        enablePlaceholders = true,
+        prefetchDistance = 20,
+        initialLoadSize = 20
+    //initialLoadSize = PAGE_SIZE * 3 // You can adjust initial load size based on your requirement
     )
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //              PAGINATION START

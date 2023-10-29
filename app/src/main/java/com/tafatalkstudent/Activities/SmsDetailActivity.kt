@@ -147,10 +147,12 @@ class SmsDetailActivity : AppCompatActivity() {
     }
 
     private fun makeIsReadToTrue(phoneNumber: String) {
+
         isthreadScope.launch {
 
             val formattedNumbers = mutableListOf<String>()
-            val cleanedPhoneNumber = phoneNumber.replace("[\\s-]".toRegex(), "")
+            //val cleanedPhoneNumber = phoneNumber.replace("[\\s-]".toRegex(), "")
+            val cleanedPhoneNumber = phoneNumber
             formattedNumbers.add(cleanedPhoneNumber)
             if (cleanedPhoneNumber.startsWith("0")) {
                 val formattedNumber = "254${cleanedPhoneNumber.substring(1)}"
@@ -175,6 +177,9 @@ class SmsDetailActivity : AppCompatActivity() {
             formattedNumbers.forEach {
                 Log.d("formattedNumbers-------", "initall: $formattedNumbers")
                 viewmodel.markMessagesAsRead(it,this@SmsDetailActivity)
+                mainScope.launch {
+                    SmsActivity().refreshData()
+                }
             }
         }
 
@@ -203,18 +208,19 @@ class SmsDetailActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val draftMessage: SmsDetail? = viewmodel.getDraftMessage(this@SmsDetailActivity)
             draftMessage?.let {
+                val draftPhoneNumber = it.phoneNumber
                 val draftBody: String = draftMessage.body.toString()
-                binding.etMessage.setText(draftBody)
+                if (it.phoneNumber == phoneNumber) {
+                    binding.etMessage.setText(draftBody)
+                }
             }
         }
     }
 
     private fun populateMessageRecyclerView() {
         lifecycleScope.launch {
-
             val messageListForPhoneNumber = async { viewmodel.getMessagesByPhoneNumber(phoneNumber, this@SmsDetailActivity) }.await()
             val joinedlist: MutableList<SmsDetail> = messageListForPhoneNumber
-
             mainScope.launch {
                 adapter.setData(joinedlist)
                 val lastItemIndex = joinedlist.size - 1

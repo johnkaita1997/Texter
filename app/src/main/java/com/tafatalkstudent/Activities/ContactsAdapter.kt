@@ -13,11 +13,15 @@ import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.tafatalkstudent.Activities.SmsActivity
 import com.tafatalkstudent.Activities.SmsDetailActivity
 import com.tafatalkstudent.R
+import com.tafatalkstudent.Shared.Constants.mainScope
+import com.tafatalkstudent.Shared.Constants.threadScope
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.goToactivityIntent_Unfinished
-import com.tafatalkstudent.Shared.makeLongToast
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 class ContactsAdapter(private val activity: Activity) : PagingDataAdapter<SmsDetail, ContactsAdapter.ViewHolder>(SmsDetailDiffCallback()) {
@@ -88,9 +92,12 @@ class ContactsAdapter(private val activity: Activity) : PagingDataAdapter<SmsDet
 
             parentCardViewLayout.setOnClickListener {
 
-
                 val highlightColor = ContextCompat.getColor(itemView.context, R.color.grey_dull)
                 itemView.setBackgroundColor(highlightColor)
+
+                mainScope.launch {
+                    delay(100)
+                }
 
                 // Restore the original color after a delay (for example, 1 second)
                 Handler().postDelayed({
@@ -129,3 +136,7 @@ class SmsDetailDiffCallback : DiffUtil.ItemCallback<SmsDetail>() {
         return oldItem == newItem
     }
 }
+
+
+
+

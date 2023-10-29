@@ -16,12 +16,9 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.Pager
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.Shared.Constants.mainScope
@@ -35,7 +32,6 @@ import com.tafatalkstudent.Shared.PostSmsBody
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.SmsPagingSource
 import com.tafatalkstudent.Shared.getContactName
-import com.tafatalkstudent.Shared.makeLongToast
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -53,12 +49,12 @@ import java.util.Locale
 
 
 @AndroidEntryPoint
-class SmsActivity : AppCompatActivity(), LifecycleOwner {
+class SmsActivity : AppCompatActivity() {
 
 
+    private lateinit var pagingData: Flow<PagingData<SmsDetail>>
     private lateinit var isthreadScope: CoroutineScope
     private lateinit var smsPagingSource: SmsPagingSource
-    private lateinit var pagingData: Flow<PagingData<SmsDetail>>
     private var isFirstTime: Boolean = true
     private lateinit var runnable: Runnable
     private lateinit var binding: ActivitySmsBinding
@@ -68,6 +64,7 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
     val handler = Handler()
     val delayMillis: Long = 2000 // 1 second
     private lateinit var sharedPrefs: SharedPreferences
+    private lateinit var recyclerView: RecyclerView
 
 
     companion object {
@@ -91,12 +88,10 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
 
         isthreadScope = CoroutineScope(Dispatchers.IO)
 
-        smsPagingSource = SmsPagingSource(viewmodel, this)
-        pagingData = Pager(config = pagingConfig, pagingSourceFactory = { smsPagingSource }).flow.cachedIn(lifecycleScope)
-        pagingData.asLiveData().observe(this@SmsActivity) { pagedData ->
-            lifecycleScope.launch {
-                adapter.submitData(pagedData)
-            }
+        val smsPagingSource = SmsPagingSource(pagingConfig.pageSize, this@SmsActivity)
+        val pagingData = Pager(config = pagingConfig, pagingSourceFactory = { smsPagingSource }).flow
+        pagingData.asLiveData().observe(this) { pagedData ->
+            adapter.submitData(lifecycle, pagedData)
         }
 
         sharedPrefs = getSharedPreferences(PREFS_NAME, 0)
@@ -107,7 +102,7 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
         cdd.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         adapter = ContactsAdapter(this)
-        val recyclerView: RecyclerView = binding.recyclerviewContacts
+        recyclerView = binding.recyclerviewContacts
         recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
         recyclerView.setItemViewCacheSize(500)
         recyclerView.adapter = adapter
@@ -122,12 +117,13 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
 
     }
 
+
     fun saveSmsMessagesToCloud() {
 
         //GET TOTAL COUNT OF LOCAL MESSAGES
         isthreadScope.launch {
 
-            /*val groupList = viewmodel.getAllGroups(this@SmsActivity)
+            val groupList = viewmodel.getAllGroups(this@SmsActivity)
             groupList.forEach {
                 val groupid = it.id
 
@@ -140,10 +136,10 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
                 if (totalLocalMessages > totalCloudGroupSms) {
                     val difference = totalLocalMessages - totalCloudGroupSms
                     Log.d("GROUPCHECK-------", "initall: GROUP -> ${it.name} HAS ${groupMessages.size} Messages and Cloud has ${totalCloudGroupSms} and difference is ${difference}")
-                    //pushTheLastXYGroupMessagesToCloud(difference, it, groupMessages)
+                    pushTheLastXYGroupMessagesToCloud(difference, it, groupMessages)
                 }
 
-            }*/
+            }
 
             val _totalCloudSms = async { viewmodel.getCloudSmsCount("sms", null, this@SmsActivity) }
             val totalCloudSms = _totalCloudSms.await()
@@ -151,14 +147,13 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
             val messagesize = localMessages.size
             val difference = messagesize - totalCloudSms
             if (messagesize > totalCloudSms) {
-                Log.d("SMSCHECK-------", "initall: Local -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
+                Log.d("SMSCHECK-------", "initall: Local Greater -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
                 pushTheLastXYMessagesToCloud(difference, localMessages)
             } else {
-                Log.d("SMSCHECK-------", "initall: Local -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
+                Log.d("SMSCHECK-------", "initall: Local Less -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
             }
 
         }
-
 
     }
 
@@ -186,7 +181,7 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
                     val batchList = deferredList.awaitAll()
 
                     // Usage example
-                    val batchSize = 500
+                    val batchSize = 5000
                     val batches = mutableListOf<List<PostSmsBody>>()
                     for (i in 0 until batchList.size step batchSize) {
                         val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
@@ -194,9 +189,9 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
                     }
 
                     val _waiter = async {
-                        /*batches.forEach {
-                            //viewmodel.pushMessages(it.toMutableList(), this@SmsActivity)
-                        }*/
+                        batches.forEach {
+                            viewmodel.pushMessages(it.toMutableList(), this@SmsActivity)
+                        }
                         batches.forEachIndexed { index, postSmsBodies ->
                             Log.d("BATCH-------", "initall: BATCH $index")
                         }
@@ -226,7 +221,7 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
                     val batchList = deferredList.awaitAll()
 
                     // Usage example
-                    val batchSize = 500
+                    val batchSize = 5000
                     val batches = mutableListOf<List<GroupSmsDetail>>()
                     for (i in 0 until batchList.size step batchSize) {
                         val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
@@ -425,7 +420,6 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
             if (::adapter.isInitialized) {
                 mainScope.launch {
                     refreshData()
-                    Log.d("CALLED-------", "initall: FINAL")
                 }
             }
 
@@ -435,9 +429,13 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
     }
 
 
-    // Call this function when you want to refresh your data
-    private fun refreshData() {
-        smsPagingSource.invalidate() // Invalidate the paging source
+    fun refreshData() {
+        val newSmsPagingSource = SmsPagingSource(pagingConfig.pageSize, this@SmsActivity)
+        val newPagingData = Pager(config = pagingConfig, pagingSourceFactory = { newSmsPagingSource }).flow
+        newPagingData.asLiveData().observe(this) { pagedData ->
+            adapter.submitData(lifecycle, pagedData)
+            //recyclerView.layoutManager?.scrollToPosition(0)
+        }
     }
 
 
@@ -533,6 +531,7 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
 
                         try {
                             mainScope.launch {
+                                Log.d("tracker-------", "initall: Update sms called")
                                 updateSmsList()
                             }
                             isthreadScope.launch {
@@ -544,6 +543,9 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
 
                     } else {
                         Log.d("CALLED-------0", "initall: NOT BIGGER THAN")
+                        mainScope.launch {
+                            // refreshData()
+                        }
                     }
 
 
@@ -570,14 +572,12 @@ class SmsActivity : AppCompatActivity(), LifecycleOwner {
         super.onPause()
         if (::runnable.isInitialized) handler.removeCallbacks(runnable)
         isthreadScope.cancel()
-        lifecycleScope.cancel()
     }
 
     override fun onStop() {
         super.onStop()
         if (::runnable.isInitialized) handler.removeCallbacks(runnable)
         isthreadScope.cancel()
-        lifecycleScope.cancel()
     }
 
     override fun onResume() {

@@ -90,6 +90,7 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
     private fun refreshLogin() {
         val u = SessionManager(this).fetchu().toString()
         val p = SessionManager(this).fetchp().toString()
+        Log.d("Login-------", "initall: $u  -  $p")
         GlobalScope.launch {
             viewmodel.refreshtoken(u,p, this@LauncherActivity)
         }
