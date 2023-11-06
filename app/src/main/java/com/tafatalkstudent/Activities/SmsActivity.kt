@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.Constants.pagingConfig
+import com.tafatalkstudent.Shared.Constants.threadScope
 import com.tafatalkstudent.Shared.Contact
 import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.GroupSmsDetail
@@ -32,6 +33,7 @@ import com.tafatalkstudent.Shared.PostSmsBody
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.SmsPagingSource
 import com.tafatalkstudent.Shared.getContactName
+import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -105,7 +107,8 @@ class SmsActivity : AppCompatActivity() {
         recyclerView = binding.recyclerviewContacts
         recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
         recyclerView.setItemViewCacheSize(500)
-        recyclerView.adapter = adapter
+        recyclerView.adapter =
+            adapter
 
         isthreadScope.launch {
             saveMessages(this@SmsActivity)
@@ -115,6 +118,18 @@ class SmsActivity : AppCompatActivity() {
             saveSmsMessagesToCloud()
         }
 
+        onclickListeners()
+
+    }
+
+    private fun onclickListeners() {
+
+        binding.buttonDeleteMessages.setOnClickListener {
+            cdd.show()
+            threadScope.launch {
+                viewmodel.deleteCloudMessages(this@SmsActivity, cdd)
+            }
+        }
     }
 
 
@@ -122,6 +137,9 @@ class SmsActivity : AppCompatActivity() {
 
         //GET TOTAL COUNT OF LOCAL MESSAGES
         isthreadScope.launch {
+
+            val cursor = this@SmsActivity.contentResolver.query(uri, null, null, null, null)
+            val numberofItems = cursor!!.count
 
             val groupList = viewmodel.getAllGroups(this@SmsActivity)
             groupList.forEach {
@@ -147,10 +165,18 @@ class SmsActivity : AppCompatActivity() {
             val messagesize = localMessages.size
             val difference = messagesize - totalCloudSms
             if (messagesize > totalCloudSms) {
-                Log.d("SMSCHECK-------", "initall: Local Greater -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
+                val message = "initall: Local Greater -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}"
+                Log.d("SMSCHECK-------", message)
+                mainScope.launch {
+                    showAlertDialog(message)
+                }
                 pushTheLastXYMessagesToCloud(difference, localMessages)
             } else {
-                Log.d("SMSCHECK-------", "initall: Local Less -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}")
+                val message = "initall: Cursor has ${numberofItems} AND  Local -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}"
+                Log.d("SMSCHECK-------", message)
+                mainScope.launch {
+                    showAlertDialog(message)
+                }
             }
 
         }

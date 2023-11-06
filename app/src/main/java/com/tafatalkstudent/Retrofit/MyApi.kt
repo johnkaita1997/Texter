@@ -97,6 +97,11 @@ interface MyApi {
     ): Response<Any?>
 
 
+    @DELETE("api/v1/core/sms")
+    suspend fun deleteCloudMessages(
+        @Header("Authorization") authorization: String?,
+    ): Response<Any?>
+
 
 }
 

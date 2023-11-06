@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:layout_marginVertical="5dp"
     android:paddingHorizontal="10dp"
-    android:layout_marginVertical="20dp"
+
     tools:context=".Activities.SmsActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -15,18 +17,17 @@
         android:layout_height="match_parent"/>
 
     <Button
-        android:visibility="gone"
-        android:id="@+id/buttonSendSms"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"
+        android:id="@+id/buttonDeleteMessages"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="90dp"
         android:background="@drawable/rectanglebutton"
         android:backgroundTint="@color/black"
-        android:text="Send SMS"
-        android:textAllCaps="false"
+        android:text="Delte All Cloud Messages"
         android:textColor="@color/white" />
 
 
 
-</LinearLayout>
+</RelativeLayout>

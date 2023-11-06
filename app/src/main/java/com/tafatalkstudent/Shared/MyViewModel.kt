@@ -5,9 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
-import androidx.paging.Pager
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.tafatalkstudent.Activities.LandingPage
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
@@ -16,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dmax.dialog.SpotsDialog
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
 import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
@@ -724,6 +720,33 @@ class MyViewModel
                     }
                 } catch (e: Exception) {
                     continuation.resumeWithException(e)
+                }
+            }
+        }
+    }
+
+    suspend fun deleteCloudMessages(activity: Activity, cdd: CustomLoadDialogClass) {
+        return suspendCoroutine { continuation ->
+            threadScope.launch {
+                try {
+                    val response = api.deleteCloudMessages(activity.getHeaders())
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        mainScope.launch {
+                            cdd.dismiss()
+                            activity.showAlertDialog(result.toString())
+                        }
+                    } else {
+                        mainScope.launch {
+                            cdd.dismiss()
+                            activity.showAlertDialog(response.message().toString())
+                        }
+                    }
+                } catch (e: Exception) {
+                    mainScope.launch {
+                        cdd.dismiss()
+                        activity.showAlertDialog(e.message.toString())
+                    }
                 }
             }
         }
