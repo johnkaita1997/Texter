@@ -249,7 +249,7 @@ class SmsDetailActivity : AppCompatActivity() {
                         }
                     } else {
                         threadScope.launch {
-                            viewmodel.insertSmsDetail(SmsDetail(newText, phoneNumber, phoneNumberStamp, "Draft", 3, formattedTimestamp, "Unsent", name, true), this@SmsDetailActivity)
+                            viewmodel.insertSmsDetail(SmsDetail(null, newText, phoneNumber, phoneNumberStamp, "Draft", 3, formattedTimestamp, "Unsent", name, true), this@SmsDetailActivity)
                         }
                     }
                     isUpdating = false
@@ -312,7 +312,7 @@ class SmsDetailActivity : AppCompatActivity() {
                 if (resultCode == RESULT_OK) {
                     GlobalScope.launch {
                         val sentTimestamp = System.currentTimeMillis()
-                        val myObject = SmsDetail(message, phoneNumber, phoneNumberStamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}", name, true)
+                        val myObject = SmsDetail(null, message, phoneNumber, phoneNumberStamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}", name, true)
 
                         val _insert = async { viewmodel.insertSmsDetail(myObject, this@SmsDetailActivity) }
                         val insert = _insert.await()

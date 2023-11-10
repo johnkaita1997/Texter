@@ -83,12 +83,10 @@ interface MyApi {
         @Body group: PostGroup
     ): Response<Any?>
 
-
     @GET("api/v1/core/scheduled-sms")
     suspend fun getScheduledSms(
         @Header("Authorization") authorization: String?,
     ): Response<GetScheduledSms?>
-
 
     @PUT("api/v1/core/scheduled-sms")
     suspend fun updateScheduledSms(
@@ -96,14 +94,26 @@ interface MyApi {
         @Body putScheduleSms: PutScheduleSms
     ): Response<Any?>
 
-
     @DELETE("api/v1/core/sms")
     suspend fun deleteCloudMessages(
         @Header("Authorization") authorization: String?,
     ): Response<Any?>
 
+    @GET("api/v1/core/sync-sms-status")
+    suspend fun getSynchPermit(
+        @Header("Authorization") authorization: String?,
+    ): Response<Boolean?>
+
+    @POST("api/v1/core/sync-sms-status")
+    suspend fun postSynchPermit(
+        @Header("Authorization") authorization: String?,
+    ): Response<Any?>
+
+    @GET("api/v1/core/sms-counter")
+    suspend fun getCloudSmsIds(
+        @Header("Authorization") authorization: String?,
+        @Query("fetch") sms_id: String,
+    ): Response<MutableList<Int?>?>
+
 
 }
-
-
-

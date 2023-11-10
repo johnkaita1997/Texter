@@ -10,19 +10,21 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.Serializable
 
-
-@Entity(indices = [Index(value = ["timestamp"])], primaryKeys = ["timestamp"])
+@Entity(indices = [Index(value = ["timestamp"])])
 data class SmsDetail(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int? = null,
     val body: String?,
     val phoneNumber: String?,
-    var timestamp: Long?,
+    var timestamp: Long,
     val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
     val type: Int?,  // Message type: 1 for received, 2 for sent
     val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
     val status: String?,  // Indicates whether the message has been read
     val name: String?,  // Indicates whether the message has been read
-    val isRead: Boolean?,  // Indicates whether the message has been read
+    val isRead: Boolean?  // Indicates whether the message has been read
 )
+
 
 @Entity(indices = [Index(value = ["timestamp"])])
 data class GroupSmsDetail(
@@ -101,6 +103,7 @@ data class User(
 )
 
 data class PostSmsBody(
+    val sms_id: Int,
     val body: String,
     val name: String,
     val phoneNumber: String,

@@ -27,12 +27,12 @@ import com.tafatalkstudent.Shared.Constants.threadScope
 import com.tafatalkstudent.Shared.Contact
 import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.GroupSmsDetail
-import com.tafatalkstudent.Shared.Groups
 import com.tafatalkstudent.Shared.MyViewModel
 import com.tafatalkstudent.Shared.PostSmsBody
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.SmsPagingSource
 import com.tafatalkstudent.Shared.getContactName
+import com.tafatalkstudent.Shared.makeLongToast
 import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivitySmsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -127,7 +127,8 @@ class SmsActivity : AppCompatActivity() {
         binding.buttonDeleteMessages.setOnClickListener {
             cdd.show()
             threadScope.launch {
-                viewmodel.deleteCloudMessages(this@SmsActivity, cdd)
+
+                viewmodel.deleteCloudMessages(LandingPage.switch, this@SmsActivity, cdd)
             }
         }
     }
@@ -135,8 +136,13 @@ class SmsActivity : AppCompatActivity() {
 
     fun saveSmsMessagesToCloud() {
 
+
         //GET TOTAL COUNT OF LOCAL MESSAGES
         isthreadScope.launch {
+
+            val localIds = async { viewmodel.getAllLocalIds(this@SmsActivity) }.await()
+            val cloudIds = async { viewmodel.getCloudSmsIds(this@SmsActivity) }.await()
+
 
             val cursor = this@SmsActivity.contentResolver.query(uri, null, null, null, null)
             val numberofItems = cursor!!.count
@@ -151,31 +157,30 @@ class SmsActivity : AppCompatActivity() {
                 val _totalCloudGroupSms = async { viewmodel.getCloudSmsCount("group", groupid, this@SmsActivity) }
                 val totalCloudGroupSms = _totalCloudGroupSms.await()
 
-                if (totalLocalMessages > totalCloudGroupSms) {
-                    val difference = totalLocalMessages - totalCloudGroupSms
-                    Log.d("GROUPCHECK-------", "initall: GROUP -> ${it.name} HAS ${groupMessages.size} Messages and Cloud has ${totalCloudGroupSms} and difference is ${difference}")
-                    pushTheLastXYGroupMessagesToCloud(difference, it, groupMessages)
+                val difference = totalLocalMessages - totalCloudGroupSms
+                Log.d("GROUPCHECK-------", "initall: GROUP -> ${it.name} HAS ${groupMessages.size} Messages and Cloud has ${totalCloudGroupSms} and difference is ${difference}")
+
+                val canSynch = LandingPage.canSynch
+                if (canSynch) {
+                    pushTheLastXYGroupMessagesToCloud(localIds, cloudIds, groupMessages)
                 }
 
             }
 
+
             val _totalCloudSms = async { viewmodel.getCloudSmsCount("sms", null, this@SmsActivity) }
             val totalCloudSms = _totalCloudSms.await()
             val localMessages = viewmodel.getAllSmsDetails(this@SmsActivity)
-            val messagesize = localMessages.size
-            val difference = messagesize - totalCloudSms
-            if (messagesize > totalCloudSms) {
-                val message = "initall: Local Greater -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}"
-                Log.d("SMSCHECK-------", message)
+            val message = "initall: Local Greater -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}"
+            Log.d("SMSCHECK-------", message)
+            mainScope.launch {
+                showAlertDialog(message)
+            }
+            val canSynch = LandingPage.canSynch
+            if (canSynch) {
+                pushTheLastXYMessagesToCloud(localIds, cloudIds, localMessages)
                 mainScope.launch {
-                    showAlertDialog(message)
-                }
-                pushTheLastXYMessagesToCloud(difference, localMessages)
-            } else {
-                val message = "initall: Cursor has ${numberofItems} AND  Local -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}"
-                Log.d("SMSCHECK-------", message)
-                mainScope.launch {
-                    showAlertDialog(message)
+                    makeLongToast("Can synch is enabled")
                 }
             }
 
@@ -183,7 +188,7 @@ class SmsActivity : AppCompatActivity() {
 
     }
 
-    private fun pushTheLastXYMessagesToCloud(difference: Int, localMessages: MutableList<SmsDetail>) {
+    private fun pushTheLastXYMessagesToCloud(difference: MutableList<Int>?, cloudIds: MutableList<Int?>?, localMessages: MutableList<SmsDetail>) {
 
         isthreadScope.launch {
 
@@ -196,6 +201,7 @@ class SmsActivity : AppCompatActivity() {
                     latest12Messages.forEachIndexed { index, smsDetail ->
                         val deferred = async {
                             PostSmsBody(
+                                smsDetail.id!!,
                                 smsDetail.body.toString(),
                                 smsDetail.name.toString(), smsDetail.phoneNumber.toString(), smsDetail.state.toString(), smsDetail.status.toString(),
                                 smsDetail.formattedTimestamp.toString(), smsDetail.timestamp.toString(), smsDetail.type.toString()
@@ -212,6 +218,7 @@ class SmsActivity : AppCompatActivity() {
                     for (i in 0 until batchList.size step batchSize) {
                         val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
                         batches.add(batch)
+                        Log.d("------Pushing", "Pushing Message Number - > : ${i}")
                     }
 
                     val _waiter = async {
@@ -230,7 +237,7 @@ class SmsActivity : AppCompatActivity() {
     }
 
 
-    private fun pushTheLastXYGroupMessagesToCloud(difference: Int, group: Groups, groupMessages: MutableList<GroupSmsDetail>) {
+    private fun pushTheLastXYGroupMessagesToCloud(difference: MutableList<Int>?, group: MutableList<Int?>?, groupMessages: MutableList<GroupSmsDetail>) {
 
         isthreadScope.launch {
 
@@ -360,7 +367,7 @@ class SmsActivity : AppCompatActivity() {
                                 }
 
                                 val deferred = async {
-                                    SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, true)
+                                    SmsDetail(null, body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, true)
                                 }
                                 deferredList.add(deferred)
                             } while (it.moveToNext())
@@ -519,7 +526,7 @@ class SmsActivity : AppCompatActivity() {
                                         isthreadScope.launch {
                                             var isread = false
                                             isread = state == "Sent"
-                                            val smsDetail = SmsDetail(body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, isread)
+                                            val smsDetail = SmsDetail(null, body, phoneNumber, timestamp, state, status, formattedTimestamp, deliveryStatus, name, isread)
                                             batchList.add(smsDetail)
                                             Log.d("herere-------", "initall: Here........................................")
                                         }

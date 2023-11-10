@@ -4,6 +4,7 @@ import android.accounts.NetworkErrorException
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.widget.Switch
 import androidx.lifecycle.*
 import com.tafatalkstudent.Activities.LandingPage
 import com.tafatalkstudent.Retrofit.MyApi
@@ -725,7 +726,7 @@ class MyViewModel
         }
     }
 
-    suspend fun deleteCloudMessages(activity: Activity, cdd: CustomLoadDialogClass) {
+    suspend fun deleteCloudMessages(switch: Switch?, activity: Activity, cdd: CustomLoadDialogClass) {
         return suspendCoroutine { continuation ->
             threadScope.launch {
                 try {
@@ -735,6 +736,8 @@ class MyViewModel
                         mainScope.launch {
                             cdd.dismiss()
                             activity.showAlertDialog(result.toString())
+                            switch?.isChecked = false
+                            LandingPage.canSynch = false
                         }
                     } else {
                         mainScope.launch {
@@ -751,6 +754,72 @@ class MyViewModel
             }
         }
     }
+
+    suspend fun getAllLocalIds(activity: Activity): MutableList<Int>? {
+        return suspendCoroutine { continuation ->
+            threadScope.launch {
+                try {
+                    val database = RoomDb(activity).getSmsDao()
+                    val result = database.getAllLocalTimestamps()
+                    continuation.resume(result)
+                } catch (e: Exception) {
+                    continuation.resumeWithException(e)
+                }
+            }
+        }
+    }
+
+
+    suspend fun getSynchPermit(activity: Activity): Boolean? {
+        return try {
+            val response = api.getSynchPermit(activity.getHeaders())
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun postSynchPermit(switch: Switch, changedToTrueOrFalse: Boolean, activity: Activity): Any? {
+        return try {
+            val response = api.postSynchPermit(activity.getHeaders())
+            if (response.isSuccessful) {
+                val theresponse = response.body()
+                mainScope.launch {
+                    activity.makeLongToast(theresponse.toString())
+                    if (changedToTrueOrFalse) {
+                        switch.isChecked = true
+                        LandingPage.canSynch = true
+                    } else {
+                        switch.isChecked = false
+                        LandingPage.canSynch = false
+                    }
+                }
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
+    suspend fun getCloudSmsIds(activity: Activity): MutableList<Int?>? {
+        return try {
+            val response = api.getCloudSmsIds("sms_id", activity.getHeaders())
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 
 
 }

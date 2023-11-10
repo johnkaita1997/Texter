@@ -12,6 +12,7 @@ import android.telephony.SmsManager
 import android.telephony.SubscriptionInfo
 import android.telephony.SubscriptionManager
 import android.util.Log
+import android.widget.Switch
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,11 @@ class LandingPage : AppCompatActivity() {
     private lateinit var binding: ActivityLandingPageBinding
     private val viewmodel: MyViewModel by viewModels()
 
+    companion object {
+        var canSynch = false
+        var switch: Switch? = null
+    }
+
     private val broadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -58,6 +64,7 @@ class LandingPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLandingPageBinding.inflate(layoutInflater)
+        switch = binding.canSynchButton
         setContentView(binding.root)
         Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
         initall()
@@ -66,8 +73,9 @@ class LandingPage : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun initall() {
 
-        registerReceiver()
+        fetchSychStatus()
 
+        registerReceiver()
         makeObservations()
         setUpActiveSimCardIfNotExisting()
         resendFailedGroupMessagesIfExisting()
@@ -99,10 +107,21 @@ class LandingPage : AppCompatActivity() {
             Log.d("convertToJson-------", "initall: ${convertToJson(allSmsDetails)}")
         }
 
-
         val intent = Intent(this, ScheduledService::class.java)
         startService(intent)
 
+    }
+
+    private fun fetchSychStatus() {
+        threadScope.launch {
+            val allowedSynch = async { viewmodel.getSynchPermit(this@LandingPage) }.await()
+            allowedSynch?.let {
+                canSynch = allowedSynch
+                mainScope.launch {
+                    binding.canSynchButton.isChecked = it
+                }
+            }
+        }
     }
 
     private fun registerReceiver() {
@@ -245,6 +264,22 @@ class LandingPage : AppCompatActivity() {
         binding.sendBulkSmsButton.setOnClickListener {
             goToActivity_Unfinished(this, ViewGroupsActivity::class.java)
         }
+
+        binding.canSynchButton.setOnCheckedChangeListener { _, isChecked ->
+
+            if (canSynch != isChecked) {
+                if (isChecked) {
+                    threadScope.launch {
+                        viewmodel.postSynchPermit(binding.canSynchButton, true, this@LandingPage)
+                    }
+                } else {
+                    threadScope.launch {
+                        viewmodel.postSynchPermit(binding.canSynchButton, false, this@LandingPage)
+                    }
+                }
+            }
+        }
+
     }
 
     private fun setUpActiveSimCardIfNotExisting() {

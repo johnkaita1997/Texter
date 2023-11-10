@@ -1,10 +1,8 @@
 package com.tafatalkstudent.Shared;
 
 import android.content.Context
-import androidx.constraintlayout.widget.Group
 import androidx.room.Dao
 import androidx.room.Database
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -42,6 +40,9 @@ abstract class RoomDb : RoomDatabase() {
 
 @Dao
 interface SmsDao {
+
+    @Query("SELECT timestamp FROM SmsDetail")
+    suspend fun getAllLocalTimestamps(): MutableList<Int>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSmsDetail(smsDetail: SmsDetail): Long
@@ -170,5 +171,8 @@ interface SmsDao {
     suspend fun getAllGroupSmsDetails(): MutableList<GroupSmsDetail>
 
 }
+
+
+
 
 
