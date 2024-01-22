@@ -80,6 +80,7 @@ class SmsDetailAdapter(var viewModel: MyViewModel, var activity: Activity, var e
 
     fun updateItem(newItem: SmsDetail, recyclerView: RecyclerView) {
         try {
+            Log.d("updateItem-------", "initall: Update item called")
             smsMessages.add(newItem)
             notifyItemInserted(smsMessages.size - 1)
             recyclerView.scrollToPosition(smsMessages.size - 1)

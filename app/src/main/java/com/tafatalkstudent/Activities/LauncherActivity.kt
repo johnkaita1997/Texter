@@ -146,7 +146,7 @@ class LauncherActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     override fun onBackPressed() {
-        val alert = android.app.AlertDialog.Builder(this).setTitle("Tafa Talk").setCancelable(false).setMessage("Are you sure you want to exit").setIcon(R.drawable.logodark)
+        val alert = android.app.AlertDialog.Builder(this).setTitle("Smart SMS").setCancelable(false).setMessage("Are you sure you want to exit").setIcon(R.drawable.logodark)
             .setPositiveButton("Exit", { dialog, _ ->
                 dialog.dismiss()
                 finish()

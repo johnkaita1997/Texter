@@ -110,7 +110,7 @@ fun Context.dismissredirect() {
 }
 
 fun Context.showAlertDialog(message: String) {
-    val alert = AlertDialog.Builder(this).setTitle("Tafa Talk").setCancelable(false).setMessage(message).setIcon(R.drawable.logodark).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
+    val alert = AlertDialog.Builder(this).setTitle("Smart SMS").setCancelable(false).setMessage(message).setIcon(R.drawable.logodark).setPositiveButton("", DialogInterface.OnClickListener { dialog, _ ->
         isDialogShown = false
         dialog.dismiss()
     }).setNegativeButton("OKAY", DialogInterface.OnClickListener { dialog, _ ->
@@ -466,6 +466,7 @@ fun Context.getPhoneNumberForSubscriptionId(subscriptionId: Int): String {
 
 
 
+@RequiresApi(Build.VERSION_CODES.ECLAIR)
 fun Context.getContactFromDatabase(phoneNumber: String): String {
     val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
     val cursor = contentResolver.query(
@@ -529,3 +530,18 @@ fun Context.getAuthDetails(): MyAuth {
 fun Context.getHeaders() : String {
     return "${getAuthDetails().authToken.toString()}"
 }
+
+fun Context.saveToSharedPreferences(variableName : String, variableValue : String) {
+    val sharedPrefs = getSharedPreferences("Preferences", 0)
+    val editor: SharedPreferences.Editor = sharedPrefs.edit()
+    editor.putString(variableName, variableValue)
+    editor.apply()
+}
+
+fun Context.getFromSharedPreferences(variableName: String): String? {
+    val sharedPrefs = getSharedPreferences("Preferences", 0)
+    return sharedPrefs.getString(variableName, null)
+}
+
+
+

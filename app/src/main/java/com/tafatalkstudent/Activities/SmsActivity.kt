@@ -2,6 +2,7 @@ package com.tafatalkstudent.Activities
 
 import ContactsAdapter
 import android.annotation.SuppressLint
+import android.app.AlertDialog.*
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
@@ -21,6 +22,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.tafatalkstudent.R
 import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.Constants.pagingConfig
 import com.tafatalkstudent.Shared.Constants.threadScope
@@ -28,7 +30,6 @@ import com.tafatalkstudent.Shared.Contact
 import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.GroupSmsDetail
 import com.tafatalkstudent.Shared.MyViewModel
-import com.tafatalkstudent.Shared.PostSmsBody
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.SmsPagingSource
 import com.tafatalkstudent.Shared.getContactName
@@ -42,6 +43,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -53,9 +55,9 @@ import java.util.Locale
 @AndroidEntryPoint
 class SmsActivity : AppCompatActivity() {
 
-
     private lateinit var pagingData: Flow<PagingData<SmsDetail>>
     private lateinit var isthreadScope: CoroutineScope
+    private lateinit var mythreadScope: CoroutineScope
     private lateinit var smsPagingSource: SmsPagingSource
     private var isFirstTime: Boolean = true
     private lateinit var runnable: Runnable
@@ -67,7 +69,6 @@ class SmsActivity : AppCompatActivity() {
     val delayMillis: Long = 2000 // 1 second
     private lateinit var sharedPrefs: SharedPreferences
     private lateinit var recyclerView: RecyclerView
-
 
     companion object {
         val uri = Uri.parse("content://sms")
@@ -89,6 +90,9 @@ class SmsActivity : AppCompatActivity() {
     private fun initall() {
 
         isthreadScope = CoroutineScope(Dispatchers.IO)
+        mythreadScope = CoroutineScope(Dispatchers.IO)
+
+        fetchSychStatus()
 
         val smsPagingSource = SmsPagingSource(pagingConfig.pageSize, this@SmsActivity)
         val pagingData = Pager(config = pagingConfig, pagingSourceFactory = { smsPagingSource }).flow
@@ -107,169 +111,151 @@ class SmsActivity : AppCompatActivity() {
         recyclerView = binding.recyclerviewContacts
         recyclerView.layoutManager = LinearLayoutManager(this@SmsActivity)
         recyclerView.setItemViewCacheSize(500)
-        recyclerView.adapter =
-            adapter
+        recyclerView.adapter = adapter
 
         isthreadScope.launch {
             saveMessages(this@SmsActivity)
         }
 
-        isthreadScope.launch {
-            saveSmsMessagesToCloud()
-        }
-
         onclickListeners()
+
+        threadScope.launch {
+            showAlertIndicatingDifferences()
+        }
 
     }
 
     private fun onclickListeners() {
 
         binding.buttonDeleteMessages.setOnClickListener {
-            cdd.show()
-            threadScope.launch {
 
-                viewmodel.deleteCloudMessages(LandingPage.switch, this@SmsActivity, cdd)
+            Builder(this).setTitle("Smart Sms")
+                .setCancelable(false)
+                .setMessage("Are you sure you want to delete all messages backed up in the cloud?")
+                .setIcon(R.drawable.logodark)
+                .setPositiveButton("Delete") { dialog, _ ->
+                    dialog.dismiss()
+                    cdd.show()
+                    threadScope.launch {
+                        viewmodel.deleteCloudMessages(this@SmsActivity, cdd)
+                        delay(2000)
+                        fetchSychStatus()
+                    }
+                }.setNegativeButton("No", { dialog, _ -> dialog.dismiss() }).show()
+
+        }
+
+
+        binding.canSynchButton.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                saveMessagesToCloud(true)
+                Log.d("-------", "initall: checkedcalled")
+            } else {
+                mainScope.launch {
+                    mythreadScope.cancel()
+                    delay(2000)
+                    async { viewmodel.deleteCloudMessages(this@SmsActivity, cdd) }.await()
+                    saveMessagesToCloud(false)
+                }
             }
         }
     }
 
 
-    fun saveSmsMessagesToCloud() {
-
+    fun showAlertIndicatingDifferences() {
 
         //GET TOTAL COUNT OF LOCAL MESSAGES
         isthreadScope.launch {
 
-            val localIds = async { viewmodel.getAllLocalIds(this@SmsActivity) }.await()
             val cloudIds = async { viewmodel.getCloudSmsIds(this@SmsActivity) }.await()
-
-
-            val cursor = this@SmsActivity.contentResolver.query(uri, null, null, null, null)
-            val numberofItems = cursor!!.count
-
-            val groupList = viewmodel.getAllGroups(this@SmsActivity)
-            groupList.forEach {
-                val groupid = it.id
-
-                val groupMessages = viewmodel.getGroupSmsDetailById(groupid!!, this@SmsActivity)
-
-                val totalLocalMessages = viewmodel.getGroupSmsDetailById(it.id, this@SmsActivity).size
-                val _totalCloudGroupSms = async { viewmodel.getCloudSmsCount("group", groupid, this@SmsActivity) }
-                val totalCloudGroupSms = _totalCloudGroupSms.await()
-
-                val difference = totalLocalMessages - totalCloudGroupSms
-                Log.d("GROUPCHECK-------", "initall: GROUP -> ${it.name} HAS ${groupMessages.size} Messages and Cloud has ${totalCloudGroupSms} and difference is ${difference}")
-
-                val canSynch = LandingPage.canSynch
-                if (canSynch) {
-                    pushTheLastXYGroupMessagesToCloud(localIds, cloudIds, groupMessages)
-                }
-
-            }
-
-
+            val localIds = async { viewmodel.getAllLocalIds(this@SmsActivity) }.await()
             val _totalCloudSms = async { viewmodel.getCloudSmsCount("sms", null, this@SmsActivity) }
             val totalCloudSms = _totalCloudSms.await()
             val localMessages = viewmodel.getAllSmsDetails(this@SmsActivity)
-            val message = "initall: Local Greater -> HAS ${localMessages.size} Messages and Cloud has ${totalCloudSms} and difference is ${difference}"
+            val message = "\nLocal Messages -> ${localMessages.size}\nCloud Messages -> ${totalCloudSms}\nDifference is ${totalCloudSms - localMessages.size}"
             Log.d("SMSCHECK-------", message)
             mainScope.launch {
-                showAlertDialog(message)
-            }
-            val canSynch = LandingPage.canSynch
-            if (canSynch) {
-                pushTheLastXYMessagesToCloud(localIds, cloudIds, localMessages)
-                mainScope.launch {
-                    makeLongToast("Can synch is enabled")
-                }
+                showAlertDialog("LocalIds Size -> ${localIds?.size}\nCloudIds Size -> ${cloudIds?.size}\n${message}")
             }
 
         }
 
     }
 
-    private fun pushTheLastXYMessagesToCloud(difference: MutableList<Int>?, cloudIds: MutableList<Int?>?, localMessages: MutableList<SmsDetail>) {
 
-        isthreadScope.launch {
 
-            if (localMessages.isNotEmpty()) {
-                if (difference > 0) {
+    private fun pushTheLastXYGroupMessagesToCloud() {
 
-                    val deferredList = mutableListOf<Deferred<PostSmsBody>>()
+        mythreadScope.launch {
 
-                    val latest12Messages = localMessages.sortedByDescending { it.timestamp }.take(difference)
-                    latest12Messages.forEachIndexed { index, smsDetail ->
-                        val deferred = async {
-                            PostSmsBody(
-                                smsDetail.id!!,
-                                smsDetail.body.toString(),
-                                smsDetail.name.toString(), smsDetail.phoneNumber.toString(), smsDetail.state.toString(), smsDetail.status.toString(),
-                                smsDetail.formattedTimestamp.toString(), smsDetail.timestamp.toString(), smsDetail.type.toString()
-                            )
-                        }
-                        deferredList.add(deferred)
-                    }
+            val localGroupIds = async { viewmodel.getAllLocalGroupSmsIds(this@SmsActivity) }.await()
+            val cloudGroupIds = async { viewmodel.getCloudGroupIds(this@SmsActivity) }.await()
+            val groupList = viewmodel.getAllGroups(this@SmsActivity)
 
-                    val batchList = deferredList.awaitAll()
+            val deferredList = mutableListOf<Deferred<GroupSmsDetail>>()
 
-                    // Usage example
-                    val batchSize = 5000
-                    val batches = mutableListOf<List<PostSmsBody>>()
-                    for (i in 0 until batchList.size step batchSize) {
-                        val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
-                        batches.add(batch)
-                        Log.d("------Pushing", "Pushing Message Number - > : ${i}")
-                    }
+            val idsNotInCloud: List<Int> = localGroupIds?.filter { id ->
+                !cloudGroupIds.orEmpty().contains(id)
+            } ?: emptyList()
 
-                    val _waiter = async {
-                        batches.forEach {
-                            viewmodel.pushMessages(it.toMutableList(), this@SmsActivity)
-                        }
-                        batches.forEachIndexed { index, postSmsBodies ->
-                            Log.d("BATCH-------", "initall: BATCH $index")
-                        }
-                    }
-                    _waiter.await()
+            idsNotInCloud.forEachIndexed { index, i ->
+                val theactualmessage = viewmodel.getGroupSmsById(i, this@SmsActivity)
+                theactualmessage.let {
+                    val deferred = async { it }
+                    deferredList.add(deferred)
                 }
             }
+
+            val batchList = deferredList.awaitAll()
+
+            // Usage example
+            val batchSize = 7000
+            val batches = mutableListOf<List<GroupSmsDetail>>()
+            for (i in 0 until batchList.size step batchSize) {
+                val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
+                batches.add(batch)
+            }
+
+            val _waiter = async {
+                batches.forEach {
+                    viewmodel.pushGroupMessage(it.toMutableList(), this@SmsActivity)
+                }
+            }
+            _waiter.await()
+
         }
 
     }
 
 
-    private fun pushTheLastXYGroupMessagesToCloud(difference: MutableList<Int>?, group: MutableList<Int?>?, groupMessages: MutableList<GroupSmsDetail>) {
+    private fun pushGroupMessagesToTheCloud() {
 
-        isthreadScope.launch {
+        mythreadScope.launch {
 
-            if (groupMessages.isNotEmpty()) {
-                if (difference > 0) {
+            val deferredList = mutableListOf<Deferred<GroupSmsDetail>>()
 
-                    val deferredList = mutableListOf<Deferred<GroupSmsDetail>>()
-                    val latest12Messages = groupMessages.sortedByDescending { it.timestamp }.take(difference)
-                    latest12Messages.forEachIndexed { index, smsDetail ->
-                        val deferred = async { smsDetail }
-                        deferredList.add(deferred)
-                    }
+            val groupMessages = viewmodel.getAllGroupSmsDetail(this@SmsActivity)
 
-                    val batchList = deferredList.awaitAll()
+            groupMessages.forEachIndexed { index, theMessage ->
+                val deferred = async { theMessage }
+                deferredList.add(deferred)
+            }
 
-                    // Usage example
-                    val batchSize = 5000
-                    val batches = mutableListOf<List<GroupSmsDetail>>()
-                    for (i in 0 until batchList.size step batchSize) {
-                        val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
-                        batches.add(batch)
-                    }
+            val batchList = deferredList.awaitAll()
 
-                    val _waiter = async {
-                        batches.forEach {
-                            viewmodel.pushGroupMessage(it.toMutableList(), this@SmsActivity)
-                        }
-                    }
-                    _waiter.await()
+            val batchSize = 7000
+            val batches = mutableListOf<List<GroupSmsDetail>>()
+            for (i in 0 until batchList.size step batchSize) {
+                val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
+                batches.add(batch)
+            }
 
+            val _waiter = async {
+                batches.forEach {
+                    viewmodel.pushGroupMessage(it.toMutableList(), this@SmsActivity)
                 }
             }
+            _waiter.await()
         }
 
     }
@@ -388,7 +374,7 @@ class SmsActivity : AppCompatActivity() {
                 }
 
                 // Usage example
-                val batchSize = 500
+                val batchSize = 7000
                 val batches = mutableListOf<List<SmsDetail>>()
 
                 for (i in 0 until batchList.size step batchSize) {
@@ -403,7 +389,6 @@ class SmsActivity : AppCompatActivity() {
                 }
                 _waiter.await()
 
-
                 mainScope.launch {
                     cdd.dismiss()
                     // Update the shared preferences to indicate that the app has been launched
@@ -412,9 +397,6 @@ class SmsActivity : AppCompatActivity() {
                     isFirstTime = false
                     editor.apply()
                     updateSmsList()
-                    isthreadScope.launch {
-                        saveSmsMessagesToCloud()
-                    }
                 }
 
             } else {
@@ -443,7 +425,7 @@ class SmsActivity : AppCompatActivity() {
             // Iterate through joinedSmsList and keep only the latest SMS for each unique phone number
             for (smsDetail in smslist) {
                 val phoneNumber = smsDetail.phoneNumber.orEmpty()
-                if (!uniqueSmsMap.containsKey(phoneNumber) || smsDetail.timestamp!! > (uniqueSmsMap[phoneNumber]?.timestamp ?: 0)) {
+                if (!uniqueSmsMap.containsKey(phoneNumber) || smsDetail.timestamp > (uniqueSmsMap[phoneNumber]?.timestamp ?: 0)) {
                     uniqueSmsMap[phoneNumber] = smsDetail
                 }
             }
@@ -554,21 +536,24 @@ class SmsActivity : AppCompatActivity() {
 
 
                         isthreadScope.launch {
+
                             val _waiter = async {
                                 batches.forEach {
                                     viewmodel.insertBatchWithRetry(it, this@SmsActivity)
+                                    if (binding.canSynchButton.isChecked) {
+                                        viewmodel.pushMessages(it.toMutableList(), this@SmsActivity)
+                                    }
                                 }
                             }
                             _waiter.await()
+                            pushTheLastXYGroupMessagesToCloud()
+
                         }
 
                         try {
                             mainScope.launch {
                                 Log.d("tracker-------", "initall: Update sms called")
                                 updateSmsList()
-                            }
-                            isthreadScope.launch {
-                                saveSmsMessagesToCloud()
                             }
                         } catch (e: Exception) {
                             Log.d("-------", "initall: ")
@@ -596,7 +581,6 @@ class SmsActivity : AppCompatActivity() {
         isthreadScope.launch {
             val delete = async { viewmodel.deleteMessagesWithPattern(this@SmsActivity) }
             delete.await()
-            updateSmsList()
         }
     }
 
@@ -621,10 +605,139 @@ class SmsActivity : AppCompatActivity() {
                 isthreadScope = CoroutineScope(Dispatchers.IO)
             }
             checkForNewMessages()
-            isthreadScope.launch {
-                saveSmsMessagesToCloud()
+        }
+    }
+
+
+    private fun fetchSychStatus() {
+        threadScope.launch {
+            Log.d("Point-------", "initall: Point Initiated")
+            val allowedSynch = async { viewmodel.getSynchPermit(this@SmsActivity) }
+            Log.d("Point-------", "initall: Point Reached")
+            if (allowedSynch == null) {
+                Log.d("Point-------", "initall: It is null")
+            }
+
+            val theallowedSynch = allowedSynch.await()
+            Log.d("Point-------", "initall: reached here")
+            theallowedSynch?.let {
+                Log.d("Point-------", "initall: reached there")
+
+                mainScope.launch {
+                    if (binding.canSynchButton.isChecked != it) {
+                        binding.canSynchButton.isChecked = it
+                    }
+                    if (it == false) {
+                        val _totalCloudSms = async { viewmodel.getCloudSmsCount("sms", null, this@SmsActivity) }
+                        val totalCloudSms = _totalCloudSms.await()
+                        if (totalCloudSms > 0) {
+                            viewmodel.deleteCloudMessages(this@SmsActivity, null)
+                        }
+                    }
+                }
             }
         }
+    }
+
+
+    private fun saveMessagesToCloud(ischecked: Boolean) {
+
+        mythreadScope.launch {
+
+            val _totalCloudSms = async { viewmodel.getCloudSmsCount("sms", null, this@SmsActivity) }
+            val totalCloudSms = _totalCloudSms.await()
+
+            if (ischecked) {
+
+                threadScope.launch {
+                    val messages = viewmodel.getAllSmsDetails(this@SmsActivity)
+                    if (messages.isEmpty()) {
+                        mainScope.launch {
+                            showAlertDialog("Save messages by opening the messages page first")
+                        }
+
+                    } else {
+
+                        if (messages.size != totalCloudSms) {
+
+                            val allowedSynch = async { viewmodel.getSynchPermit(this@SmsActivity) }.await()
+                            if (allowedSynch != true) {
+                                threadScope.launch {
+                                    viewmodel.postSynchPermit(binding.canSynchButton, true, this@SmsActivity)
+                                }
+                            }
+
+                            mainScope.launch {
+                                makeLongToast("Synching ${messages.size} Messages ...")
+                            }
+
+                            val deferredList = mutableListOf<Deferred<SmsDetail>>()
+
+                            messages.forEachIndexed { index, it ->
+                                val deferred = async { it }
+                                deferredList.add(deferred)
+                            }
+
+                            val batchList = deferredList.awaitAll()
+
+                            // Usage example
+                            val batchSize = 7000
+                            val batches = mutableListOf<List<SmsDetail>>()
+                            for (i in 0 until batchList.size step batchSize) {
+                                val batch = batchList.subList(i, minOf(i + batchSize, batchList.size))
+                                batches.add(batch)
+                                Log.d("------Pushing", "Pushing Message Number - > : ${i}")
+                            }
+
+                            val _waiter = async {
+                                batches.forEachIndexed { index, postSmsBodies ->
+                                    viewmodel.pushMessages(postSmsBodies.toMutableList(), this@SmsActivity)
+                                    Log.d("BATCH-------", "initall: BATCH $index")
+                                }
+                            }
+                            _waiter.await()
+
+                            pushGroupMessagesToTheCloud()
+
+                            mainScope.launch {
+                                cdd.dismiss()
+                            }
+
+                        } else {
+                            val allowedSynch = async { viewmodel.getSynchPermit(this@SmsActivity) }.await()
+                            if (allowedSynch != true) {
+                                threadScope.launch {
+                                    viewmodel.postSynchPermit(binding.canSynchButton, true, this@SmsActivity)
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } else {
+
+                if (totalCloudSms > 0) {
+                    mainScope.launch {
+                        cdd.show()
+                        threadScope.launch {
+                            mythreadScope.cancel()
+                            delay(2000)
+                            viewmodel.deleteCloudMessages(this@SmsActivity, cdd)
+                            delay(2000)
+                            val allowedSynch = async { viewmodel.getSynchPermit(this@SmsActivity) }.await()
+                            if (allowedSynch != true) {
+                                threadScope.launch {
+                                    viewmodel.postSynchPermit(binding.canSynchButton, true, this@SmsActivity)
+                                }
+                            }
+                            fetchSychStatus()
+                        }
+                    }
+                }
+
+            }
+        }
+
     }
 
 

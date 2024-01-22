@@ -1,7 +1,5 @@
 package com.tafatalkstudent.Shared
 
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -10,26 +8,27 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.Serializable
 
-@Entity(indices = [Index(value = ["timestamp"])])
+@Entity(indices = [Index(value = ["sms_id"], unique = true), Index(value = ["timestamp"])])
 data class SmsDetail(
     @PrimaryKey(autoGenerate = true)
-    val id: Int? = null,
+    val sms_id: Int? = null,
     val body: String?,
     val phoneNumber: String?,
     var timestamp: Long,
     val state: String?,  // Formatted timestamp, e.g., "8:20 PM"
     val type: Int?,  // Message type: 1 for received, 2 for sent
-    val formattedTimestamp: String?,  // Delivery status of the message, e.g., "Delivered"
+    val time: String?,  // Delivery status of the message, e.g., "Delivered"
     val status: String?,  // Indicates whether the message has been read
     val name: String?,  // Indicates whether the message has been read
     val isRead: Boolean?  // Indicates whether the message has been read
 )
 
 
-@Entity(indices = [Index(value = ["timestamp"])])
+
+@Entity(indices = [Index(value = ["id"], unique = true), Index(value = ["timestamp"])])
 data class GroupSmsDetail(
     @PrimaryKey(autoGenerate = true)
-    val id: Long? = 0,
+    val id: Int? = 0,
     val body: String?,
     val phoneNumber: String?,
     var timestamp: Long?,

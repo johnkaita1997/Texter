@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Shared;
 
 import android.content.Context
+import android.provider.SyncStateContract.Helpers.insert
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Insert
@@ -41,15 +42,19 @@ abstract class RoomDb : RoomDatabase() {
 @Dao
 interface SmsDao {
 
-    @Query("SELECT timestamp FROM SmsDetail")
-    suspend fun getAllLocalTimestamps(): MutableList<Int>
+    @Query("SELECT sms_id FROM SmsDetail")
+    suspend fun getAllLocalSmsIds(): MutableList<Int>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertSmsDetail(smsDetail: SmsDetail): Long
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertBatch(objects: List<SmsDetail>)
+
+
+    @Query("DELETE FROM SmsDetail")
+    suspend fun deleteAllSmsDetails()
 
 
     /*@Query("SELECT * FROM smsdetail INNER JOIN (SELECT phoneNumber, MAX(timestamp) AS maxTimestamp FROM smsdetail GROUP BY phoneNumber ORDER BY maxTimestamp DESC LIMIT :pageSize OFFSET (:pageNumber - 1) * :pageSize) AS latestSms ON smsdetail.phoneNumber = latestSms.phoneNumber AND smsdetail.timestamp = latestSms.maxTimestamp")
@@ -169,6 +174,22 @@ interface SmsDao {
 
     @Query("SELECT * FROM groupsmsdetail ORDER BY timestamp DESC LIMIT 2")
     suspend fun getAllGroupSmsDetails(): MutableList<GroupSmsDetail>
+
+
+    @Query("SELECT * FROM smsdetail WHERE sms_id = :id")
+    suspend fun getSmsDetailById(id: Int): SmsDetail
+
+    @Query("SELECT * FROM SmsDetail WHERE sms_id IN (:ids)")
+    suspend fun getSmsDetailsByIds(ids: List<Long>): MutableList<SmsDetail>
+
+    @Query("SELECT * FROM groupsmsdetail WHERE id = :id")
+    suspend fun getGroupSmsById(id: Int): GroupSmsDetail
+
+    @Query("SELECT id FROM groupsmsdetail")
+    suspend fun getAllLocalGroupSmsIds(): MutableList<Int>
+
+    @Query("SELECT * FROM groupsmsdetail")
+    suspend fun getAllGroupSmsDetail(): MutableList<GroupSmsDetail>
 
 }
 

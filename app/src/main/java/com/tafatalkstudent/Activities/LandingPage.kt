@@ -1,6 +1,7 @@
 package com.tafatalkstudent.Activities
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -19,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.Constants.threadScope
+import com.tafatalkstudent.Shared.CustomLoadDialogClass
 import com.tafatalkstudent.Shared.GetScheduledSmsItem
 import com.tafatalkstudent.Shared.GroupSmsDetail
 import com.tafatalkstudent.Shared.Groups
@@ -28,18 +30,25 @@ import com.tafatalkstudent.Shared.SessionManager
 import com.tafatalkstudent.Shared.SimCard
 import com.tafatalkstudent.Shared.SmsDetail
 import com.tafatalkstudent.Shared.formatPhoneNumber
+import com.tafatalkstudent.Shared.getFromSharedPreferences
 import com.tafatalkstudent.Shared.goToActivity
 import com.tafatalkstudent.Shared.goToActivity_Unfinished
+import com.tafatalkstudent.Shared.makeLongToast
+import com.tafatalkstudent.Shared.saveToSharedPreferences
+import com.tafatalkstudent.Shared.showAlertDialog
 import com.tafatalkstudent.databinding.ActivityLandingPageBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class LandingPage : AppCompatActivity() {
 
+    private lateinit var cdd: CustomLoadDialogClass
     private lateinit var binding: ActivityLandingPageBinding
     private val viewmodel: MyViewModel by viewModels()
 
@@ -51,9 +60,7 @@ class LandingPage : AppCompatActivity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.M)
         override fun onReceive(context: Context?, intent: Intent?) {
-            // Check if the received action matches the one sent from ScheduledService
             if (intent?.action == ScheduledService.ACTION_LAUNCH_OBSERVERS) {
-                // Call your function or launch SMS here
                 launchObservers()
             }
         }
@@ -64,7 +71,6 @@ class LandingPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLandingPageBinding.inflate(layoutInflater)
-        switch = binding.canSynchButton
         setContentView(binding.root)
         Log.d("ActivityName", "Current Activity: " + javaClass.simpleName)
         initall()
@@ -73,7 +79,7 @@ class LandingPage : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun initall() {
 
-        fetchSychStatus()
+        cdd = CustomLoadDialogClass(this@LandingPage)
 
         registerReceiver()
         makeObservations()
@@ -81,7 +87,7 @@ class LandingPage : AppCompatActivity() {
         resendFailedGroupMessagesIfExisting()
         onClicklisteners()
 
-        //viewmodel.getScheduledSmsData(this@LandingPage)
+//        viewmodel.getScheduledSmsData(this@LandingPage)
 
         fun convertToJson(groups: List<Groups>): String {
             val gson = Gson()
@@ -112,17 +118,6 @@ class LandingPage : AppCompatActivity() {
 
     }
 
-    private fun fetchSychStatus() {
-        threadScope.launch {
-            val allowedSynch = async { viewmodel.getSynchPermit(this@LandingPage) }.await()
-            allowedSynch?.let {
-                canSynch = allowedSynch
-                mainScope.launch {
-                    binding.canSynchButton.isChecked = it
-                }
-            }
-        }
-    }
 
     private fun registerReceiver() {
         val intentFilter = IntentFilter(ScheduledService.ACTION_LAUNCH_OBSERVERS)
@@ -265,21 +260,6 @@ class LandingPage : AppCompatActivity() {
             goToActivity_Unfinished(this, ViewGroupsActivity::class.java)
         }
 
-        binding.canSynchButton.setOnCheckedChangeListener { _, isChecked ->
-
-            if (canSynch != isChecked) {
-                if (isChecked) {
-                    threadScope.launch {
-                        viewmodel.postSynchPermit(binding.canSynchButton, true, this@LandingPage)
-                    }
-                } else {
-                    threadScope.launch {
-                        viewmodel.postSynchPermit(binding.canSynchButton, false, this@LandingPage)
-                    }
-                }
-            }
-        }
-
     }
 
     private fun setUpActiveSimCardIfNotExisting() {
@@ -329,6 +309,11 @@ class LandingPage : AppCompatActivity() {
 
         threadScope.launch { delay(1000) }
 
+    }
+
+
+    override fun onResume() {
+        super.onResume()
     }
 
 

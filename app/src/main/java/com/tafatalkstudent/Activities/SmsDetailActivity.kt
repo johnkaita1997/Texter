@@ -310,14 +310,18 @@ class SmsDetailActivity : AppCompatActivity() {
             override fun onReceive(context: Context?, intent: Intent?) {
 
                 if (resultCode == RESULT_OK) {
+                    Log.d("Tracker1-------", "initall: Receiver result is okay")
                     GlobalScope.launch {
                         val sentTimestamp = System.currentTimeMillis()
                         val myObject = SmsDetail(null, message, phoneNumber, phoneNumberStamp, "Sent", 2, formattedTimestamp, "Sent - ${sentTimestamp}", name, true)
 
+                        Log.d("Tracker1-------", "initall: Tried to Insert SmsDetail")
+
                         val _insert = async { viewmodel.insertSmsDetail(myObject, this@SmsDetailActivity) }
                         val insert = _insert.await()
 
-                        Log.d("BROAD-------", "initall: SENT BROAD")
+                        Log.d("Tracker1-------", "initall: Finished Inserting SmsDetail")
+
                         try {
                             context?.unregisterReceiver(sentReceiver)
                             updateItem(insert)
@@ -328,8 +332,10 @@ class SmsDetailActivity : AppCompatActivity() {
 
                         }
                         viewmodel.deleteMessageByTimestamp(phoneNumberStamp, this@SmsDetailActivity)
+                        Log.d("Tracker1-------", "initall: Deleted Message By The Timestamp")
                     }
                 } else {
+                    Log.d("Tracker1-------", "initall: Receiver result if not okay")
                     GlobalScope.launch {
                         /*val _insert = async { viewmodel.insertSmsDetail(SmsDetail(message, phoneNumber, timestamp, "Draft", 4, formattedTimestamp, "Failed", name, true), this@SmsDetailActivity) }
                         val insert = _insert.await()*/
@@ -391,6 +397,7 @@ class SmsDetailActivity : AppCompatActivity() {
             val smsManager = SmsManager.getDefault()
             smsManager.sendTextMessage(toMobile, null, message, sentPI, deliveredPI)
             registerReceiver(sentReceiver, IntentFilter(SENT))
+            Log.d("Tracker1-------", "initall: Message Send And Sent Receiver Started")
             //registerReceiver(deliveredReceiver, IntentFilter(DELIVERED))
         } else {
             mainScope.launch {
@@ -410,9 +417,11 @@ class SmsDetailActivity : AppCompatActivity() {
     private fun updateItem(insert: SmsDetail) {
         mainScope.launch {
             try {
+                Log.d("Tracker1-------", "initall: Update Adapter Called")
                 adapter.updateItem(insert, recyclerView)
             } catch (e: Exception) {
-                Log.d("-------", "initall: ")
+                Log.d("Tracker1-------", "initall: Update Adapter Failed $e \n${insert}")
+
             }
         }
     }

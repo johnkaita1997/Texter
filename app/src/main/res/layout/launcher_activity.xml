@@ -44,7 +44,7 @@
                 android:layout_marginTop="220dp"
                 android:gravity="center"
                 android:src="@drawable/logo"
-                android:text="Tafa Talk"
+                android:text="Smart SMS"
                 android:textColor="@color/white"
                 android:textSize="35dp" />-->
 

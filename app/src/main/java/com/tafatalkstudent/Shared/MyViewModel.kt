@@ -3,10 +3,14 @@ package com.tafatalkstudent.Shared
 import android.accounts.NetworkErrorException
 import android.app.Activity
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Switch
 import androidx.lifecycle.*
 import com.tafatalkstudent.Activities.LandingPage
+import com.tafatalkstudent.Activities.LauncherActivity
+import com.tafatalkstudent.Activities.SmsActivity
+import com.tafatalkstudent.R2.id.async
 import com.tafatalkstudent.Retrofit.MyApi
 import com.tafatalkstudent.Shared.Constants.mainScope
 import com.tafatalkstudent.Shared.Constants.threadScope
@@ -170,7 +174,7 @@ class MyViewModel
         var insertedId = ""
         insertedId = database.insertSmsDetail(smsDetail).toString()
         Log.d("Mychek-------", "initall: checking for ${insertedId}")
-        return database.getSmsDetailByTimestamp(insertedId.toLong()) // Assuming you have a function to retrieve SmsDetail by ID
+        return database.getSmsDetailById(insertedId.toInt()) // Assuming you have a function to retrieve SmsDetail by ID
     }
 
 
@@ -179,10 +183,12 @@ class MyViewModel
 
         while (!success) {
             runCatching {
+
+                Log.d("Insert-------", "initall: Inserting local Message Batch")
                 val database = RoomDb(activity).getSmsDao()
                 database.insertBatch(listOfSmsDetail)
-                // If the code reaches here, the transaction was successful
                 success = true
+
             }.onFailure {
                 // Handle the exception or log the error
                 success = false
@@ -561,21 +567,22 @@ class MyViewModel
     }
 
 
-    suspend fun pushMessages(messageList: MutableList<PostSmsBody>, activity: Activity) {
+    suspend fun pushMessages(messageList: MutableList<SmsDetail>, activity: Activity) {
         runCatching {
             val response = api.pushMessages(activity.getHeaders(), messageList)
             if (!response.isSuccessful) {
+                Log.d("Pushed-------", "initall: Message Noooooooooooooot Pushed Successfully")
+
                 mainScope.launch {
                     activity.dismissProgress()
                 }
                 val errorBody = response.errorBody()?.string()
                 handleResponse(errorBody, null, activity)
                 return@runCatching
-            } else {
-                Log.d("-------", "initall: Message Pushed Successfully")
             }
         }.onFailure {
             mainScope.launch {
+                Log.d("Pushed-------", "initall: Message Network Noooooooooooooot Pushed Successfully")
                 activity.dismissProgress()
             }
             networkResponseFailure(it, null, "registeruser()", activity)
@@ -717,7 +724,10 @@ class MyViewModel
                         val result = response.body()
                         continuation.resume(result)
                     } else {
-                        continuation.resumeWithException(NetworkErrorException("Failed to fetch data"))
+                        mainScope.launch {
+                            activity.showAlertDialog(response.message())
+                        }
+//                        continuation.resumeWithException(NetworkErrorException(response.message()))
                     }
                 } catch (e: Exception) {
                     continuation.resumeWithException(e)
@@ -726,30 +736,32 @@ class MyViewModel
         }
     }
 
-    suspend fun deleteCloudMessages(switch: Switch?, activity: Activity, cdd: CustomLoadDialogClass) {
-        return suspendCoroutine { continuation ->
-            threadScope.launch {
-                try {
-                    val response = api.deleteCloudMessages(activity.getHeaders())
-                    if (response.isSuccessful) {
-                        val result = response.body()
-                        mainScope.launch {
-                            cdd.dismiss()
-                            activity.showAlertDialog(result.toString())
-                            switch?.isChecked = false
-                            LandingPage.canSynch = false
-                        }
-                    } else {
-                        mainScope.launch {
-                            cdd.dismiss()
-                            activity.showAlertDialog(response.message().toString())
-                        }
-                    }
-                } catch (e: Exception) {
+    suspend fun deleteCloudMessages(activity: Activity, cdd: CustomLoadDialogClass?) {
+        threadScope.launch {
+            try {
+                val response = api.deleteCloudMessages(activity.getHeaders())
+                if (response.isSuccessful) {
+                    val result = response.body()
                     mainScope.launch {
-                        cdd.dismiss()
-                        activity.showAlertDialog(e.message.toString())
+                        try {
+                            if (cdd != null) {
+                                activity.showAlertDialog("Messages Backed Up In Cloud Deleted Successfully")
+                            }
+                            cdd?.dismiss()
+                        } catch (e: Exception) {
+                            Log.d("Point-------", "initall: $e")
+                        }
                     }
+                } else {
+                    mainScope.launch {
+                        cdd?.dismiss()
+                        activity.showAlertDialog(response.message().toString())
+                    }
+                }
+            } catch (e: Exception) {
+                mainScope.launch {
+                    cdd?.dismiss()
+                    activity.showAlertDialog(e.message.toString())
                 }
             }
         }
@@ -760,7 +772,7 @@ class MyViewModel
             threadScope.launch {
                 try {
                     val database = RoomDb(activity).getSmsDao()
-                    val result = database.getAllLocalTimestamps()
+                    val result = database.getAllLocalSmsIds()
                     continuation.resume(result)
                 } catch (e: Exception) {
                     continuation.resumeWithException(e)
@@ -788,16 +800,6 @@ class MyViewModel
             val response = api.postSynchPermit(activity.getHeaders())
             if (response.isSuccessful) {
                 val theresponse = response.body()
-                mainScope.launch {
-                    activity.makeLongToast(theresponse.toString())
-                    if (changedToTrueOrFalse) {
-                        switch.isChecked = true
-                        LandingPage.canSynch = true
-                    } else {
-                        switch.isChecked = false
-                        LandingPage.canSynch = false
-                    }
-                }
             } else {
                 null
             }
@@ -809,7 +811,7 @@ class MyViewModel
 
     suspend fun getCloudSmsIds(activity: Activity): MutableList<Int?>? {
         return try {
-            val response = api.getCloudSmsIds("sms_id", activity.getHeaders())
+            val response = api.getCloudSmsIds(activity.getHeaders(), "sms_id")
             if (response.isSuccessful) {
                 response.body()
             } else {
@@ -820,6 +822,68 @@ class MyViewModel
         }
     }
 
+
+    suspend fun getSmsById(id: Int, activity: Activity): SmsDetail {
+        val database = RoomDb(activity).getSmsDao()
+        val thesms = database.getSmsDetailById(id)
+        return thesms
+    }
+
+
+    suspend fun getCloudGroupIds(activity: Activity): MutableList<Int?>? {
+        return try {
+            val response = api.getCloudSmsIds(activity.getHeaders(), "group_id")
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
+    suspend fun getAllLocalGroupSmsIds(activity: Activity): MutableList<Int>? {
+        return suspendCoroutine { continuation ->
+            threadScope.launch {
+                try {
+                    val database = RoomDb(activity).getSmsDao()
+                    val result = database.getAllLocalGroupSmsIds()
+                    continuation.resume(result)
+                } catch (e: Exception) {
+                    continuation.resumeWithException(e)
+                }
+            }
+        }
+    }
+
+
+    suspend fun getAllGroupSmsDetail(groupId: Long, activity: Activity): MutableList<GroupSmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val getGroupSmsDetailById = database.getGroupSmsDetailById(groupId)
+        return getGroupSmsDetailById
+    }
+
+
+    suspend fun getGroupSmsById(id: Int, activity: Activity): GroupSmsDetail {
+        val database = RoomDb(activity).getSmsDao()
+        val thesms = database.getGroupSmsById(id)
+        return thesms
+    }
+
+
+    suspend fun deleteAllSmsDetails(activity: Activity) {
+        val database = RoomDb(activity).getSmsDao()
+        database.deleteAllSmsDetails()
+    }
+
+
+    suspend fun getAllGroupSmsDetail(activity: Activity): MutableList<GroupSmsDetail> {
+        val database = RoomDb(activity).getSmsDao()
+        val getGroupSmsDetailById = database.getAllGroupSmsDetail()
+        return getGroupSmsDetailById
+    }
 
 
 }

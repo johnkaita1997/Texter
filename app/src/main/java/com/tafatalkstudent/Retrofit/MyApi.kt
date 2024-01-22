@@ -26,8 +26,8 @@ interface MyApi {
             loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
             val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
-                .connectTimeout(30, TimeUnit.SECONDS) // set connect timeout to 30 seconds
-                .readTimeout(30, TimeUnit.SECONDS) // set read timeout to 30 seconds
+                .connectTimeout(300, TimeUnit.SECONDS) // set connect timeout to 30 seconds
+                .readTimeout(300, TimeUnit.SECONDS) // set read timeout to 30 seconds
                 .build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(Constants.baseurl)
@@ -61,7 +61,7 @@ interface MyApi {
     @POST("api/v1/core/sms")
     suspend fun pushMessages(
         @Header("Authorization") authorization: String?,
-        @Body messageList: MutableList<PostSmsBody>
+        @Body messageList: MutableList<SmsDetail>
     ): Response<String>
 
     @POST("api/v1/core/group-sms")
@@ -109,7 +109,7 @@ interface MyApi {
         @Header("Authorization") authorization: String?,
     ): Response<Any?>
 
-    @GET("api/v1/core/sms-counter")
+    @GET("api/v1/core/sms")
     suspend fun getCloudSmsIds(
         @Header("Authorization") authorization: String?,
         @Query("fetch") sms_id: String,
