@@ -175,7 +175,7 @@ class SmsActivity : AppCompatActivity() {
             val message = "\nLocal Messages -> ${localMessages.size}\nCloud Messages -> ${totalCloudSms}\nDifference is ${totalCloudSms - localMessages.size}"
             Log.d("SMSCHECK-------", message)
             mainScope.launch {
-                showAlertDialog("LocalIds Size -> ${localIds?.size}\nCloudIds Size -> ${cloudIds?.size}\n${message}")
+                //showAlertDialog("LocalIds Size -> ${localIds?.size}\nCloudIds Size -> ${cloudIds?.size}\n${message}")
             }
 
         }
@@ -668,7 +668,7 @@ class SmsActivity : AppCompatActivity() {
                             }
 
                             mainScope.launch {
-                                makeLongToast("Synching ${messages.size} Messages ...")
+                                //makeLongToast("Synching ${messages.size} Messages ...")
                             }
 
                             val deferredList = mutableListOf<Deferred<SmsDetail>>()

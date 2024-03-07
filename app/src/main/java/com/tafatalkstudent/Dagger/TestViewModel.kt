@@ -18,7 +18,7 @@ class TestViewModel
 ) : ViewModel() {
     init {
         val activity: Activity? = (appcontext as MyApplication).currentActivity
-        activity!!.showAlertDialog("Love is good")
+        //activity!!.showAlertDialog("Love is good")
 
     }
 }
